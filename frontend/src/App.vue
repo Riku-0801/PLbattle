@@ -1,50 +1,34 @@
 <template>
-  <v-app>
-    <header>
-      <v-app-bar
-        elevation='1'
-      >
-        <v-toolbar-title>PLbattle</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn
-          @click="openModal"
-        >遊び方
-        </v-btn>
-      </v-app-bar>
-    </header>
-    <BattleExplanation
-      v-bind:bool="showExplanation"
-      @from-child="closeModal"
-    />
-    <v-main>
-      <router-view/>
-    </v-main>
-  </v-app>
+	<div id="app">
+		<img alt="Vue logo" src="./assets/logo.png" />
+		<HelloWorld msg="Welcome to Your Vue.js App" />
+	</div>
 </template>
 
 <script>
-import BattleExplanation from ".//components/BattleExplanation.vue"
+import HelloWorld from './components/BattleExplanation.vue'
 
 export default {
-    components: {
-      BattleExplanation
-    },
-    data() {
-        return {
-          // モーダルを非表示
-          showExplanation: false
-        }
-    },
-    methods: {
-        openModal: function(){
-            this.showExplanation = true
-        },
-        closeModal: function(){
-            this.showExplanation = false
-        },
-    }
-};
+	name: 'App',
+	components: {
+		HelloWorld,
+	},
+  // 追記
+	async created() {
+		await this.$axios.get('/message').then((res) => {
+			console.log(res.data)
+		})
+	},
+}
 </script>
 
-<style scoped>
+<style>
+#app {
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-align: center;
+	color: #2c3e50;
+	margin-top: 60px;
+}
 </style>
