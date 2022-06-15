@@ -2,13 +2,16 @@ const express = require('express')
 const serveStatic = require('serve-static')
 const cors = require('cors')
 const app = express()
+
 const port = process.env.PORT || 3000
+
 
 if (process.env.NODE_ENV !== 'production') {
 	app.use(cors())
 }
 
 app.use(serveStatic(__dirname + '/dist'))
+
 
 var data = [
     {
@@ -25,7 +28,7 @@ var data = [
 ]
 // 下記内容を追記
 app.get('/api/message', (req, res) => {
-	res.json(data)
+	res.send(data)
 })
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
