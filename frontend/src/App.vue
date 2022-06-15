@@ -17,6 +17,9 @@
       @from-child="closeModal"
     />
     <v-main>
+      <v-btn
+        @click = "getDatas"
+      >データを取得</v-btn>
       <h1>
         {{file[0].id}}
       </h1>
@@ -46,8 +49,10 @@ export default {
           showExplanation: false
         }
     },
-    async created() {
-		await this.$axios.get('/message')
+    
+    methods: {
+      getDatas: function() {
+		this.$axios.get('/message')
     .then(res => {
       console.log(res.data)
       this.file = res.data
@@ -56,7 +61,6 @@ export default {
         console.error(err)
     })
 	  },
-    methods: {
         openModal: function(){
             this.showExplanation = true
         },
