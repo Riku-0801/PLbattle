@@ -32,8 +32,9 @@ io.sockets.on("connection", function (socket) {
   });
   //ログイン時処理
   socket.on("login", function (RoomId) {
-    // 待機中プレイヤーが居る場合
+    //  room_idが空だった場合
     if (RoomId == "") {
+      // 待機中プレイヤーが居る場合
       if (waitPlayer == 1) {
         // 待機中の部屋IDにjoin
         socket.join(tmpRoomId);
@@ -46,6 +47,7 @@ io.sockets.on("connection", function (socket) {
         tmpRoomId = createRoomId();
         socket.join(tmpRoomId);
       }
+      // room_idがあった場合
     } else {
       socket.join(RoomId);
     }
