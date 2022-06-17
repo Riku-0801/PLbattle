@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 7000;
 room_idを自動生成してくれる関数
 多分10文字のランダムな文字列を作ってくれる
 */
-function creatRoomid() {
+function createRoomId() {
   var base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   base = base.split("");
   var str = "";
@@ -31,19 +31,36 @@ io.sockets.on("connection", function (socket) {
     console.log("disconnect");
   });
   //ログイン時処理
-  socket.on("login", function () {
+  socket.on("login", function (RoomId) {
     // 待機中プレイヤーが居る場合
-    if (waitPlayer == 1) {
-      // 待機中の部屋IDにjoin
-      socket.join(tmpRoomId);
-      waitPlayer = 0;
-      // 待機中プレイヤーが居ない場合
+    if (RoomId == "") {
+      if (waitPlayer == 1) {
+        // 待機中の部屋IDにjoin
+        socket.join(tmpRoomId);
+        waitPlayer = 0;
+        // 待機中プレイヤーが居ない場合
+      } else {
+        // 待機プレイヤーに1を設定
+        waitPlayer = 1;
+        // 部屋IDを生成
+        tmpRoomId = createRoomId();
+        socket.join(tmpRoomId);
+      }
     } else {
-      // 待機プレイヤーに1を設定
-      waitPlayer = 1;
-      // 部屋IDを生成
-      tmpRoomId = createRoomId();
-      socket.join(tmpRoomId);
+      socket.join(RoomId);
     }
   });
 });
+
+/*
+room_idを発行する場合
+
+io.sockets.on("connection", function (socket) {
+  socket.on("disconnect", function () {
+    console.log("disconnect");
+  });
+  socket.on("login", function (RoomId) {
+    socket.join(RoomId);
+  });
+});
+*/
