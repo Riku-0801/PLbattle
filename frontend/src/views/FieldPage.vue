@@ -48,11 +48,7 @@
   <v-main>
     <v-btn
         @click = "getDatas"
-      >データを取得</v-btn>
-      <h1>
-        {{mydata.length}}
-        {{mydata_len}}
-      </h1>
+      >ドロー</v-btn>
   </v-main>
   </v-app>
 </template>
@@ -100,12 +96,12 @@ import VueDrag from 'vuedraggable'
 		this.$axios.get('/message')
     .then(res => {
       this.recent_mydata_len = []
+      console.log(this.mydata)
+      console.log(this.selecteddata)
       for(let i = 0; i < this.mydata.length; i++){
         this.recent_mydata_len.push(this.mydata[i].id-1)
-        console.log("新規リスト作成")
       }
       for (let i = this.mydata.length-1; i < 5;){
-        console.log("push完了")
         this.tmp = Number(Math.floor(Math.random() * 10));
         if(!this.recent_mydata_len.includes(this.tmp)){
           this.mydata_len.push(this.tmp);
@@ -113,6 +109,7 @@ import VueDrag from 'vuedraggable'
           i++;
         }
         }
+      console.log("ドロー完了")
 		})
     .catch(err => {
         console.error(err)
