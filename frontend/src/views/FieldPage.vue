@@ -1,4 +1,5 @@
 <template>
+<v-app>
   <v-container>
     <div class="field">
       <VueDrag
@@ -11,7 +12,7 @@
       >
       <div
         v-for="select in selecteddata"
-        :key="select.id"
+        :key="`first-${select.id}`"
         class="item"
       >
         <v-card
@@ -32,7 +33,7 @@
       >
         <div
           v-for="mine in mydata"
-          :key="mine.id"
+          :key="`second-${mine.id}`"
           class="item"
         >
           <v-card
@@ -43,6 +44,17 @@
         </div>
       </VueDrag>
   </v-container>
+  
+  <v-main>
+    <v-btn
+        @click = "getDatas"
+      >データを取得</v-btn>
+      <h1>
+        {{mydata.length}}
+        {{mydata_len}}
+      </h1>
+  </v-main>
+  </v-app>
 </template>
 
 <script>
@@ -59,46 +71,52 @@ import VueDrag from 'vuedraggable'
           group: "myGroup",
           animation: 200
         },
-        selecteddata: [
-        ],
-        mydata: [
-          {
-            id: 1,
-            name: "C",
-            type: "language",
-            value: 50
-          },
-          {
-            id: 2,
-            name: "C++",
-            type: "language",
-            value: 60
-          },
-          {
-            id: 3,
-            name: "C#",
-            type: "language",
-            value: 50
-          },
-          {
-            id: 4,
-            name: "python",
-            type: "language",
-            value: 20
-          },
-          {
-            id: 5,
-            name: "Java",
-            type: "language",
-            value: 50
-          },
-          {
-            id: 6,
-            name: "R",
-            type: "language",
-            value: 20
-          },
-        ]
+        selecteddata: [],
+        mydata: [],
+        mydata_len: [],
+        recent_mydata_len: [],
+        tmp: 0
+      }
+    },
+    mounted() {
+    window.onload = ()=>{
+      this.$axios.get('/message')
+        .then(res => {
+          for (let i = this.mydata.length; i < 6;){
+          this.tmp = Number(Math.floor(Math.random() * 10));
+          if(!this.mydata_len.includes(this.tmp)){
+            this.mydata_len.push(this.tmp);
+            this.mydata.push(res.data[this.mydata_len[i]])
+            i++;
+          }
+        }
+        })
+        console.log(this.mydata)
+        console.log("初期データ移行完了")
+      }
+    },
+    methods: {
+    getDatas: function() {
+		this.$axios.get('/message')
+    .then(res => {
+      this.recent_mydata_len = []
+      for(let i = 0; i < this.mydata.length; i++){
+        this.recent_mydata_len.push(this.mydata[i].id-1)
+        console.log("新規リスト作成")
+      }
+      for (let i = this.mydata.length-1; i < 5;){
+        console.log("push完了")
+        this.tmp = Number(Math.floor(Math.random() * 10));
+        if(!this.recent_mydata_len.includes(this.tmp)){
+          this.mydata_len.push(this.tmp);
+          this.mydata.push(res.data[this.mydata_len[i-this.mydata.length+this.mydata_len.length]])
+          i++;
+        }
+        }
+		})
+    .catch(err => {
+        console.error(err)
+      })
       }
     }
   }
