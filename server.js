@@ -4,6 +4,10 @@ var http = require("http").Server(app);
 const io = require("socket.io")(http);
 const PORT = process.env.PORT || 7000;
 
+/*
+room_idを自動生成してくれる関数
+多分10文字のランダムな文字列を作ってくれる
+*/
 function creatRoomid() {
   var base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   base = base.split("");
