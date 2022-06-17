@@ -14,6 +14,13 @@ app.use(serveStatic(__dirname + '/dist'))
 
 var combo_data = [
     {
+        combo_id: 0,
+        name_en: "Test combo",
+        name_ja: "てすとだよ",
+        action_value: 0,
+        id_list: [1]
+    },
+    {
         combo_id: 1,
         name_en: "Royal Straight Flush",
         name_ja: "ロイヤルストレートフラッシュ",
@@ -177,6 +184,24 @@ var data = [
         field: "",
         set_id: 0
     },{
+        id: 1,
+        name: "Javascript",
+        type: "language",
+        img: "",
+        action: "attack",
+        value: 10,
+        field: "",
+        set_id: 0
+    },{
+        id: 1,
+        name: "Javascript",
+        type: "language",
+        img: "",
+        action: "attack",
+        value: 10,
+        field: "",
+        set_id: 0
+    },{
         id: 2,
         name: "HTML",
         type: "language",
@@ -248,6 +273,24 @@ var data = [
         value: 20,
         field: "iOS,macOS",
         set_id: 30
+    },{
+        id: 10,
+        name: "Python",
+        type: "language",
+        img: "",
+        action: "attack",
+        value: 30,
+        field: "LinuxOS",
+        set_id: 0
+    },{
+        id: 10,
+        name: "Python",
+        type: "language",
+        img: "",
+        action: "attack",
+        value: 30,
+        field: "LinuxOS",
+        set_id: 0
     },{
         id: 10,
         name: "Python",
@@ -674,8 +717,11 @@ var data = [
     }
 ]
 // 下記内容を追記
-app.get('/api/message', (req, res) => {
+app.get('/api/data', (req, res) => {
 	res.json(data)
+})
+app.get('/api/combo_data', (req, res) => {
+	res.json(combo_data)
 })
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))

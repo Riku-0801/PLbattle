@@ -49,6 +49,9 @@
     <v-btn
         @click = "getDatas"
       >ドロー</v-btn>
+    <v-btn
+        @click = "sendDatas"
+      >コンボ判定</v-btn>
   </v-main>
   </v-app>
 </template>
@@ -71,12 +74,13 @@ import VueDrag from 'vuedraggable'
         mydata: [],
         mydata_len: [],
         recent_mydata_len: [],
+        recent_selectdata_id: [],
         tmp: 0
       }
     },
     mounted() {
     window.onload = ()=>{
-      this.$axios.get('/message')
+      this.$axios.get('/data')
         .then(res => {
           for (let i = this.mydata.length; i < 6;){
           this.tmp = Number(Math.floor(Math.random() * 10));
@@ -93,7 +97,7 @@ import VueDrag from 'vuedraggable'
     },
     methods: {
     getDatas: function() {
-		this.$axios.get('/message')
+		this.$axios.get('/data')
     .then(res => {
       this.recent_mydata_len = []
       console.log(this.mydata)
@@ -114,9 +118,29 @@ import VueDrag from 'vuedraggable'
     .catch(err => {
         console.error(err)
       })
-      }
+    },
+    sendDatas: function() {
+      this.$axios.get('/combo_data')
+      .then(res => {
+        console.log(res.data)
+        this.recent_selectdata_id = []
+        for (let i = 0; i < this.selecteddata.length; i++){
+          this.recent_selectdata_id.push(this.selecteddata[i].id)
+        }
+        console.log(this.recent_selectdata_id)
+        for (let i = 0; i < res.data.length; i++){
+          console.log(res.data[i].id_list)
+          if(JSON.stringify(res.data[i].id_list) === JSON.stringify(this.recent_selectdata_id)){
+            console.log("成功です")
+          }else{
+            console.log("これはコンボじゃないよ")
+          }
+        }
+      })
+        //ここにwebsocketを使って通信するシステムを記述、あるいはその内容をbackendに飛ばす処理を行う
     }
   }
+}
 </script>
 
 <style scoped>
