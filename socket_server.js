@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 7001;
 
 /*
 room_idを自動生成してくれる関数
-多分10文字のランダムな文字列を作ってくれる
+10文字のランダムな文字列を作ってくれる
 */
 function createRoomId() {
   var base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -19,6 +19,7 @@ function createRoomId() {
   return id;
 }
 
+//接続時処理
 io.sockets.on("connection", function (socket) {
   //接続切断処理
   socket.on("disconnect", function () {
@@ -37,3 +38,9 @@ io.sockets.on("connection", function (socket) {
 http.listen(PORT, function () {
   console.log("server listening. Port:" + PORT);
 });
+
+/**
+変数名
+RoomId : ルームのID
+cardValue : カードの情報
+ */
