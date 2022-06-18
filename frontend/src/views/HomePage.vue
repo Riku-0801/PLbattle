@@ -1,5 +1,6 @@
 <template>
   <v-container>
+
     <v-row class="home-container">
       <v-col cols="8">
         <div>>　Program Card Battle</div>
@@ -14,7 +15,7 @@
           >　<span>相手のIDを入力してください：</span
           ><input v-model="id" placeholder="" /><v-btn
             outlined
-            @click="play"
+            @click="sendRoomId('hogehoge')"
             class="btn play"
             >このルームで遊ぶ</v-btn
           >
@@ -27,12 +28,12 @@
       </v-col>
       <v-col cols="4" class="start">
         <v-btn outlined class="btn big"
-          ><router-link :to="{ name: 'field' }"
-            ><span>start</span></router-link
-          ></v-btn
+          @click="push()">
+            <span>start</span></v-btn
         >
       </v-col>
     </v-row>
+
   </v-container>
 </template>
 
@@ -50,10 +51,12 @@ export default {
     };
   },
   mounted() {
-    this.socket.on("turnflag", function (turn_flag) {
-      this.turn_flag = 1;
-      console.log(this.turn_flag);
-      localStorage.setItem("turn_flag", 1);
+
+    this.socket.on("logined", function (userId) {
+      console.log(userId);
+      localStorage.setItem("userId", userId);
+      //this.push();
+
     });
   },
   methods: {
@@ -63,8 +66,12 @@ export default {
     },
     sendRoomId: function (RoomId) {
       this.socket.emit("login", RoomId);
-      this.turn_flag = 0;
+
       console.log(RoomId);
+    },
+    push() {
+      this.$router.push({ name: "field", query: { room: "hogehoge" } });
+
     },
     set() {
       localStorage.setItem(
