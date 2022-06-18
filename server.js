@@ -2,7 +2,7 @@ var express = require("express");
 var app = express();
 var http = require("http").Server(app);
 const io = require("socket.io")(http);
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 const serveStatic = require("serve-static");
 const cors = require("cors");
 
@@ -67,6 +67,7 @@ var combo_data = [
     name_ja: "てすとだよ",
     action_value: 0,
     id_list: [1],
+    name_list: ["aaaaa","bbbbb"]
   },
   {
     combo_id: 1,

@@ -52,9 +52,9 @@
         :key="able.name_en"
       >
         <div>{{ able.name_en }}</div>
-        <div>必要カード{{ }}</div>
+        <div>必要カード{{ able.name_list }}</div>
       </div>
-      <v-btn @click="deleteCards">発動</v-btn>
+      <v-btn v-bind:disabled = "attack_decision" @click="deleteCards">発動</v-btn>
   </v-container>
   
   <v-main>
@@ -85,7 +85,8 @@ import VueDrag from 'vuedraggable'
         combo_data: [],
         recent_mydata_len: [],
         recent_selectdata: [],
-        tmp: 0
+        tmp: 0,
+        judge: false
       }
     },
     mounted() {
@@ -159,6 +160,23 @@ import VueDrag from 'vuedraggable'
           // 完全一致した攻撃だけを返す
             return this.combo_data.filter(combo_data => {
               return isIncludes(updateddata, combo_data.id_list)
+            })
+        }
+      },
+      //カードの判定をします！！ここでしてます！！読みにくくてごめんなさい！！
+      attack_decision:function(){
+        let updateddata = this.selecteddata.map(obj => obj.id)
+        const isIncludes = (arr, target) => arr.every(el => target.includes(el))
+        if(updateddata.length === 0){
+          return true
+        }else if(updateddata.length === 1){
+          return false
+        }else{
+          // 完全一致した攻撃だけを返す
+            this.combo_data.filter(combo_data => {
+              if(isIncludes(updateddata, combo_data.id_list) === true){
+                return false
+              }
             })
         }
       }
