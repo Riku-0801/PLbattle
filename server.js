@@ -186,6 +186,7 @@ var combo_data = [
     name_ja: "バード",
     action_value: 70,
     id_list: [30, 31],
+    name_list: ["Swift","Kotlin"]
   },
   {
     combo_id: 16,
@@ -193,6 +194,7 @@ var combo_data = [
     name_ja: "グーグル",
     action_value: 80,
     id_list: [32, 37],
+    name_list: ["dart","Go"]
   },
   {
     combo_id: 17,
@@ -200,6 +202,7 @@ var combo_data = [
     name_ja: "アップル",
     action_value: 70,
     id_list: [29, 30],
+    name_list: ["Objective-C","Swift"]
   },
   {
     combo_id: 18,
@@ -207,6 +210,7 @@ var combo_data = [
     name_ja: "パイソンズ1",
     action_value: 40,
     id_list: [4, 5],
+    name_list: ["Django","FastAPI"]
   },
   {
     combo_id: 19,
@@ -214,6 +218,7 @@ var combo_data = [
     name_ja: "パイソンズ2",
     action_value: 50,
     id_list: [4, 16],
+    name_list: ["Django","Flask"]
   },
   {
     combo_id: 20,
@@ -221,6 +226,7 @@ var combo_data = [
     name_ja: "パイソンズ3",
     action_value: 50,
     id_list: [5, 16],
+    name_list: ["FastAPI","Flask"]
   },
   {
     combo_id: 21,
