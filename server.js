@@ -78,6 +78,7 @@ io.sockets.on("connection", function (socket) {
     socket.to("hogehoge").emit("turnflag", turn_flag["hogehoge"][userId]);
   });
   socket.on("cardvalue", function (cardValue) {
+    console.log("aaaaaaaaaaaaaaaaaaaa");
     io.to("hogehoge").emit("cardValue", cardValue);
   });
 });
