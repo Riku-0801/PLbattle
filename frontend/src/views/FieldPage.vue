@@ -1146,7 +1146,7 @@ export default {
       if(this.selecteddata.length == 1){
         if(this.selecteddata[0].action == "enhancement"){
           // 回復の処理
-          this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value
+          this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
         }else if(this.selecteddata[0].action == "steal"){
           // 吸収の処理
           this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value;
@@ -1160,9 +1160,6 @@ export default {
         this.sampleHp.yours = this.sampleHp.yours - this.ableattacks[0].action_value
       }
       this.showAttack = true;
-      // todo: 必殺技からもvalueをとってくるようにする
-      this.sampleHp.yours = this.sampleHp.yours - this.cardValue.value;
-      console.log(this.cardValue.value);
       this.selecteddata.splice(index, this.selecteddata.length);
       // if(this.selecteddata)
     },
