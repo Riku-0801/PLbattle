@@ -14,12 +14,13 @@ export default {
   methods: {
     //cardValueをサーバーサイドへ送信
     sendValue(cardValue) {
-      this.turn_flag = 1
+      this.turn_flag = 1;
       this.socket.emit("value", cardValue);
     },
     //roomIdをサーバーサイドへ送信
     sendRoomId(roomId) {
       this.socket.emit("login", roomId);
+      turn_flag = 0;
     },
   },
   mounted() {
@@ -27,8 +28,15 @@ export default {
     this.socket.on("cardValue", function (cardValue) {
       //ここに処理を書く
       this.recieved_cardValue = [cardValue];
-      this.turn_flag = 0
-      console.log(this.turn_flag)
+      this.turn_flag = 1;
+      console.log(this.turn_flag);
+    });
+    this.socket.on("turnflag", function (turn_flag) {
+      turn_flag = 1;
     });
   },
 };
+/**
+turn_flag = 0:相手のターン
+　　　　　 = 1:自分のターン
+ */
