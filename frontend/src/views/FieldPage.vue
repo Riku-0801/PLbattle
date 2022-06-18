@@ -52,7 +52,7 @@
         :key="able.name_en"
       >
         <div>{{ able.name_en }}</div>
-        <div>必要カード{{ able.id_list }}</div>
+        <div>必要カード{{ }}</div>
       </div>
       <v-btn @click="deleteCards">発動</v-btn>
   </v-container>
@@ -61,9 +61,6 @@
     <v-btn
         @click = "getDatas"
       >ドロー</v-btn>
-    <v-btn
-        @click = "sendDatas"
-      >コンボ判定</v-btn>
   </v-main>
   </v-app>
 </template>
@@ -87,7 +84,7 @@ import VueDrag from 'vuedraggable'
         mydata_len: [],
         combo_data: [],
         recent_mydata_len: [],
-        recent_selectdata_id: [],
+        recent_selectdata: [],
         tmp: 0
       }
     },
@@ -146,25 +143,6 @@ import VueDrag from 'vuedraggable'
     .catch(err => {
         console.error(err)
       })
-    },
-    sendDatas: function() {
-      this.$axios.get('/combo_data')
-      .then(res => {
-        this.recent_selectdata_id = []
-        for (let i = 0; i < this.selecteddata.length; i++){
-          this.recent_selectdata_id.push(this.selecteddata[i].id)
-        }
-        for (let i = 0; i < res.data.length; i++){
-          console.log(res.data[i].id_list)
-          if(JSON.stringify(res.data[i].id_list) === JSON.stringify(this.recent_selectdata_id)){
-            console.log("成功です")
-          }else{
-            console.log("これはコンボじゃないよ")
-          }
-        }
-      })
-        //ここにwebsocketを使って通信するシステムを記述、あるいはその内容をbackendに飛ばす処理を行う
-        
     }
   },
   computed: {
@@ -173,6 +151,7 @@ import VueDrag from 'vuedraggable'
         let updateddata = this.selecteddata.map(obj => obj.id)
         // 配列の完全一致を判定
         const isIncludes = (arr, target) => arr.every(el => target.includes(el))
+        //recent_selectdataに、idに対応するカードの名前を入れたい
         if(updateddata.length === 0){
           // 何も選択されていないとき空の配列を返す
           return []

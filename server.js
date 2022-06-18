@@ -74,6 +74,7 @@ var combo_data = [
     name_ja: "ロイヤルストレートフラッシュ",
     action_value: 500,
     id_list: [29, 41, 42, 44],
+    name_list: ["Objective-C","C","C#","C++"]
   },
   {
     combo_id: 2,
@@ -81,6 +82,7 @@ var combo_data = [
     name_ja: "マークアップ",
     action_value: 40,
     id_list: [2, 3],
+    name_list: ["HTML","CSS"]
   },
   {
     combo_id: 3,
@@ -88,6 +90,7 @@ var combo_data = [
     name_ja: "ルーキー",
     action_value: 60,
     id_list: [1, 2, 3],
+    name_list: ["Javascript","HTML","CSS"]
   },
   {
     combo_id: 4,
@@ -95,6 +98,7 @@ var combo_data = [
     name_ja: "ジュエリー",
     action_value: 100,
     id_list: [28, 29],
+    name_list: ["Perl","Objective-C"]
   },
   {
     combo_id: 5,
@@ -102,6 +106,7 @@ var combo_data = [
     name_ja: "Pコンボ1",
     action_value: 80,
     id_list: [27, 28],
+    name_list: ["PHP","Perl"]
   },
   {
     combo_id: 6,
@@ -109,6 +114,7 @@ var combo_data = [
     name_ja: "Pコンボ2",
     action_value: 80,
     id_list: [10, 27],
+    name_list: ["Python","PHP"]
   },
   {
     combo_id: 7,
@@ -116,6 +122,7 @@ var combo_data = [
     name_ja: "Pコンボ3",
     action_value: 80,
     id_list: [10, 28],
+    name_list: ["Python","Perl"]
   },
   {
     combo_id: 8,
@@ -123,6 +130,7 @@ var combo_data = [
     name_ja: "Pファミリー",
     action_value: 100,
     id_list: [10, 27, 28],
+    name_list: ["Python","PHP","Perl"]
   },
   {
     combo_id: 9,
@@ -130,6 +138,7 @@ var combo_data = [
     name_ja: "Rコンボ1",
     action_value: 50,
     id_list: [11, 33],
+    name_list: ["R","Rust"]
   },
   {
     combo_id: 10,
@@ -137,6 +146,7 @@ var combo_data = [
     name_ja: "Rコンボ2",
     action_value: 60,
     id_list: [11, 39],
+    name_list: ["R","Ruby"]
   },
   {
     combo_id: 11,
@@ -144,6 +154,7 @@ var combo_data = [
     name_ja: "Rコンボ3",
     action_value: 80,
     id_list: [33, 39],
+    name_list: ["Rust","Ruby"]
   },
   {
     combo_id: 12,
@@ -151,6 +162,7 @@ var combo_data = [
     name_ja: "Rファミリー",
     action_value: 90,
     id_list: [11, 33, 39],
+    name_list: ["R","Rust","Ruby"]
   },
   {
     combo_id: 13,
@@ -158,6 +170,7 @@ var combo_data = [
     name_ja: "月と鼈",
     action_value: 60,
     id_list: [1, 43],
+    name_list: ["Javascript","Java"]
   },
   {
     combo_id: 14,
@@ -165,6 +178,7 @@ var combo_data = [
     name_ja: "スクリプト兄弟",
     action_value: 50,
     id_list: [1, 12],
+    name_list: ["Javascript","TypeScript"]
   },
   {
     combo_id: 15,
@@ -248,6 +262,139 @@ var combo_data = [
     id_list: [50, 51, 52],
     name_list: ["なでしこ", "ドリトル", "プロデル"],
   },
+  {
+    combo_id: 26,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 45,
+    id_list: [1,15],
+  },{
+    combo_id: 27,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 30,
+    id_list: [1,6],
+  },{
+    combo_id: 28,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 45,
+    id_list: [1,18],
+  },{
+    combo_id: 29,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 75,
+    id_list: [1,36],
+  },{
+    combo_id: 30,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 45,
+    id_list: [10,16],
+  },{
+    combo_id: 31,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 30,
+    id_list: [10,5],
+  },{
+    combo_id: 32,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 30,
+    id_list: [10,5],
+  },{
+    combo_id: 33,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 60,
+    id_list: [3,34],
+  },{
+    combo_id: 34,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 90,
+    id_list: [27,23],
+  },{
+    combo_id: 35,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 90,
+    id_list: [27,8],
+  },{
+    combo_id: 36,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 105,
+    id_list: [39,17],
+  },{
+    combo_id: 37,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 75,
+    id_list: [30,9],
+  },{
+    combo_id: 38,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 90,
+    id_list: [37,20],
+  },{
+    combo_id: 39,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 105,
+    id_list: [43,19],
+  },{
+    combo_id: 40,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 75,
+    id_list: [33,21],
+  },{
+    combo_id: 41,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 75,
+    id_list: [33,22],
+  },{
+    combo_id: 42,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 105,
+    id_list: [32,24],
+  },{
+    combo_id: 43,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 75,
+    id_list: [31,7],
+  },{
+    combo_id: 44,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 75,
+    id_list: [33,14],
+  },{
+    combo_id: 45,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 45,
+    id_list: [3,56],
+  },{
+    combo_id: 46,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 75,
+    id_list: [12,15],
+  },{
+    combo_id: 47,
+    name_en: "Pair",
+    name_ja: "ペア",
+    action_value: 75,
+    id_list: [12,18],
+  }
 ];
 
 //カードリスト
