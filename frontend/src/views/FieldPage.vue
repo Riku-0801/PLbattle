@@ -1,46 +1,47 @@
 <template>
-<v-app>
-  <v-container>
-    <!-- 攻撃エフェクト -->
-    <div
-     v-show="showAttack"
-     class="overlay"
-     @click="closeModal"
-    >
-      <div class="effect">卍解 天鎖斬月</div>
-    </div>
-    <!-- カードを出す場所 -->
-    <div class="field">
-      <VueDrag
-        v-model="selecteddata"
-        group="myGroup"
-        @start="drag=true"
-        @end="drag=false"
-        :options="options"
-        class="area"
-      >
-      <div
-        v-for="select in selecteddata"
-        :key="`first-${select.id}`"
-        class="item"
-      >
-        <v-card
-          height="200px"
-          hover
-          :img="select.img"
-        >{{ select.name }}
-        </v-card>
+  <v-app>
+    <v-container>
+      <!-- 攻撃エフェクト -->
+      <div v-show="showAttack" class="overlay" @click="closeModal">
+        <div class="effect">卍解千本桜景厳</div>
       </div>
-      </VueDrag>
-    </div>
-    <!-- 自分の手札 -->
-    <div class="mycards">
-    </div>
+      <!-- カードを出す場所 -->
+      <div class="field">
+        <VueDrag
+          v-model="selecteddata"
+          group="myGroup"
+          @start="drag = true"
+          @end="drag = false"
+          :options="options"
+          class="area"
+        >
+          <div
+            v-for="select in selecteddata"
+            :key="`first-${select.id}`"
+            class="item"
+          >
+            <v-card
+              height="242px"
+              max-width="300px"
+              hover
+            >
+              <v-img
+                aspect-ratio="475/400"
+                height="242px"
+                :src="select.img"
+              >
+              </v-img>
+            </v-card>
+          </div>
+        </VueDrag>
+      </div>
+      <!-- 自分の手札 -->
+      <div class="mycards"></div>
       <VueDrag
         v-model="mydata"
         group="myGroup"
-        @start="drag=true"
-        @end="drag=false"
+        @start="drag = true"
+        @end="drag = false"
         :options="options"
         class="area"
       >
@@ -51,13 +52,12 @@
         >
           <v-card
             height="242px"
-            max-width="400px"
+            max-width="300px"
             hover
-            :img="mine.img"
           >
             <v-img
               aspect-ratio="475/400"
-              height="240px"
+              height="242px"
               :src="mine.img"
             >
             </v-img>
@@ -65,10 +65,7 @@
         </div>
       </VueDrag>
       <!-- 使える技を表示 -->
-      <div
-        v-for='able in ableattacks'
-        :key="able.name_en"
-      >
+      <div v-for="able in ableattacks" :key="able.name_en">
         <div>{{ able.name_en }}</div>
         <div>必要カード{{ able.name_list }}</div>
       </div>
@@ -80,24 +77,22 @@
         <div>相手:{{ sampleHp.yours }}</div>
       </div>
       <v-btn @click="useCards">発動</v-btn>
-  </v-container>
-  <v-main>
-    <v-btn
-        @click = "getDatas"
-      >ドロー</v-btn>
-  </v-main>
+    </v-container>
+    <v-main>
+      <v-btn @click="getDatas">ドロー</v-btn>
+    </v-main>
   </v-app>
 </template>
 
 <script>
-import VueDrag from 'vuedraggable'
+import VueDrag from "vuedraggable";
 
 export default {
-  name: 'field',
+  name: "field",
   components: {
-    VueDrag
+    VueDrag,
   },
-  data (){
+  data() {
     return {
     combo_data_db: [
   {
@@ -1034,16 +1029,6 @@ export default {
   //   set_id: 0,
   // },
   {
-    id: 54,
-    name: "Hacker",
-    type: "hack",
-    img: require("../assets/cards/hacker1.png"),
-    action: "steal",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
     id: 55,
     name: "Hacker",
     type: "hack",
@@ -1067,7 +1052,7 @@ export default {
       showAttack: false,
       options: {
         group: "myGroup",
-        animation: 200
+        animation: 200,
       },
       selecteddata: [],
       mydata: [],
@@ -1076,11 +1061,11 @@ export default {
       recent_mydata_len: [],
       recent_selectdata_id: [],
       tmp: 0,
-      sampleHp:{
-          mine: 300,
-          yours: 300
-      }
-    }
+      sampleHp: {
+        mine: 300,
+        yours: 300,
+      },
+    };
   },
   mounted() {
   window.onload = ()=>{
@@ -1099,22 +1084,22 @@ export default {
           i++;
         }
       }
-      console.log(this.mydata)
-      console.log("初期データ移行完了")
-    }
+      console.log(this.mydata);
+      console.log("初期データ移行完了");
+    };
   },
   methods: {
-  //カードを消します。本来は、ここでデータを送信します。
-    useCards: function(index){
-        this.showAttack = true
-        // todo: 必殺技からもvalueをとってくるようにする
-        this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value
-        this.selecteddata.splice(index, this.selecteddata.length);
+    //カードを消します。本来は、ここでデータを送信します。
+    useCards: function (index) {
+      this.showAttack = true;
+      // todo: 必殺技からもvalueをとってくるようにする
+      this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value;
+      this.selecteddata.splice(index, this.selecteddata.length);
     },
-    closeModal: function(){
-      this.showAttack = false
+    closeModal: function () {
+      this.showAttack = false;
     },
-    getDatas: function() {
+    getDatas: function () {
       //ドロー機能です。
 
         this.recent_mydata_len = []
@@ -1137,61 +1122,70 @@ export default {
             i++;
           }
         }
-      console.log("ドロー完了")
-      console.log(this.mydata)
-    }
-  },
-  computed: {
-      ableattacks: function(){
-        // selecteddataのidだけを集めた
-        let updateddata = this.selecteddata.map(obj => obj.id)
-        // 配列の完全一致を判定
-        const isIncludes = (arr, target) => arr.every(el => target.includes(el))
-        //recent_selectdataに、idに対応するカードの名前を入れたい
-        if(updateddata.length === 0){
-          // 何も選択されていないとき空の配列を返す
-          return []
-        }else{
-          // 完全一致した攻撃だけを返す
-            return this.combo_data.filter(combo_data => {
-              return isIncludes(updateddata, combo_data.id_list)
-            })
-        }
-      },
-      //カードの判定をします！！ここでしてます！！読みにくくてごめんなさい！！
-      attack_decision:function(){
-        let updateddata = this.selecteddata.map(obj => obj.id)
-        const isIncludes = (arr, target) => arr.every(el => target.includes(el))
-        if(updateddata.length === 0){
-          return true
-        }else if(updateddata.length === 1){
-          return false
-        }else{
-          // 完全一致した攻撃だけを返す
-            this.combo_data.filter(combo_data => {
-              if(isIncludes(updateddata, combo_data.id_list) === true){
-                return false
-              }
-            })
-        }
       }
-    }
-  }
-
+    },
+  computed: {
+    ableattacks: function () {
+      // selecteddataのidだけを集めた
+      let updateddata = this.selecteddata.map((obj) => obj.id);
+      // 配列の完全一致を判定
+      const isIncludes = (arr, target) =>
+        arr.every((el) => target.includes(el));
+      //recent_selectdataに、idに対応するカードの名前を入れたい
+      if (updateddata.length === 0) {
+        // 何も選択されていないとき空の配列を返す
+        return [];
+      } else {
+        // 完全一致した攻撃だけを返す
+        return this.combo_data.filter((combo_data) => {
+          return isIncludes(updateddata, combo_data.id_list);
+        });
+      }
+    },
+    //カードの判定をします！！ここでしてます！！読みにくくてごめんなさい！！
+    attack_decision: function () {
+      let updateddata = this.selecteddata.map((obj) => obj.id);
+      const isIncludes = (arr, target) =>
+        arr.every((el) => target.includes(el));
+      if (updateddata.length === 0) {
+        return true;
+      } else if (updateddata.length === 1) {
+        return false;
+      } else {
+        // 完全一致した攻撃だけを返す
+        this.combo_data.filter((combo_data) => {
+          if (isIncludes(updateddata, combo_data.id_list) === true) {
+            return false;
+          }
+        });
+      }
+    },
+  },
+}
 </script>
 
 <style scoped>
-.overlay{
+@keyframes SlideIn {
+  0% {
+    opacity: 0;
+    transform: translate(-700px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
+}
+.overlay {
   /*　要素を重ねた時の順番　*/
-  z-index:1;
+  z-index: 1;
 
   /*　画面全体を覆う設定　*/
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background-color:rgba(0,0,0,0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
 
   /*　画面の中央に要素を表示させる設定　*/
   display: flex;
@@ -1200,9 +1194,36 @@ export default {
 }
 
 .effect {
-  width: 50%;
-  height: 50%;
-  background-color: brown;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  color: white;
+  font-size: 128px;
+  animation: SlideIn 0.4s;
+  background: radial-gradient(#3973a9, #102335);
+  font: "Oxanium";
+}
+.effect:before {
+  background: #000;
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: -10%;
+  transform: rotate(0deg);
+  width: 200%;
+  height: 200px;
+}
+.effect:after {
+  background: #000;
+  content: "";
+  position: absolute;
+  bottom: 0px;
+  left: -10%;
+  transform: rotate(0deg);
+  width: 200%;
+  height: 200px;
 }
 
 .field {
@@ -1211,8 +1232,12 @@ export default {
   background-color: aquamarine;
 }
 
+.v-card {
+  background-color: #000;
+}
+
 .item {
-  display: inline-block;
+  /* display: inline-block; */
   margin: 10px;
   width: 12%;
 }
@@ -1221,11 +1246,13 @@ export default {
   cursor: grab;
 }
 
-.item:active{
+.item:active {
   cursor: grabbing;
 }
 
 .area {
+  display: flex;
+  justify-content: center;
   width: 100%;
   height: 300px;
 }
