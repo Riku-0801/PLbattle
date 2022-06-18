@@ -1,20 +1,12 @@
 <template>
   <v-app>
     <v-container>
-      <v-btn
-        @click="oponentAttack"
-      >相手の攻撃</v-btn>
+      <v-btn @click="oponentAttack">相手の攻撃</v-btn>
       <!-- 相手の攻撃エフェクト -->
       <div v-show="showOponent" class="overlay" @click="closeOponent">
         <!-- 相手の攻撃情報をここに持ってくる -->
-        <v-card
-          height="475px"
-          width="400px"
-          class="black"
-        >
-          <v-img
-            src="../assets/cards/Angular.png"
-          ></v-img>
+        <v-card height="475px" width="400px" class="black">
+          <v-img src="../assets/cards/Angular.png"></v-img>
         </v-card>
         <div class="dalayEffect">倒れろ 逆撫</div>
       </div>
@@ -30,7 +22,9 @@
           <h4 class="text">相手：{{ sampleHp.yours }}</h4>
         </div>
         <div>
-          <v-btn @click="useCards" class="btn action" v-if="attack_decision">発動</v-btn>
+          <v-btn @click="useCards" class="btn action" v-if="attack_decision"
+            >発動</v-btn
+          >
           <p v-else>発動可能なカードを選択してください</p>
         </div>
       </v-row>
@@ -59,12 +53,7 @@
                 :key="`first-${select.id}`"
                 class="item"
               >
-                <v-card
-                  height="242px"
-                  max-width="200px"
-                  hover
-                  class="black"
-                >
+                <v-card height="242px" max-width="200px" hover class="black">
                   <v-img
                     aspect-ratio="475/400"
                     height="242px"
@@ -89,7 +78,6 @@
           <div v-for="mine in mydata" :key="`second-${mine.id}`" class="item">
             <v-card hover>
               <v-img :src="mine.img"> </v-img>
-
             </v-card>
           </div>
         </VueDrag>
@@ -491,588 +479,588 @@ export default {
           name_list: ["TypeScript", "Angular"],
         },
       ],
-    data_db: [
-  {
-    id: 1,
-    name: "Javascript",
-    type: "language",
-    img: require("../assets/cards/JavaScript.png"),
-    action: "attack",
-    value: 10,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 1,
-    name: "Javascript",
-    type: "language",
-    img: require("../assets/cards/JavaScript.png"),
-    action: "attack",
-    value: 10,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 1,
-    name: "Javascript",
-    type: "language",
-    img: require("../assets/cards/JavaScript.png"),
-    action: "attack",
-    value: 10,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 2,
-    name: "HTML",
-    type: "language",
-    img: require("../assets/cards/HTML.png"),
-    action: "attack",
-    value: 10,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 3,
-    name: "CSS",
-    type: "language",
-    img: require("../assets/cards/CSS.png"),
-    action: "attack",
-    value: 10,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 4,
-    name: "Django",
-    type: "framework",
-    img: require("../assets/cards/Django.png"),
-    action: "attack",
-    value: 20,
-    field: "LinuxOS",
-    set_id: 10,
-  },
-  {
-    id: 5,
-    name: "FastAPI",
-    type: "framework",
-    img: require("../assets/cards/FastAPI.png"),
-    action: "attack",
-    value: 10,
-    field: "LinuxOS",
-    set_id: 10,
-  },
-  {
-    id: 6,
-    name: "jQuery",
-    type: "framework",
-    img: require("../assets/cards/jQuery.png"),
-    action: "attack",
-    value: 10,
-    field: "",
-    set_id: 10,
-  },
-  {
-    id: 7,
-    name: "Ktor",
-    type: "framework",
-    img: require("../assets/cards/Ktor.png"),
-    action: "attack",
-    value: 20,
-    field: "AndroidOS",
-    set_id: 31,
-  },
-  {
-    id: 8,
-    name: "Cake PHP",
-    type: "framework",
-    img: require("../assets/cards/CakePHP.png"),
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 27,
-  },
-  {
-    id: 9,
-    name: "SwiftUI",
-    type: "framework",
-    img: require("../assets/cards/SwiftUI.png"),
-    action: "attack",
-    value: 20,
-    field: "iOS,macOS",
-    set_id: 30,
-  },
-  {
-    id: 10,
-    name: "Python",
-    type: "language",
-    img: require("../assets/cards/Python.png"),
-    action: "attack",
-    value: 30,
-    field: "LinuxOS",
-    set_id: 0,
-  },
-  {
-    id: 10,
-    name: "Python",
-    type: "language",
-    img: require("../assets/cards/Python.png"),
-    action: "attack",
-    value: 30,
-    field: "LinuxOS",
-    set_id: 0,
-  },
-  {
-    id: 10,
-    name: "Python",
-    type: "language",
-    img: require("../assets/cards/Python.png"),
-    action: "attack",
-    value: 30,
-    field: "LinuxOS",
-    set_id: 0,
-  },
-  {
-    id: 11,
-    name: "R",
-    type: "language",
-    img: require("../assets/cards/R.png"),
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 12,
-    name: "TypeScript",
-    type: "language",
-    img: require("../assets/cards/TypeScript.png"),
-    action: "attack",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 13,
-    name: "Julia",
-    type: "language",
-    img: require("../assets/cards/Julia.png"),
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 15,
-    name: "Vue",
-    type: "framework",
-    img: require("../assets/cards/Vue.png"),
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 1,
-  },
-  {
-    id: 16,
-    name: "Flask",
-    type: "framework",
-    img: require("../assets/cards/Flask.png"),
-    action: "attack",
-    value: 20,
-    field: "LinuxOS",
-    set_id: 10,
-  },
-  {
-    id: 17,
-    name: "Rails",
-    type: "framework",
-    img: require("../assets/cards/Rails.png"),
-    action: "attack",
-    value: 30,
-    field: "",
-    set_id: 39,
-  },
-  {
-    id: 18,
-    name: "Angular",
-    type: "framework",
-    img: require("../assets/cards/Angular.png"),
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 1,
-  },
-  {
-    id: 19,
-    name: "Spring",
-    type: "framework",
-    img: require("../assets/cards/Spring.png"),
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 43,
-  },
-  {
-    id: 20,
-    name: "echo",
-    type: "framework",
-    img: require("../assets/cards/echo.png"),
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 37,
-  },
-  {
-    id: 21,
-    name: "Rocket",
-    type: "framework",
-    img: require("../assets/cards/Rocket.png"),
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 33,
-  },
-  {
-    id: 22,
-    name: "Yew",
-    type: "framework",
-    img: require("../assets/cards/Yew.png"),
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 33,
-  },
-  {
-    id: 23,
-    name: "Laravel",
-    type: "framework",
-    img: require("../assets/cards/Laravel.png"),
-    action: "attack",
-    value: 30,
-    field: "",
-    set_id: 27,
-  },
-  {
-    id: 24,
-    name: "Flutter",
-    type: "framework",
-    img: require("../assets/cards/Flutter.png"),
-    action: "attack",
-    value: 30,
-    field: "",
-    set_id: 32,
-  },
-  {
-    id: 25,
-    name: "外付けHDD",
-    type: "attachment",
-    img: require("../assets/cards/External-HDD.png"),
-    action: "enhancement",
-    value: 20,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 26,
-    name: "外付けHDD",
-    type: "attachment",
-    img: require("../assets/cards/External-HDD.png"),
-    action: "enhancement",
-    value: 40,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 27,
-    name: "PHP",
-    type: "language",
-    img: require("../assets/cards/PHP.png"),
-    action: "attack",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 28,
-    name: "Perl",
-    type: "language",
-    img: require("../assets/cards/Perl.png"),
-    action: "attack",
-    value: 40,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 29,
-    name: "Objective-C",
-    type: "language",
-    img: require("../assets/cards/Objective-C.png"),
-    action: "attack",
-    value: 30,
-    field: "iOS,macOS",
-    set_id: 0,
-  },
-  {
-    id: 30,
-    name: "Swift",
-    type: "language",
-    img: require("../assets/cards/Swift.png"),
-    action: "attack",
-    value: 30,
-    field: "iOS,macOS",
-    set_id: 0,
-  },
-  {
-    id: 31,
-    name: "Kotlin",
-    type: "language",
-    img: require("../assets/cards/Kotlin.png"),
-    action: "attack",
-    value: 30,
-    field: "AndroidOS",
-    set_id: 0,
-  },
-  {
-    id: 32,
-    name: "dart",
-    type: "language",
-    img: require("../assets/cards/dart.png"),
-    action: "attack",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 33,
-    name: "Rust",
-    type: "language",
-    img: require("../assets/cards/Rust.png"),
-    action: "attack",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 34,
-    name: "tailwind",
-    type: "framework",
-    img: require("../assets/cards/tailwind.png"),
-    action: "attack",
-    value: 30,
-    field: "",
-    set_id: 3,
-  },
-  {
-    id: 35,
-    name: "冷却ファン",
-    type: "attachment",
-    img: require("../assets/cards/Cooling-fan.png"),
-    action: "enhancement",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 36,
-    name: "Node.js",
-    type: "framework",
-    img: require("../assets/cards/Node.js.png"),
-    action: "attack",
-    value: 40,
-    field: "WindowsOS",
-    set_id: 1,
-  },
-  {
-    id: 37,
-    name: "Go",
-    type: "language",
-    img: require("../assets/cards/Go.png"),
-    action: "attack",
-    value: 40,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 38,
-    name: "Haskell",
-    type: "language",
-    img: require("../assets/cards/Haskell.png"),
-    action: "attack",
-    value: 40,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 39,
-    name: "Ruby",
-    type: "language",
-    img: require("../assets/cards/Ruby.png"),
-    action: "attack",
-    value: 40,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 40,
-    name: "外付けSSD",
-    type: "attachment",
-    img: require("../assets/cards/External-SSD.png"),
-    action: "enhancement",
-    value: 20,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 41,
-    name: "C",
-    type: "language",
-    img: require("../assets/cards/C.png"),
-    action: "attack",
-    value: 50,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 42,
-    name: "C#",
-    type: "language",
-    img: require("../assets/cards/Cs.png"),
-    action: "attack",
-    value: 50,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 43,
-    name: "Java",
-    type: "language",
-    img: require("../assets/cards/Java.png"),
-    action: "attack",
-    value: 50,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 44,
-    name: "C++",
-    type: "language",
-    img: require("../assets/cards/C++.png"),
-    action: "attack",
-    value: 60,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 45,
-    name: "cobol",
-    type: "language",
-    img: require("../assets/cards/cobol.png"),
-    action: "attack",
-    value: 70,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 46,
-    name: "fortran",
-    type: "language",
-    img: require("../assets/cards/Fortran.png"),
-    action: "attack",
-    value: 80,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 47,
-    name: "セカンドディスプレイ",
-    type: "attachment",
-    img: require("../assets/cards/PC-Monitor.png"),
-    action: "enhancement",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 48,
-    name: "キーボード",
-    type: "attachment",
-    img: require("../assets/cards/Keyboard.png"),
-    action: "enhancement",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 49,
-    name: "マウス",
-    type: "attachment",
-    img: require("../assets/cards/mouse.png"),
-    action: "enhancement",
-    value: 10,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 50,
-    name: "なでしこ",
-    type: "language",
-    img: require("../assets/cards/Nadeshiko.png"),
-    action: "attack",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 51,
-    name: "ドリトル",
-    type: "language",
-    img: require("../assets/cards/dolittle.png"),
-    action: "attack",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 52,
-    name: "プロデル",
-    type: "language",
-    img: require("../assets/cards/Prodel.png"),
-    action: "attack",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 53,
-    name: "Scratch",
-    type: "language",
-    img: require("../assets/cards/Scratch.png"),
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 55,
-    name: "Hacker",
-    type: "hack",
-    img: require("../assets/cards/hacker2.png"),
-    action: "steal",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
-  {
-    id: 56,
-    name: "BootStrap",
-    type: "framework",
-    img: require("../assets/cards/BootStrap.png"),
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 3,
-  },
-    ],
+      data_db: [
+        {
+          id: 1,
+          name: "Javascript",
+          type: "language",
+          img: require("../assets/cards/JavaScript.png"),
+          action: "attack",
+          value: 10,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 1,
+          name: "Javascript",
+          type: "language",
+          img: require("../assets/cards/JavaScript.png"),
+          action: "attack",
+          value: 10,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 1,
+          name: "Javascript",
+          type: "language",
+          img: require("../assets/cards/JavaScript.png"),
+          action: "attack",
+          value: 10,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 2,
+          name: "HTML",
+          type: "language",
+          img: require("../assets/cards/HTML.png"),
+          action: "attack",
+          value: 10,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 3,
+          name: "CSS",
+          type: "language",
+          img: require("../assets/cards/CSS.png"),
+          action: "attack",
+          value: 10,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 4,
+          name: "Django",
+          type: "framework",
+          img: require("../assets/cards/Django.png"),
+          action: "attack",
+          value: 20,
+          field: "LinuxOS",
+          set_id: 10,
+        },
+        {
+          id: 5,
+          name: "FastAPI",
+          type: "framework",
+          img: require("../assets/cards/FastAPI.png"),
+          action: "attack",
+          value: 10,
+          field: "LinuxOS",
+          set_id: 10,
+        },
+        {
+          id: 6,
+          name: "jQuery",
+          type: "framework",
+          img: require("../assets/cards/jQuery.png"),
+          action: "attack",
+          value: 10,
+          field: "",
+          set_id: 10,
+        },
+        {
+          id: 7,
+          name: "Ktor",
+          type: "framework",
+          img: require("../assets/cards/Ktor.png"),
+          action: "attack",
+          value: 20,
+          field: "AndroidOS",
+          set_id: 31,
+        },
+        {
+          id: 8,
+          name: "Cake PHP",
+          type: "framework",
+          img: require("../assets/cards/CakePHP.png"),
+          action: "attack",
+          value: 20,
+          field: "",
+          set_id: 27,
+        },
+        {
+          id: 9,
+          name: "SwiftUI",
+          type: "framework",
+          img: require("../assets/cards/SwiftUI.png"),
+          action: "attack",
+          value: 20,
+          field: "iOS,macOS",
+          set_id: 30,
+        },
+        {
+          id: 10,
+          name: "Python",
+          type: "language",
+          img: require("../assets/cards/Python.png"),
+          action: "attack",
+          value: 30,
+          field: "LinuxOS",
+          set_id: 0,
+        },
+        {
+          id: 10,
+          name: "Python",
+          type: "language",
+          img: require("../assets/cards/Python.png"),
+          action: "attack",
+          value: 30,
+          field: "LinuxOS",
+          set_id: 0,
+        },
+        {
+          id: 10,
+          name: "Python",
+          type: "language",
+          img: require("../assets/cards/Python.png"),
+          action: "attack",
+          value: 30,
+          field: "LinuxOS",
+          set_id: 0,
+        },
+        {
+          id: 11,
+          name: "R",
+          type: "language",
+          img: require("../assets/cards/R.png"),
+          action: "attack",
+          value: 20,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 12,
+          name: "TypeScript",
+          type: "language",
+          img: require("../assets/cards/TypeScript.png"),
+          action: "attack",
+          value: 30,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 13,
+          name: "Julia",
+          type: "language",
+          img: require("../assets/cards/Julia.png"),
+          action: "attack",
+          value: 20,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 15,
+          name: "Vue",
+          type: "framework",
+          img: require("../assets/cards/Vue.png"),
+          action: "attack",
+          value: 20,
+          field: "",
+          set_id: 1,
+        },
+        {
+          id: 16,
+          name: "Flask",
+          type: "framework",
+          img: require("../assets/cards/Flask.png"),
+          action: "attack",
+          value: 20,
+          field: "LinuxOS",
+          set_id: 10,
+        },
+        {
+          id: 17,
+          name: "Rails",
+          type: "framework",
+          img: require("../assets/cards/Rails.png"),
+          action: "attack",
+          value: 30,
+          field: "",
+          set_id: 39,
+        },
+        {
+          id: 18,
+          name: "Angular",
+          type: "framework",
+          img: require("../assets/cards/Angular.png"),
+          action: "attack",
+          value: 20,
+          field: "",
+          set_id: 1,
+        },
+        {
+          id: 19,
+          name: "Spring",
+          type: "framework",
+          img: require("../assets/cards/Spring.png"),
+          action: "attack",
+          value: 20,
+          field: "",
+          set_id: 43,
+        },
+        {
+          id: 20,
+          name: "echo",
+          type: "framework",
+          img: require("../assets/cards/echo.png"),
+          action: "attack",
+          value: 20,
+          field: "",
+          set_id: 37,
+        },
+        {
+          id: 21,
+          name: "Rocket",
+          type: "framework",
+          img: require("../assets/cards/Rocket.png"),
+          action: "attack",
+          value: 20,
+          field: "",
+          set_id: 33,
+        },
+        {
+          id: 22,
+          name: "Yew",
+          type: "framework",
+          img: require("../assets/cards/Yew.png"),
+          action: "attack",
+          value: 20,
+          field: "",
+          set_id: 33,
+        },
+        {
+          id: 23,
+          name: "Laravel",
+          type: "framework",
+          img: require("../assets/cards/Laravel.png"),
+          action: "attack",
+          value: 30,
+          field: "",
+          set_id: 27,
+        },
+        {
+          id: 24,
+          name: "Flutter",
+          type: "framework",
+          img: require("../assets/cards/Flutter.png"),
+          action: "attack",
+          value: 30,
+          field: "",
+          set_id: 32,
+        },
+        {
+          id: 25,
+          name: "外付けHDD",
+          type: "attachment",
+          img: require("../assets/cards/External-HDD.png"),
+          action: "enhancement",
+          value: 20,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 26,
+          name: "外付けHDD",
+          type: "attachment",
+          img: require("../assets/cards/External-HDD.png"),
+          action: "enhancement",
+          value: 40,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 27,
+          name: "PHP",
+          type: "language",
+          img: require("../assets/cards/PHP.png"),
+          action: "attack",
+          value: 30,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 28,
+          name: "Perl",
+          type: "language",
+          img: require("../assets/cards/Perl.png"),
+          action: "attack",
+          value: 40,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 29,
+          name: "Objective-C",
+          type: "language",
+          img: require("../assets/cards/Objective-C.png"),
+          action: "attack",
+          value: 30,
+          field: "iOS,macOS",
+          set_id: 0,
+        },
+        {
+          id: 30,
+          name: "Swift",
+          type: "language",
+          img: require("../assets/cards/Swift.png"),
+          action: "attack",
+          value: 30,
+          field: "iOS,macOS",
+          set_id: 0,
+        },
+        {
+          id: 31,
+          name: "Kotlin",
+          type: "language",
+          img: require("../assets/cards/Kotlin.png"),
+          action: "attack",
+          value: 30,
+          field: "AndroidOS",
+          set_id: 0,
+        },
+        {
+          id: 32,
+          name: "dart",
+          type: "language",
+          img: require("../assets/cards/dart.png"),
+          action: "attack",
+          value: 30,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 33,
+          name: "Rust",
+          type: "language",
+          img: require("../assets/cards/Rust.png"),
+          action: "attack",
+          value: 30,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 34,
+          name: "tailwind",
+          type: "framework",
+          img: require("../assets/cards/tailwind.png"),
+          action: "attack",
+          value: 30,
+          field: "",
+          set_id: 3,
+        },
+        {
+          id: 35,
+          name: "冷却ファン",
+          type: "attachment",
+          img: require("../assets/cards/Cooling-fan.png"),
+          action: "enhancement",
+          value: 30,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 36,
+          name: "Node.js",
+          type: "framework",
+          img: require("../assets/cards/Node.js.png"),
+          action: "attack",
+          value: 40,
+          field: "WindowsOS",
+          set_id: 1,
+        },
+        {
+          id: 37,
+          name: "Go",
+          type: "language",
+          img: require("../assets/cards/Go.png"),
+          action: "attack",
+          value: 40,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 38,
+          name: "Haskell",
+          type: "language",
+          img: require("../assets/cards/Haskell.png"),
+          action: "attack",
+          value: 40,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 39,
+          name: "Ruby",
+          type: "language",
+          img: require("../assets/cards/Ruby.png"),
+          action: "attack",
+          value: 40,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 40,
+          name: "外付けSSD",
+          type: "attachment",
+          img: require("../assets/cards/External-SSD.png"),
+          action: "enhancement",
+          value: 20,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 41,
+          name: "C",
+          type: "language",
+          img: require("../assets/cards/C.png"),
+          action: "attack",
+          value: 50,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 42,
+          name: "C#",
+          type: "language",
+          img: require("../assets/cards/Cs.png"),
+          action: "attack",
+          value: 50,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 43,
+          name: "Java",
+          type: "language",
+          img: require("../assets/cards/Java.png"),
+          action: "attack",
+          value: 50,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 44,
+          name: "C++",
+          type: "language",
+          img: require("../assets/cards/C++.png"),
+          action: "attack",
+          value: 60,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 45,
+          name: "cobol",
+          type: "language",
+          img: require("../assets/cards/cobol.png"),
+          action: "attack",
+          value: 70,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 46,
+          name: "fortran",
+          type: "language",
+          img: require("../assets/cards/Fortran.png"),
+          action: "attack",
+          value: 80,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 47,
+          name: "セカンドディスプレイ",
+          type: "attachment",
+          img: require("../assets/cards/PC-Monitor.png"),
+          action: "enhancement",
+          value: 30,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 48,
+          name: "キーボード",
+          type: "attachment",
+          img: require("../assets/cards/Keyboard.png"),
+          action: "enhancement",
+          value: 30,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 49,
+          name: "マウス",
+          type: "attachment",
+          img: require("../assets/cards/mouse.png"),
+          action: "enhancement",
+          value: 10,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 50,
+          name: "なでしこ",
+          type: "language",
+          img: require("../assets/cards/Nadeshiko.png"),
+          action: "attack",
+          value: 30,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 51,
+          name: "ドリトル",
+          type: "language",
+          img: require("../assets/cards/dolittle.png"),
+          action: "attack",
+          value: 30,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 52,
+          name: "プロデル",
+          type: "language",
+          img: require("../assets/cards/Prodel.png"),
+          action: "attack",
+          value: 30,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 53,
+          name: "Scratch",
+          type: "language",
+          img: require("../assets/cards/Scratch.png"),
+          action: "attack",
+          value: 20,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 55,
+          name: "Hacker",
+          type: "hack",
+          img: require("../assets/cards/hacker2.png"),
+          action: "steal",
+          value: 30,
+          field: "",
+          set_id: 0,
+        },
+        {
+          id: 56,
+          name: "BootStrap",
+          type: "framework",
+          img: require("../assets/cards/BootStrap.png"),
+          action: "attack",
+          value: 20,
+          field: "",
+          set_id: 3,
+        },
+      ],
       showAttack: false,
       showOponent: false,
       dalayItem: false,
@@ -1113,13 +1101,14 @@ export default {
 
     this.socket.emit("getTurnFlag", this.userId);
   },
-  mounted() {
+  updated() {
     //cardValueを受け取った時の処理
     this.socket.on("cardValue", function (cardValue) {
-      //ここに処理を書く
-      this.recieved_cardValue = [cardValue];
-      this.turn_flag = 1;
-      console.log(this.turn_flag);
+      if (cardValue.userId == this.userId) {
+        //攻撃できなくしたい（相手のターンにする）
+      } else {
+        //攻撃を受ける処理＋自分のターンにする（攻撃できるようにする）
+      }
     });
   },
   methods: {
@@ -1128,51 +1117,57 @@ export default {
       this.turn_flag = localStorage.getItem("turn_flag");
       console.log(this.turn_flag);
     },
-    //カードのデータの送信
-    sendValue(cardValue) {
-      this.turn_flag = 1;
-      this.socket.emit("value", cardValue);
-    },
     //roomIdをサーバーサイドへ送信
     sendRoomId(roomId) {
       this.socket.emit("login", roomId);
     },
     //カードを消します。本来は、ここでデータを送信します。
     useCards: function (index) {
-      if(this.selecteddata.length == 1){
-        if(this.selecteddata[0].action == "enhancement"){
+      if (this.selecteddata.length == 1) {
+        if (this.selecteddata[0].action == "enhancement") {
           // 回復の処理
           this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
-        }else if(this.selecteddata[0].action == "steal"){
+        } else if (this.selecteddata[0].action == "steal") {
           // 吸収の処理
-          this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value;
+          this.sampleHp.yours =
+            this.sampleHp.yours - this.selecteddata[0].value;
           this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
-        }else{
+        } else {
           // 攻撃の処理
-          this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value;
+          this.sampleHp.yours =
+            this.sampleHp.yours - this.selecteddata[0].value;
         }
-      }else{
+      } else {
         // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
-        this.sampleHp.yours = this.sampleHp.yours - this.ableattacks[0].action_value
+        this.sampleHp.yours =
+          this.sampleHp.yours - this.ableattacks[0].action_value;
       }
       this.showAttack = true;
       this.selecteddata.splice(index, this.selecteddata.length);
       // ドロー
-      this.recent_mydata_len = []
+      this.recent_mydata_len = [];
       //現在の手札のidリストを初期化しています
-      for(let i = 0; i < this.mydata.length; i++){
-        this.recent_mydata_len.push(this.mydata[i].id-1)
+      for (let i = 0; i < this.mydata.length; i++) {
+        this.recent_mydata_len.push(this.mydata[i].id - 1);
         //現在の手札idをいれました。
       }
-      for (let i = this.mydata.length-1; i < 5;){
+      for (let i = this.mydata.length - 1; i < 5; ) {
         this.tmp = Number(Math.floor(Math.random() * 56));
-        if(!this.recent_mydata_len.includes(this.tmp)){
+        if (!this.recent_mydata_len.includes(this.tmp)) {
           this.mydata_len.push(this.tmp);
-          let pushdata = this.data_db[this.mydata_len[i-this.mydata.length+this.mydata_len.length]]
-          this.mydata.push(pushdata)
+          let pushdata =
+            this.data_db[
+              this.mydata_len[i - this.mydata.length + this.mydata_len.length]
+            ];
+          this.mydata.push(pushdata);
           i++;
         }
       }
+      let cardValue = {
+        userId: this.userId,
+        selecteddata: this.selecteddata,
+      };
+      socket.emit("cardValue", cardValue);
     },
     closeModal: function () {
       this.showAttack = false;
@@ -1182,8 +1177,8 @@ export default {
       this.showOponent = true;
     },
     closeOponent: function () {
-      this.showOponent = false
-    }
+      this.showOponent = false;
+    },
   },
   computed: {
     ableattacks: function () {
@@ -1218,15 +1213,15 @@ export default {
         let ableCombo = this.combo_data_db.filter((combo_data) => {
           return isIncludes(updateddata, combo_data.id_list);
         });
-        console.log(ableCombo)
+        console.log(ableCombo);
         // 完全一致した攻撃だけを返す
-        for(let i = 0, n = updateddata.length; i < n; ++i){
-          if(ableCombo.length == 0){
-            return false
-          }else if(updateddata[i] !== ableCombo[0].id_list[i]){
-            return true
-          }else{
-            return false
+        for (let i = 0, n = updateddata.length; i < n; ++i) {
+          if (ableCombo.length == 0) {
+            return false;
+          } else if (updateddata[i] !== ableCombo[0].id_list[i]) {
+            return true;
+          } else {
+            return false;
           }
         }
       }
@@ -1265,7 +1260,6 @@ export default {
   /* opacityが戻らないようにする */
   animation-fill-mode: forwards;
 }
-
 
 @keyframes SlideIn {
   0% {
@@ -1335,7 +1329,6 @@ export default {
   border: 2px solid #d3fffd;
   box-shadow: 0px 0px 50px #d3fffd;
 }
-
 
 .item {
   margin: 10px;
