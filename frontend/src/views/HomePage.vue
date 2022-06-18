@@ -12,11 +12,17 @@
         <!--<div class="typing">-->
         <div class="input">
           >　<span>相手のIDを入力してください：</span
-          ><input v-model="id" placeholder="" />
+          ><input v-model="id" placeholder="" /><v-btn
+            outlined
+            @click="play"
+            class="btn play"
+            >このルームで遊ぶ</v-btn
+          >
         </div>
         <div>
-          ><v-btn outlined @click="issue" class="btn">IDを発行</v-btn>
-          <p>>　id：{{ number }}</p>
+          ><v-btn outlined @click="issue" class="btn">IDを発行</v-btn> 　<span
+            >id：{{ number }}</span
+          >
         </div>
       </v-col>
       <v-col cols="4" class="start">
@@ -40,33 +46,36 @@ export default {
       number: "",
       id: "",
       socket: io("localhost:3000"),
-      turn_flag: 0
+      turn_flag: 0,
     };
   },
-  mounted(){
+  mounted() {
     this.socket.on("turnflag", function (turn_flag) {
-    this.turn_flag = 1;
-    console.log(this.turn_flag)
-    localStorage.setItem('turn_flag', 1)
-  });
+      this.turn_flag = 1;
+      console.log(this.turn_flag);
+      localStorage.setItem("turn_flag", 1);
+    });
   },
   methods: {
     issue() {
       // HACK: ID作る関数入れておく
       this.number = Math.random().toString(32).substring(2);
     },
-    sendRoomId: function(RoomId) {
+    sendRoomId: function (RoomId) {
       this.socket.emit("login", RoomId);
       this.turn_flag = 0;
-      console.log(RoomId)
+      console.log(RoomId);
     },
     set() {
-      localStorage.setItem('obj', JSON.stringify({
-        turn_flag: 1,
-        HP: 200
-      }))
-    }
-  }
+      localStorage.setItem(
+        "obj",
+        JSON.stringify({
+          turn_flag: 1,
+          HP: 200,
+        })
+      );
+    },
+  },
 };
 </script>
 <style scoped>
@@ -104,7 +113,9 @@ export default {
   justify-content: center;
   box-shadow: 0 0 0.75rem #d3fffd;
 }
-
+.btn.play {
+  margin: 0 1rem;
+}
 .btn.big {
   width: 250px;
   height: 75px;
