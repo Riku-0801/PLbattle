@@ -129,18 +129,6 @@ import VueDrag from 'vuedraggable'
         ]
       }
     },
-    // カードを移動すると発火
-    // updated() {
-    //     // selecteddataのnameだけを集めた
-    //     let updateddata = this.selecteddata.map(obj => obj.name)
-    //     // 配列の完全一致を判定
-    //     const isIncludes = (arr, target) => arr.every(el => target.includes(el))
-    //     // 完全一致したデータだけを返す
-    //     let aaa = this.specialAttack.filter(attack => {
-    //       return isIncludes(updateddata, attack.contain)
-    //     })
-    //     console.log(aaa)
-    // },
     methods: {
       // ボタンを押したらカードを削除
       deleteCards: function(index){
