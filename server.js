@@ -19,39 +19,34 @@ app.get("/api/data", (req, res) => {
 app.get("/api/combo_data", (req, res) => {
   res.json(combo_data);
 });
-/*
-app.listen(port, () =>
-  console.log(`Example app listening at http://localhost:${port}`)
-);
-*/
-/*
-room_idを自動生成してくれる関数
-10文字のランダムな文字列を作ってくれる
-*/
-function createRoomId() {
-  var base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  base = base.split("");
-  var id = "";
-  var count = base.length;
-  for (var i = 0; i < 10; i++) {
-    id += base[Math.floor(Math.random() * count)];
-  }
-  return id;
-}
 
+let numClients = {};
 //接続時処理
 io.sockets.on("connection", function (socket) {
+  console.log("connected");
   //接続切断処理
   socket.on("disconnect", function () {
     console.log("disconnect");
+    socket.leave(RoomId);
+    numClients[RoomId]--;
   });
   //ログイン時処理
   socket.on("login", function (RoomId) {
+    if (numClients[RoomId] == undefined) {
+      numClients[RoomId] = 1;
+    } else {
+      numClients[RoomId]++;
+    }
+    //もしルームの人数が２人以上ならルームに入れない
+    if (numClients[RoomId] >= 2) {
+      console.log("This room is full");
+    } else {
+      socket.join(RoomId);
+    }
     //ルーム入室
-    socket.join(RoomId);
   });
   socket.on("value", function (cardValue) {
-    io.to(RoomId).emit("cardValue", cardValue);
+    io.to(RoomId).broadcast.emit("cardValue", cardValue);
   });
 });
 
