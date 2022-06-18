@@ -94,8 +94,6 @@
         <div>自分:{{ sampleHp.mine }}</div>
         <div>相手:{{ sampleHp.yours }}</div>
       </div>
-      <v-btn @click="useCards">発動</v-btn>
-      <v-btn @click="getTurnFlag">turn_flagを入手</v-btn>
     </v-container>
     <v-main>
       <v-btn @click="getDatas">ドロー</v-btn>
@@ -1228,8 +1226,12 @@ export default {
         console.log(ableCombo)
         // 完全一致した攻撃だけを返す
         for(let i = 0, n = updateddata.length; i < n; ++i){
-          if(updateddata[i] !== ableCombo[0].id_list[i]){
+          if(ableCombo.length == 0){
+            return true
+          }else if(updateddata[i] !== ableCombo[0].id_list[i]){
             return false
+          }else{
+            return true
           }
         }
       }
