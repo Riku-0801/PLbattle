@@ -27,6 +27,7 @@
         <v-card
           height="200px"
           hover
+          :img="select.img"
         >{{ select.name }}
         </v-card>
       </div>
@@ -49,15 +50,17 @@
           class="item"
         >
           <v-card
-            height="200px"
+            height="242px"
+            max-width="400px"
             hover
-            img="../assets/logo.png"
+            :img="mine.img"
           >
-            <!-- <v-img
-              height="200px"
-              :src="mine.png"
-            >{{ mine.name }}
-            </v-img> -->
+            <v-img
+              aspect-ratio="475/400"
+              height="240px"
+              :src="mine.img"
+            >
+            </v-img>
           </v-card>
         </div>
       </VueDrag>
@@ -69,7 +72,7 @@
         <div>{{ able.name_en }}</div>
         <div>必要カード{{ able.name_list }}</div>
       </div>
-      <v-btn v-bind:disabled = "attack_decision" @click="deleteCards">発動</v-btn>
+      <v-btn v-bind:disabled = "attack_decision" @click="useCards">発動</v-btn>
       <!-- 自分と相手のHPを表示 -->
       <div>
         <div>hp</div>
@@ -97,14 +100,6 @@ export default {
   data (){
     return {
     combo_data_db: [
-  {
-    combo_id: 0,
-    name_en: "Test combo",
-    name_ja: "てすとだよ",
-    action_value: 0,
-    id_list: [1],
-    name_list: ["aaaaa","bbbbb"]
-  },
   {
     combo_id: 1,
     name_en: "Royal Straight Flush",
@@ -482,7 +477,7 @@ export default {
     id: 1,
     name: "Javascript",
     type: "language",
-    img: "",
+    img: require("../assets/cards/JavaScript.png"),
     action: "attack",
     value: 10,
     field: "",
@@ -492,7 +487,7 @@ export default {
     id: 1,
     name: "Javascript",
     type: "language",
-    img: "",
+    img: require("../assets/cards/JavaScript.png"),
     action: "attack",
     value: 10,
     field: "",
@@ -502,7 +497,7 @@ export default {
     id: 1,
     name: "Javascript",
     type: "language",
-    img: "",
+    img: require("../assets/cards/JavaScript.png"),
     action: "attack",
     value: 10,
     field: "",
@@ -512,7 +507,7 @@ export default {
     id: 2,
     name: "HTML",
     type: "language",
-    img: "",
+    img: require("../assets/cards/HTML.png"),
     action: "attack",
     value: 10,
     field: "",
@@ -522,7 +517,7 @@ export default {
     id: 3,
     name: "CSS",
     type: "language",
-    img: "",
+    img: require("../assets/cards/CSS.png"),
     action: "attack",
     value: 10,
     field: "",
@@ -532,7 +527,7 @@ export default {
     id: 4,
     name: "Django",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Django.png"),
     action: "attack",
     value: 20,
     field: "LinuxOS",
@@ -542,7 +537,7 @@ export default {
     id: 5,
     name: "FastAPI",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/FastAPI.png"),
     action: "attack",
     value: 10,
     field: "LinuxOS",
@@ -552,7 +547,7 @@ export default {
     id: 6,
     name: "jQuery",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/jQuery.png"),
     action: "attack",
     value: 10,
     field: "",
@@ -562,7 +557,7 @@ export default {
     id: 7,
     name: "Ktor",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Ktor.png"),
     action: "attack",
     value: 20,
     field: "AndroidOS",
@@ -572,7 +567,7 @@ export default {
     id: 8,
     name: "Cake PHP",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/CakePHP.png"),
     action: "attack",
     value: 20,
     field: "",
@@ -582,7 +577,7 @@ export default {
     id: 9,
     name: "SwiftUI",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/SwiftUI.png"),
     action: "attack",
     value: 20,
     field: "iOS,macOS",
@@ -592,7 +587,7 @@ export default {
     id: 10,
     name: "Python",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Python.png"),
     action: "attack",
     value: 30,
     field: "LinuxOS",
@@ -602,7 +597,7 @@ export default {
     id: 10,
     name: "Python",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Python.png"),
     action: "attack",
     value: 30,
     field: "LinuxOS",
@@ -612,7 +607,7 @@ export default {
     id: 10,
     name: "Python",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Python.png"),
     action: "attack",
     value: 30,
     field: "LinuxOS",
@@ -622,7 +617,7 @@ export default {
     id: 11,
     name: "R",
     type: "language",
-    img: "",
+    img: require("../assets/cards/R.png"),
     action: "attack",
     value: 20,
     field: "",
@@ -632,7 +627,7 @@ export default {
     id: 12,
     name: "TypeScript",
     type: "language",
-    img: "",
+    img: require("../assets/cards/TypeScript.png"),
     action: "attack",
     value: 30,
     field: "",
@@ -642,7 +637,7 @@ export default {
     id: 13,
     name: "Julia",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Julia.png"),
     action: "attack",
     value: 20,
     field: "",
@@ -652,7 +647,7 @@ export default {
     id: 15,
     name: "Vue",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Vue.png"),
     action: "attack",
     value: 20,
     field: "",
@@ -662,7 +657,7 @@ export default {
     id: 16,
     name: "Flask",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Flask.png"),
     action: "attack",
     value: 20,
     field: "LinuxOS",
@@ -672,7 +667,7 @@ export default {
     id: 17,
     name: "Rails",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Rails.png"),
     action: "attack",
     value: 30,
     field: "",
@@ -682,7 +677,7 @@ export default {
     id: 18,
     name: "Angular",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Angular.png"),
     action: "attack",
     value: 20,
     field: "",
@@ -692,7 +687,7 @@ export default {
     id: 19,
     name: "Spring",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Spring.png"),
     action: "attack",
     value: 20,
     field: "",
@@ -702,7 +697,7 @@ export default {
     id: 20,
     name: "echo",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/echo.png"),
     action: "attack",
     value: 20,
     field: "",
@@ -712,7 +707,7 @@ export default {
     id: 21,
     name: "Rocket",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Rocket.png"),
     action: "attack",
     value: 20,
     field: "",
@@ -722,7 +717,7 @@ export default {
     id: 22,
     name: "Yew",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Yew.png"),
     action: "attack",
     value: 20,
     field: "",
@@ -732,7 +727,7 @@ export default {
     id: 23,
     name: "Laravel",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Laravel.png"),
     action: "attack",
     value: 30,
     field: "",
@@ -742,7 +737,7 @@ export default {
     id: 24,
     name: "Flutter",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Flutter.png"),
     action: "attack",
     value: 30,
     field: "",
@@ -752,7 +747,7 @@ export default {
     id: 25,
     name: "外付けHDD",
     type: "attachment",
-    img: "",
+    img: require("../assets/cards/External-HDD.png"),
     action: "enhancement",
     value: 20,
     field: "",
@@ -762,7 +757,7 @@ export default {
     id: 26,
     name: "外付けHDD",
     type: "attachment",
-    img: "",
+    img: require("../assets/cards/External-HDD.png"),
     action: "enhancement",
     value: 20,
     field: "",
@@ -772,7 +767,7 @@ export default {
     id: 27,
     name: "PHP",
     type: "language",
-    img: "",
+    img: require("../assets/cards/PHP.png"),
     action: "attack",
     value: 30,
     field: "",
@@ -782,7 +777,7 @@ export default {
     id: 28,
     name: "Perl",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Perl.png"),
     action: "attack",
     value: 40,
     field: "",
@@ -792,7 +787,7 @@ export default {
     id: 29,
     name: "Objective-C",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Objective-C.png"),
     action: "attack",
     value: 30,
     field: "iOS,macOS",
@@ -802,7 +797,7 @@ export default {
     id: 30,
     name: "Swift",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Swift.png"),
     action: "attack",
     value: 30,
     field: "iOS,macOS",
@@ -812,7 +807,7 @@ export default {
     id: 31,
     name: "Kotlin",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Kotlin.png"),
     action: "attack",
     value: 30,
     field: "AndroidOS",
@@ -822,7 +817,7 @@ export default {
     id: 32,
     name: "dart",
     type: "language",
-    img: "",
+    img: require("../assets/cards/dart.png"),
     action: "attack",
     value: 30,
     field: "",
@@ -832,7 +827,7 @@ export default {
     id: 33,
     name: "Rust",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Rust.png"),
     action: "attack",
     value: 30,
     field: "",
@@ -842,27 +837,27 @@ export default {
     id: 34,
     name: "tailwind",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/tailwind.png"),
     action: "attack",
     value: 30,
     field: "",
     set_id: 3,
   },
-  {
-    id: 35,
-    name: "冷却ファン",
-    type: "attachment",
-    img: "",
-    action: "enhancement",
-    value: 30,
-    field: "",
-    set_id: 0,
-  },
+  // {
+  //   id: 35,
+  //   name: "冷却ファン",
+  //   type: "attachment",
+  //   img: require("../assets/cards"),
+  //   action: "enhancement",
+  //   value: 30,
+  //   field: "",
+  //   set_id: 0,
+  // },
   {
     id: 36,
     name: "Node.js",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/Node.js.png"),
     action: "attack",
     value: 40,
     field: "WindowsOS",
@@ -872,7 +867,7 @@ export default {
     id: 37,
     name: "Go",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Go.png"),
     action: "attack",
     value: 40,
     field: "",
@@ -882,7 +877,7 @@ export default {
     id: 38,
     name: "Haskell",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Haskell.png"),
     action: "attack",
     value: 40,
     field: "",
@@ -892,7 +887,7 @@ export default {
     id: 39,
     name: "Ruby",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Ruby.png"),
     action: "attack",
     value: 40,
     field: "",
@@ -902,7 +897,7 @@ export default {
     id: 40,
     name: "外付けSSD",
     type: "attachment",
-    img: "",
+    img: require("../assets/cards/External-SSD.png"),
     action: "enhancement",
     value: 40,
     field: "",
@@ -912,7 +907,7 @@ export default {
     id: 41,
     name: "C",
     type: "language",
-    img: "",
+    img: require("../assets/cards/C.png"),
     action: "attack",
     value: 50,
     field: "",
@@ -922,7 +917,7 @@ export default {
     id: 42,
     name: "C#",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Cs.png"),
     action: "attack",
     value: 50,
     field: "",
@@ -932,7 +927,7 @@ export default {
     id: 43,
     name: "Java",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Java.png"),
     action: "attack",
     value: 50,
     field: "",
@@ -942,7 +937,7 @@ export default {
     id: 44,
     name: "C++",
     type: "language",
-    img: "",
+    img: require("../assets/cards/C++.png"),
     action: "attack",
     value: 60,
     field: "",
@@ -952,7 +947,7 @@ export default {
     id: 45,
     name: "cobol",
     type: "language",
-    img: "",
+    img: require("../assets/cards/cobol.png"),
     action: "attack",
     value: 70,
     field: "",
@@ -962,7 +957,7 @@ export default {
     id: 46,
     name: "fortran",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Fortran.png"),
     action: "attack",
     value: 80,
     field: "",
@@ -972,7 +967,7 @@ export default {
     id: 47,
     name: "セカンドディスプレイ",
     type: "attachment",
-    img: "",
+    img: require("../assets/cards/PC-Monitor.png"),
     action: "enhancement",
     value: 30,
     field: "",
@@ -982,7 +977,7 @@ export default {
     id: 48,
     name: "キーボード",
     type: "attachment",
-    img: "",
+    img: require("../assets/cards/Keyboard.png"),
     action: "enhancement",
     value: 30,
     field: "",
@@ -992,7 +987,7 @@ export default {
     id: 49,
     name: "マウス",
     type: "attachment",
-    img: "",
+    img: require("../assets/cards/mouse.png"),
     action: "enhancement",
     value: 10,
     field: "",
@@ -1002,7 +997,7 @@ export default {
     id: 50,
     name: "なでしこ",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Nadeshiko.png"),
     action: "attack",
     value: 30,
     field: "",
@@ -1012,7 +1007,7 @@ export default {
     id: 51,
     name: "ドリトル",
     type: "language",
-    img: "",
+    img: require("../assets/cards/dolittle.png"),
     action: "attack",
     value: 30,
     field: "",
@@ -1022,27 +1017,27 @@ export default {
     id: 52,
     name: "プロデル",
     type: "language",
-    img: "",
+    img: require("../assets/cards/Prodel.png"),
     action: "attack",
     value: 30,
     field: "",
     set_id: 0,
   },
-  {
-    id: 53,
-    name: "Scratch",
-    type: "language",
-    img: "",
-    action: "attack",
-    value: 20,
-    field: "",
-    set_id: 0,
-  },
+  // {
+  //   id: 53,
+  //   name: "Scratch",
+  //   type: "language",
+  //   img: require("../assets/cards/"),
+  //   action: "attack",
+  //   value: 20,
+  //   field: "",
+  //   set_id: 0,
+  // },
   {
     id: 54,
     name: "Hacker",
     type: "hack",
-    img: "",
+    img: require("../assets/cards/hacker1.png"),
     action: "steal",
     value: 30,
     field: "",
@@ -1052,7 +1047,7 @@ export default {
     id: 55,
     name: "Hacker",
     type: "hack",
-    img: "",
+    img: require("../assets/cards/hacker2.png"),
     action: "steal",
     value: 30,
     field: "",
@@ -1062,7 +1057,7 @@ export default {
     id: 56,
     name: "BootStrap",
     type: "framework",
-    img: "",
+    img: require("../assets/cards/BootStrap.png"),
     action: "attack",
     value: 20,
     field: "",
@@ -1091,16 +1086,16 @@ export default {
   window.onload = ()=>{
     //windowsリロード時に発火するコードです
     //combo_dataをバックから貰って、それをフロント側で保存します。
-        for (let i = 0;i < combo_data_db.length; i++){
-          this.combo_data.push(combo_data_db[i])
+        for (let i = 0;i < this.combo_data_db.length; i++){
+          this.combo_data.push(this.combo_data_db[i])
         }
         console.log(this.combo_data)
     //初期ドローを行います。6枚もらいます。いえい
         for (let i = this.mydata.length; i < 6;){
-        this.tmp = Number(Math.floor(Math.random() * 2));
+        this.tmp = Number(Math.floor(Math.random() * 56));
         if(!this.mydata_len.includes(this.tmp)){
           this.mydata_len.push(this.tmp);
-          this.mydata.push(data_db[this.mydata_len[i]])
+          this.mydata.push(this.data_db[this.mydata_len[i]])
           i++;
         }
       }
@@ -1129,10 +1124,10 @@ export default {
           //現在の手札idをいれました。
         }
         for (let i = this.mydata.length-1; i < 5;){
-          this.tmp = Number(Math.floor(Math.random() * 2));
+          this.tmp = Number(Math.floor(Math.random() * 56));
           if(!this.recent_mydata_len.includes(this.tmp)){
             this.mydata_len.push(this.tmp);
-            let pushdata = data_db[this.mydata_len[i-this.mydata.length+this.mydata_len.length]]
+            let pushdata = this.data_db[this.mydata_len[i-this.mydata.length+this.mydata_len.length]]
             // let aaa = pushdata.img
             // let bbb = require(aaa)
             // pushdata.name = '変更したぜ'
