@@ -30,8 +30,8 @@
           <h4 class="text">相手：{{ sampleHp.yours }}</h4>
         </div>
         <div>
-          <v-btn @click="getDatas" class="btn draw" outlined>ドロー</v-btn>
-          <v-btn @click="useCards" class="btn action">発動</v-btn>
+          <v-btn @click="useCards" class="btn action" v-if="attack_decision">発動</v-btn>
+          <p v-else>発動可能なカードを選択してください</p>
         </div>
       </v-row>
       <v-row class="field-row">
@@ -59,7 +59,12 @@
                 :key="`first-${select.id}`"
                 class="item"
               >
-                <v-card height="242px" max-width="200px" hover>
+                <v-card
+                  height="242px"
+                  max-width="200px"
+                  hover
+                  class="black"
+                >
                   <v-img
                     aspect-ratio="475/400"
                     height="242px"
@@ -81,7 +86,6 @@
           :options="options"
           class="area"
         >
-
           <div v-for="mine in mydata" :key="`second-${mine.id}`" class="item">
             <v-card hover>
               <v-img :src="mine.img"> </v-img>
@@ -1153,14 +1157,7 @@ export default {
       }
       this.showAttack = true;
       this.selecteddata.splice(index, this.selecteddata.length);
-      // if(this.selecteddata)
-    },
-    closeModal: function () {
-      this.showAttack = false;
-    },
-    getDatas: function () {
-      //ドロー機能です。
-
+      // ドロー
       this.recent_mydata_len = []
       //現在の手札のidリストを初期化しています
       for(let i = 0; i < this.mydata.length; i++){
@@ -1177,7 +1174,9 @@ export default {
         }
       }
     },
-
+    closeModal: function () {
+      this.showAttack = false;
+    },
     // 相手の攻撃のエフェクト用
     oponentAttack: function () {
       this.showOponent = true;
@@ -1211,10 +1210,10 @@ export default {
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
       if (updateddata.length === 0) {
-        return true;
+        return false;
       } else if (updateddata.length === 1) {
         this.cardValue.value = this.selecteddata[0].value;
-        return false;
+        return true;
       } else {
         let ableCombo = this.combo_data_db.filter((combo_data) => {
           return isIncludes(updateddata, combo_data.id_list);
@@ -1222,7 +1221,11 @@ export default {
         console.log(ableCombo)
         // 完全一致した攻撃だけを返す
         for(let i = 0, n = updateddata.length; i < n; ++i){
-          if(updateddata[i] !== ableCombo[0].id_list[i]){
+          if(ableCombo.length == 0){
+            return false
+          }else if(updateddata[i] !== ableCombo[0].id_list[i]){
+            return true
+          }else{
             return false
           }
         }
