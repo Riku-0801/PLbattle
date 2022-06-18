@@ -23,83 +23,74 @@
         <div class="effect">卍解千本桜景厳</div>
       </div>
       <!-- カードを出す場所 -->
-      <div class="field">
+      <v-row class="field-row"
+        ><div>
+          <h4 class="text">HP</h4>
+          <h2 class="text">自分：{{ sampleHp.mine }}</h2>
+          <h4 class="text">相手：{{ sampleHp.yours }}</h4>
+        </div>
+        <div>
+          <v-btn @click="getDatas" class="btn draw" outlined>ドロー</v-btn>
+          <v-btn @click="useCards" class="btn action">発動</v-btn>
+        </div>
+      </v-row>
+      <v-row class="field-row">
+        <v-col cols="3">
+          <div class="action-list">
+            <div>></div>
+            <div v-for="able in ableattacks" :key="able.name_en">
+              <div>>　action：{{ able.name_en }}</div>
+              <div>>　必要なカード：{{ able.name_list }}</div>
+            </div>
+          </div>
+        </v-col>
+        <v-col cols="9">
+          <div class="field">
+            <VueDrag
+              v-model="selecteddata"
+              group="myGroup"
+              @start="drag = true"
+              @end="drag = false"
+              :options="options"
+              class="area"
+            >
+              <div
+                v-for="select in selecteddata"
+                :key="`first-${select.id}`"
+                class="item"
+              >
+                <v-card height="242px" max-width="200px" hover>
+                  <v-img
+                    aspect-ratio="475/400"
+                    height="242px"
+                    :src="select.img"
+                  >
+                  </v-img>
+                </v-card>
+              </div>
+            </VueDrag>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row>
         <VueDrag
-          v-model="selecteddata"
+          v-model="mydata"
           group="myGroup"
           @start="drag = true"
           @end="drag = false"
           :options="options"
           class="area"
         >
-          <div
-            v-for="select in selecteddata"
-            :key="`first-${select.id}`"
-            class="item"
-          >
-            <v-card
-              height="242px"
-              max-width="300px"
-              hover
-              class="black"
-            >
-              <v-img
-                aspect-ratio="475/400"
-                height="242px"
-                :src="select.img"
-              ></v-img>
+
+          <div v-for="mine in mydata" :key="`second-${mine.id}`" class="item">
+            <v-card hover>
+              <v-img :src="mine.img"> </v-img>
+
             </v-card>
           </div>
         </VueDrag>
-      </div>
-      <!-- 自分の手札 -->
-      <div class="mycards"></div>
-      <VueDrag
-        v-model="mydata"
-        group="myGroup"
-        @start="drag = true"
-        @end="drag = false"
-        :options="options"
-        class="area"
-      >
-        <div
-          v-for="mine in mydata"
-          :key="`second-${mine.id}`"
-          class="item"
-        >
-          <v-card
-            height="242px"
-            max-width="300px"
-            hover
-            class="black"
-          >
-            <v-img
-              aspect-ratio="475/400"
-              height="242px"
-              :src="mine.img"
-            >
-            </v-img>
-          </v-card>
-        </div>
-      </VueDrag>
-      <!-- 使える技を表示 -->
-      <div v-for="able in ableattacks" :key="able.name_en">
-        <div>{{ able.name_en }}</div>
-        <div>必要カード{{ able.name_list }}</div>
-      </div>
-      <v-btn v-bind:disabled="attack_decision" @click="useCards">発動</v-btn>
-      <!-- 自分と相手のHPを表示 -->
-      <div>
-        <div>HP</div>
-        <div>自分:{{ sampleHp.mine }}</div>
-        <div>相手:{{ sampleHp.yours }}</div>
-      </div>
-      <v-btn @click="useCards">発動</v-btn>
-      <v-btn @click="getTurnFlag">turn_flagを入手</v-btn>
+      </v-row>
     </v-container>
-    <v-main>
-      <v-btn @click="getDatas">ドロー</v-btn>
-    </v-main>
   </v-app>
 </template>
 
@@ -1115,6 +1106,7 @@ export default {
     }
     console.log(this.mydata);
     console.log("初期データ移行完了");
+
     this.socket.emit("getTurnFlag", this.userId);
   },
   mounted() {
@@ -1168,6 +1160,7 @@ export default {
     },
     getDatas: function () {
       //ドロー機能です。
+
       this.recent_mydata_len = []
       //現在の手札のidリストを初期化しています
       for(let i = 0; i < this.mydata.length; i++){
@@ -1184,6 +1177,7 @@ export default {
         }
       }
     },
+
     // 相手の攻撃のエフェクト用
     oponentAttack: function () {
       this.showOponent = true;
@@ -1334,7 +1328,9 @@ export default {
 .field {
   height: 300px;
   width: 100%;
-  background-color: aquamarine;
+  background: rgba(211, 255, 253);
+  border: 2px solid #d3fffd;
+  box-shadow: 0px 0px 50px #d3fffd;
 }
 
 
@@ -1353,8 +1349,43 @@ export default {
 
 .area {
   display: flex;
-  justify-content: center;
-  width: 100%;
+  justify-content: stretch;
+  width: 1500px;
   height: 300px;
+}
+
+.action-list {
+  padding: 1rem;
+  height: 300px;
+  width: 100%;
+  border: 2px solid #d3fffd;
+  box-shadow: 0px 0px 50px #d3fffd;
+  overflow-x: hidden;
+}
+
+.field-row {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1.5rem;
+  align-items: end;
+}
+
+.text {
+  font-weight: 300;
+}
+
+.btn {
+  margin-right: 1rem;
+  width: 100px;
+}
+
+.btn.draw {
+  color: #fff;
+}
+
+.btn.action {
+  color: #102335;
+  border: 1px solid #d3fffd;
+  box-shadow: 0px 0px 20px #d3fffd;
 }
 </style>
