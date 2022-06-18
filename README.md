@@ -1,4 +1,4 @@
-# PLbattle
+# PLbattleの遊び方
 
 ## 対戦形態
 
