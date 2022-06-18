@@ -2,7 +2,7 @@ var express = require("express");
 var app = express();
 var http = require("http").Server(app);
 const io = require("socket.io")(http);
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const serveStatic = require("serve-static");
 const cors = require("cors");
 
@@ -214,6 +214,7 @@ var combo_data = [
     name_ja: "パイソン兄弟",
     action_value: 70,
     id_list: [4, 5, 16],
+    name_list: ["Django", "FastAPI", "Flask"],
   },
   {
     combo_id: 22,
@@ -221,6 +222,7 @@ var combo_data = [
     name_ja: "アニマルズ1",
     action_value: 80,
     id_list: [10, 37],
+    name_list: ["Python", "Go"],
   },
   {
     combo_id: 23,
@@ -228,6 +230,7 @@ var combo_data = [
     name_ja: "アニマルズ2",
     action_value: 70,
     id_list: [10, 51],
+    name_list: ["Python", "ドリトル"],
   },
   {
     combo_id: 24,
@@ -235,6 +238,7 @@ var combo_data = [
     name_ja: "アニマルズ3",
     action_value: 80,
     id_list: [37, 51],
+    name_list: ["Go", "ドリトル"],
   },
   {
     combo_id: 25,
@@ -242,6 +246,7 @@ var combo_data = [
     name_ja: "ジャパニーズ",
     action_value: 90,
     id_list: [50, 51, 52],
+    name_list: ["なでしこ", "ドリトル", "プロデル"],
   },
 ];
 
