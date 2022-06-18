@@ -6,10 +6,8 @@
     <p>相手のIDを入力してください</p>
     <input v-model="id" placeholder="edit me" />
     <br />
-    <v-btn @click="sendRoomId(id)">
-      aa
-    </v-btn>
-    <router-link :to="{ name: 'field' }" @click="sendRoomId(100)">スタート</router-link>
+    <v-btn @click="sendRoomId('hogehoge')">スタート</v-btn>
+    <v-btn @click="push()">スタート</v-btn>
   </v-container>
 </template>
 
@@ -23,32 +21,37 @@ export default {
       number: "",
       id: "",
       socket: io("localhost:3000"),
-      turn_flag: 0
+      turn_flag: 0,
     };
   },
-  mounted(){
-    this.socket.on("turnflag", function (turn_flag) {
-    this.turn_flag = 1;
-    console.log(this.turn_flag)
-    localStorage.setItem('turn_flag', 1)
-  });
+  mounted() {
+    this.socket.on("logined", function (userId) {
+      console.log(userId);
+      localStorage.setItem("userId", userId);
+      //this.push();
+    });
   },
   methods: {
     issue() {
       // HACK: ID作る関数入れておく
       this.number = Math.random().toString(32).substring(2);
     },
-    sendRoomId: function(RoomId) {
+    sendRoomId: function (RoomId) {
       this.socket.emit("login", RoomId);
-      this.turn_flag = 0;
-      console.log(RoomId)
+      console.log(RoomId);
+    },
+    push() {
+      this.$router.push({ name: "field", query: { room: "hogehoge" } });
     },
     set() {
-      localStorage.setItem('obj', JSON.stringify({
-        turn_flag: 1,
-        HP: 200
-      }))
-    }
-  }
+      localStorage.setItem(
+        "obj",
+        JSON.stringify({
+          turn_flag: 1,
+          HP: 200,
+        })
+      );
+    },
+  },
 };
 </script>
