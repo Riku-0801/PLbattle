@@ -52,7 +52,7 @@
       <v-btn v-bind:disabled="attack_decision" @click="deleteCards">発動</v-btn>
       <!-- 自分と相手のHPを表示 -->
       <div>
-        <div>hp</div>
+        <div>HP</div>
         <div>自分:{{ sampleHp.mine }}</div>
         <div>相手:{{ sampleHp.yours }}</div>
       </div>
