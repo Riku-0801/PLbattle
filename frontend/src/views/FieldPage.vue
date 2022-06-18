@@ -1,7 +1,24 @@
 <template>
   <v-app>
     <v-container>
-      <!-- 攻撃エフェクト -->
+      <v-btn
+        @click="oponentAttack"
+      >相手の攻撃</v-btn>
+      <!-- 相手の攻撃エフェクト -->
+      <div v-show="showOponent" class="overlay" @click="closeOponent">
+        <!-- 相手の攻撃情報をここに持ってくる -->
+        <v-card
+          height="475px"
+          width="400px"
+          class="black"
+        >
+          <v-img
+            src="../assets/cards/Angular.png"
+          ></v-img>
+        </v-card>
+        <div class="dalayEffect">倒れろ 逆撫</div>
+      </div>
+      <!-- 自分の攻撃エフェクト -->
       <div v-show="showAttack" class="overlay" @click="closeModal">
         <div class="effect">卍解千本桜景厳</div>
       </div>
@@ -24,13 +41,13 @@
               height="242px"
               max-width="300px"
               hover
+              class="black"
             >
               <v-img
                 aspect-ratio="475/400"
                 height="242px"
                 :src="select.img"
-              >
-              </v-img>
+              ></v-img>
             </v-card>
           </div>
         </VueDrag>
@@ -54,6 +71,7 @@
             height="242px"
             max-width="300px"
             hover
+            class="black"
           >
             <v-img
               aspect-ratio="475/400"
@@ -76,7 +94,6 @@
         <div>自分:{{ sampleHp.mine }}</div>
         <div>相手:{{ sampleHp.yours }}</div>
       </div>
-      <v-btn @click="useCards">発動</v-btn>
     </v-container>
     <v-main>
       <v-btn @click="getDatas">ドロー</v-btn>
@@ -754,7 +771,7 @@ export default {
     type: "attachment",
     img: require("../assets/cards/External-HDD.png"),
     action: "enhancement",
-    value: 20,
+    value: 40,
     field: "",
     set_id: 0,
   },
@@ -838,16 +855,16 @@ export default {
     field: "",
     set_id: 3,
   },
-  // {
-  //   id: 35,
-  //   name: "冷却ファン",
-  //   type: "attachment",
-  //   img: require("../assets/cards"),
-  //   action: "enhancement",
-  //   value: 30,
-  //   field: "",
-  //   set_id: 0,
-  // },
+  {
+    id: 35,
+    name: "冷却ファン",
+    type: "attachment",
+    img: require("../assets/cards/Cooling-fan.png"),
+    action: "enhancement",
+    value: 30,
+    field: "",
+    set_id: 0,
+  },
   {
     id: 36,
     name: "Node.js",
@@ -894,7 +911,7 @@ export default {
     type: "attachment",
     img: require("../assets/cards/External-SSD.png"),
     action: "enhancement",
-    value: 40,
+    value: 20,
     field: "",
     set_id: 0,
   },
@@ -1018,16 +1035,16 @@ export default {
     field: "",
     set_id: 0,
   },
-  // {
-  //   id: 53,
-  //   name: "Scratch",
-  //   type: "language",
-  //   img: require("../assets/cards/"),
-  //   action: "attack",
-  //   value: 20,
-  //   field: "",
-  //   set_id: 0,
-  // },
+  {
+    id: 53,
+    name: "Scratch",
+    type: "language",
+    img: require("../assets/cards/Scratch.png"),
+    action: "attack",
+    value: 20,
+    field: "",
+    set_id: 0,
+  },
   {
     id: 55,
     name: "Hacker",
@@ -1050,6 +1067,8 @@ export default {
   },
     ],
       showAttack: false,
+      showOponent: false,
+      dalayItem: false,
       options: {
         group: "myGroup",
         animation: 200,
@@ -1091,44 +1110,61 @@ export default {
   methods: {
     //カードを消します。本来は、ここでデータを送信します。
     useCards: function (index) {
+      if(this.selecteddata.length == 1){
+        if(this.selecteddata[0].action == "enhancement"){
+          // 回復の処理
+          this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value
+        }else if(this.selecteddata[0].action == "steal"){
+          // 吸収の処理
+          this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value;
+          this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
+        }else{
+          // 攻撃の処理
+          this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value;
+        }
+      }else{
+        // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
+        this.sampleHp.yours = this.sampleHp.yours - this.ableattacks[0].action_value
+      }
       this.showAttack = true;
       // todo: 必殺技からもvalueをとってくるようにする
-      this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value;
       this.selecteddata.splice(index, this.selecteddata.length);
+      // if(this.selecteddata)
     },
     closeModal: function () {
       this.showAttack = false;
     },
     getDatas: function () {
       //ドロー機能です。
-
-        this.recent_mydata_len = []
-        //現在の手札のidリストを初期化しています
-        for(let i = 0; i < this.mydata.length; i++){
-          this.recent_mydata_len.push(this.mydata[i].id-1)
-          //現在の手札idをいれました。
-        }
-        for (let i = this.mydata.length-1; i < 5;){
-          this.tmp = Number(Math.floor(Math.random() * 56));
-          if(!this.recent_mydata_len.includes(this.tmp)){
-            this.mydata_len.push(this.tmp);
-            let pushdata = this.data_db[this.mydata_len[i-this.mydata.length+this.mydata_len.length]]
-            // let aaa = pushdata.img
-            // let bbb = require(aaa)
-            // pushdata.name = '変更したぜ'
-            // pushdata.img = bbb
-            console.log(pushdata.img)
-            this.mydata.push(pushdata)
-            i++;
-          }
+      this.recent_mydata_len = []
+      //現在の手札のidリストを初期化しています
+      for(let i = 0; i < this.mydata.length; i++){
+        this.recent_mydata_len.push(this.mydata[i].id-1)
+        //現在の手札idをいれました。
+      }
+      for (let i = this.mydata.length-1; i < 5;){
+        this.tmp = Number(Math.floor(Math.random() * 56));
+        if(!this.recent_mydata_len.includes(this.tmp)){
+          this.mydata_len.push(this.tmp);
+          let pushdata = this.data_db[this.mydata_len[i-this.mydata.length+this.mydata_len.length]]
+          this.mydata.push(pushdata)
+          i++;
         }
       }
     },
+    // 相手の攻撃のエフェクト用
+    oponentAttack: function () {
+      this.showOponent = true;
+    },
+    closeOponent: function () {
+      this.showOponent = false
+    }
+  },
   computed: {
     ableattacks: function () {
       // selecteddataのidだけを集めた
       let updateddata = this.selecteddata.map((obj) => obj.id);
-      // 配列の完全一致を判定
+      // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
       //recent_selectdataに、idに対応するカードの名前を入れたい
@@ -1136,15 +1172,16 @@ export default {
         // 何も選択されていないとき空の配列を返す
         return [];
       } else {
-        // 完全一致した攻撃だけを返す
-        return this.combo_data.filter((combo_data) => {
+        // updateddataにあるのと一致した攻撃だけを返す
+        return this.combo_data_db.filter((combo_data) => {
           return isIncludes(updateddata, combo_data.id_list);
         });
       }
     },
-    //カードの判定をします！！ここでしてます！！読みにくくてごめんなさい！！
+    //発動できるかどうかを判定する
     attack_decision: function () {
       let updateddata = this.selecteddata.map((obj) => obj.id);
+      // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
       if (updateddata.length === 0) {
@@ -1152,12 +1189,16 @@ export default {
       } else if (updateddata.length === 1) {
         return false;
       } else {
-        // 完全一致した攻撃だけを返す
-        this.combo_data.filter((combo_data) => {
-          if (isIncludes(updateddata, combo_data.id_list) === true) {
-            return false;
-          }
+        let ableCombo = this.combo_data_db.filter((combo_data) => {
+          return isIncludes(updateddata, combo_data.id_list);
         });
+        console.log(ableCombo)
+        // 完全一致した攻撃だけを返す
+        for(let i = 0, n = updateddata.length; i < n; ++i){
+          if(updateddata[i] !== ableCombo[0].id_list[i]){
+            return false
+          }
+        }
       }
     },
   },
@@ -1165,13 +1206,44 @@ export default {
 </script>
 
 <style scoped>
+.oponent {
+  height: 200px;
+  display: flex;
+  justify-content: center;
+}
+
+.oponentCard {
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.dalayEffect {
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 30%;
+  color: white;
+  font-size: 128px;
+  background: radial-gradient(#3973a9, #102335);
+  font: "Oxanium";
+  opacity: 0;
+  animation: SlideIn 0.4s;
+  /* 0.8秒遅らせる */
+  animation-delay: 0.8s;
+  /* opacityが戻らないようにする */
+  animation-fill-mode: forwards;
+}
+
+
 @keyframes SlideIn {
   0% {
     opacity: 0;
     transform: translate(-700px);
   }
   100% {
-    opacity: 1;
+    opacity: 0.9;
     transform: translate(0);
   }
 }
@@ -1232,12 +1304,8 @@ export default {
   background-color: aquamarine;
 }
 
-.v-card {
-  background-color: #000;
-}
 
 .item {
-  /* display: inline-block; */
   margin: 10px;
   width: 12%;
 }
