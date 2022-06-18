@@ -51,7 +51,13 @@
           <v-card
             height="200px"
             hover
-          >{{ mine.name }}
+            img="../assets/logo.png"
+          >
+            <!-- <v-img
+              height="200px"
+              :src="mine.png"
+            >{{ mine.name }}
+            </v-img> -->
           </v-card>
         </div>
       </VueDrag>
@@ -71,7 +77,6 @@
       </div>
       <v-btn @click="useCards">発動</v-btn>
   </v-container>
-  
   <v-main>
     <v-btn
         @click = "getDatas"
@@ -86,129 +91,136 @@
 <script>
 import VueDrag from 'vuedraggable'
 
-  export default {
-    name: 'field',
-    components: {
-      VueDrag
-    },
-    data (){
-      return {
-        showAttack: false,
-        options: {
-          group: "myGroup",
-          animation: 200
-        },
-        selecteddata: [],
-        mydata: [],
-        mydata_len: [],
-        combo_data: [],
-        recent_mydata_len: [],
-        recent_selectdata_id: [],
-        tmp: 0,
-        sampleHp:{
-            mine: 300,
-            yours: 300
+export default {
+  name: 'field',
+  components: {
+    VueDrag
+  },
+  data (){
+    return {
+      showAttack: false,
+      options: {
+        group: "myGroup",
+        animation: 200
+      },
+      selecteddata: [],
+      mydata: [],
+      mydata_len: [],
+      combo_data: [],
+      recent_mydata_len: [],
+      recent_selectdata_id: [],
+      tmp: 0,
+      sampleHp:{
+          mine: 300,
+          yours: 300
+      }
+    }
+  },
+  mounted() {
+  window.onload = ()=>{
+    //windowsリロード時に発火するコードです
+    //combo_dataをバックから貰って、それをフロント側で保存します。
+    this.$axios.get('/combo_data')
+      .then(res => {
+        for (let i = 0;i < res.data.length; i++){
+          this.combo_data.push(res.data[i])
+        }
+        console.log(this.combo_data)
+      })
+    //初期ドローを行います。6枚もらいます。いえい
+    this.$axios.get('/data')
+      .then(res => {
+        for (let i = this.mydata.length; i < 6;){
+        this.tmp = Number(Math.floor(Math.random() * 2));
+        if(!this.mydata_len.includes(this.tmp)){
+          this.mydata_len.push(this.tmp);
+          this.mydata.push(res.data[this.mydata_len[i]])
+          i++;
         }
       }
+      })
+      console.log(this.mydata)
+      console.log("初期データ移行完了")
+    }
+  },
+  methods: {
+  //カードを消します。本来は、ここでデータを送信します。
+    useCards: function(index){
+        this.showAttack = true
+        // todo: 必殺技からもvalueをとってくるようにする
+        this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value
+        this.selecteddata.splice(index, this.selecteddata.length);
     },
-    mounted() {
-    window.onload = ()=>{
-      //windowsリロード時に発火するコードです
-      //combo_dataをバックから貰って、それをフロント側で保存します。
-      this.$axios.get('/combo_data')
-        .then(res => {
-          for (let i = 0;i < res.data.length; i++){
-            this.combo_data.push(res.data[i])
-          }
-          console.log(this.combo_data)
-        })
-      //初期ドローを行います。6枚もらいます。いえい
+    closeModal: function(){
+      this.showAttack = false
+    },
+    getDatas: function() {
+      //ドロー機能です。
       this.$axios.get('/data')
-        .then(res => {
-          for (let i = this.mydata.length; i < 6;){
-          this.tmp = Number(Math.floor(Math.random() * 57));
-          if(!this.mydata_len.includes(this.tmp)){
+      .then(res => {
+        this.recent_mydata_len = []
+        //現在の手札のidリストを初期化しています
+        for(let i = 0; i < this.mydata.length; i++){
+          this.recent_mydata_len.push(this.mydata[i].id-1)
+          //現在の手札idをいれました。
+        }
+        for (let i = this.mydata.length-1; i < 5;){
+          this.tmp = Number(Math.floor(Math.random() * 2));
+          if(!this.recent_mydata_len.includes(this.tmp)){
             this.mydata_len.push(this.tmp);
-            this.mydata.push(res.data[this.mydata_len[i]])
+            let pushdata = res.data[this.mydata_len[i-this.mydata.length+this.mydata_len.length]]
+            // let aaa = pushdata.img
+            // let bbb = require(aaa)
+            // pushdata.name = '変更したぜ'
+            // pushdata.img = bbb
+            console.log(pushdata.img)
+            this.mydata.push(pushdata)
             i++;
           }
         }
-        })
-        console.log(this.mydata)
-        console.log("初期データ移行完了")
-      }
+      console.log("ドロー完了")
+      console.log(this.mydata)
+      })
+      .catch(err => {
+        console.error(err)
+      })
     },
-    methods: {
-    //カードを消します。本来は、ここでデータを送信します。
-      useCards: function(index){
-          this.showAttack = true
-          // todo: 必殺技からもvalueをとってくるようにする
-          this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value
-          this.selecteddata.splice(index, this.selecteddata.length);
-      },
-      closeModal: function(){
-        this.showAttack = false
-      },
-      getDatas: function() {
-        //ドロー機能です。
-        this.$axios.get('/data')
-        .then(res => {
-          this.recent_mydata_len = []
-          //現在の手札のidリストを初期化しています
-          for(let i = 0; i < this.mydata.length; i++){
-            this.recent_mydata_len.push(this.mydata[i].id-1)
-            //現在の手札idをいれました。
+    sendDatas: function() {
+      this.$axios.get('/combo_data')
+      .then(res => {
+        this.recent_selectdata_id = []
+        for (let i = 0; i < this.selecteddata.length; i++){
+          this.recent_selectdata_id.push(this.selecteddata[i].id)
+        }
+        for (let i = 0; i < res.data.length; i++){
+          console.log(res.data[i].id_list)
+          if(JSON.stringify(res.data[i].id_list) === JSON.stringify(this.recent_selectdata_id)){
+            console.log("成功です")
+          }else{
+            console.log("これはコンボじゃないよ")
           }
-          for (let i = this.mydata.length-1; i < 5;){
-            this.tmp = Number(Math.floor(Math.random() * 57));
-            if(!this.recent_mydata_len.includes(this.tmp)){
-              this.mydata_len.push(this.tmp);
-              this.mydata.push(res.data[this.mydata_len[i-this.mydata.length+this.mydata_len.length]])
-              i++;
-            }
-          }
-        console.log("ドロー完了")
-        })
-        .catch(err => {
-          console.error(err)
-        })
-      },
-      sendDatas: function() {
-        this.$axios.get('/combo_data')
-        .then(res => {
-          this.recent_selectdata_id = []
-          for (let i = 0; i < this.selecteddata.length; i++){
-            this.recent_selectdata_id.push(this.selecteddata[i].id)
-          }
-          for (let i = 0; i < res.data.length; i++){
-            console.log(res.data[i].id_list)
-            if(JSON.stringify(res.data[i].id_list) === JSON.stringify(this.recent_selectdata_id)){
-              console.log("成功です")
-            }else{
-              console.log("これはコンボじゃないよ")
-            }
-          }
-        })
-        //ここにwebsocketを使って通信するシステムを記述、あるいはその内容をbackendに飛ばす処理を行う
+        }
+      })
+      //ここにwebsocketを使って通信するシステムを記述、あるいはその内容をbackendに飛ばす処理を行う
     }
   },
   computed: {
-      ableattacks: function(){
-        // selecteddataのidだけを集めた
-        let updateddata = this.selecteddata.map(obj => obj.id)
-        // 配列の完全一致を判定
-        const isIncludes = (arr, target) => arr.every(el => target.includes(el))
-        if(updateddata.length === 0){
-          // 何も選択されていないとき空の配列を返す
-          return []
-        }else{
-          // 完全一致した攻撃だけを返す
-            return this.combo_data.filter(combo_data => {
-              return isIncludes(updateddata, combo_data.id_list)
-            })
-        }
+    ableattacks: function(){
+      // selecteddataのidだけを集めた
+      let updateddata = this.selecteddata.map(obj => obj.id)
+      // 配列の完全一致を判定
+      const isIncludes = (arr, target) => arr.every(el => target.includes(el))
+      if(updateddata.length === 0){
+        // 何も選択されていないとき空の配列を返す
+        return []
+      }else{
+        // 完全一致した攻撃だけを返す
+          return this.combo_data.filter(combo_data => {
+            return isIncludes(updateddata, combo_data.id_list)
+          })
       }
     }
+  }
 }
 </script>
 
