@@ -11,19 +11,13 @@ room_idを自動生成してくれる関数
 function createRoomId() {
   var base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   base = base.split("");
-  var str = "";
+  var id = "";
   var count = base.length;
   for (var i = 0; i < 10; i++) {
-    str += base[Math.floor(Math.random() * count)];
+    id += base[Math.floor(Math.random() * count)];
   }
-  return str;
+  return id;
 }
-
-// 待機中フラグ
-var waitPlayer = 0;
-
-// 一時部屋ID
-var tmpRoomId;
 
 io.sockets.on("connection", function (socket) {
   //接続切断処理
@@ -32,40 +26,11 @@ io.sockets.on("connection", function (socket) {
   });
   //ログイン時処理
   socket.on("login", function (RoomId) {
-    //  room_idが空だった場合
-    if (RoomId == "") {
-      // 待機中プレイヤーが居る場合
-      if (waitPlayer == 1) {
-        // 待機中の部屋IDにjoin
-        socket.join(tmpRoomId);
-        waitPlayer = 0;
-        // 待機中プレイヤーが居ない場合
-      } else {
-        // 待機プレイヤーに1を設定
-        waitPlayer = 1;
-        // 部屋IDを生成
-        tmpRoomId = createRoomId();
-        socket.join(tmpRoomId);
-      }
-      // room_idがあった場合
-    } else {
-      socket.join(RoomId);
-    }
+    //ルーム入室
+    socket.join(RoomId);
   });
 });
 
 http.listen(PORT, function () {
   console.log("server listening. Port:" + PORT);
 });
-/*
-room_idを発行する場合
-
-io.sockets.on("connection", function (socket) {
-  socket.on("disconnect", function () {
-    console.log("disconnect");
-  });
-  socket.on("login", function (RoomId) {
-    socket.join(RoomId);
-  });
-});
-*/
