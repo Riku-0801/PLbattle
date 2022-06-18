@@ -34,7 +34,7 @@ io.sockets.on("connection", function (socket) {
       console.log("This room is full");
     } else {
       socket.join(RoomId);
-      io.to(RoomId).broadcast.emit("turnflag", turnflag);
+      io.to(RoomId).broadcast.emit("turnflag", turn_flag);
     }
     //ルーム入室
   });
