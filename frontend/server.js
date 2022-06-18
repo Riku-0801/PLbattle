@@ -328,15 +328,6 @@ var data = [
         field: "",
         set_id: 0 
     },{
-        id: 14,
-        name: "warp",
-        type: "framework",
-        img: "",
-        action: "attack",
-        value: 20,
-        field: "",
-        set_id: 33
-    },{
         id: 15,
         name: "Vue",
         type: "framework",
