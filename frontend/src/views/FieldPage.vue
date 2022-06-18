@@ -85,8 +85,7 @@ import VueDrag from 'vuedraggable'
         combo_data: [],
         recent_mydata_len: [],
         recent_selectdata: [],
-        tmp: 0,
-        judge: false
+        tmp: 0
       }
     },
     mounted() {
