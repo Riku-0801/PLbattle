@@ -51,7 +51,7 @@ io.sockets.on("connection", function (socket) {
     socket.join(RoomId);
   });
   socket.on("value", function (cardValue) {
-    io.to(RoomId).emit("cardValue", cardValue);
+    io.to(RoomId).broadcast.emit("cardValue", cardValue);
   });
 });
 
