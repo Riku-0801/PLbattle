@@ -10,16 +10,17 @@ export default {
     };
   },
   methods: {
+    //cardValueをサーバーサイドへ送信
     sendValue(cardValue) {
-      // 2) valueをserver側へ送信
       this.socket.emit("value", cardValue);
     },
+    //roomIdをサーバーサイドへ送信
     sendRoomId(roomId) {
       this.socket.emit("login", roomId);
     },
   },
   mounted() {
-    // 3) サーバの変更内容を受信
+    //cardValueを受け取った時の処理
     this.socket.on("cardValue", function (cardValue) {});
   },
 };
