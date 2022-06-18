@@ -45,8 +45,8 @@ io.sockets.on("connection", function (socket) {
   //接続切断処理
   socket.on("disconnect", function () {
     console.log("disconnect");
-    // socket.leave(RoomId);
-    // numClients[RoomId]--;
+    socket.leave("hogehoge");
+    numClients["hogehoge"]--;
   });
   //ログイン時処理
   socket.on("login", function (RoomId) {
@@ -77,8 +77,8 @@ io.sockets.on("connection", function (socket) {
   socket.on("getTurnFlag", function (userId) {
     socket.to("hogehoge").emit("turnflag", turn_flag["hogehoge"][userId]);
   });
-  socket.on("value", function (cardValue) {
-    io.to(RoomId).broadcast.emit("cardValue", cardValue);
+  socket.on("cardvalue", function (cardValue) {
+    io.to("hogehoge").emit("cardValue", cardValue);
   });
 });
 
