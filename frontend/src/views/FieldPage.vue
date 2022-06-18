@@ -49,10 +49,10 @@
       </VueDrag>
       <div
         v-for='able in ableattacks'
-        :key="able.name"
+        :key="able.name_en"
       >
-        <div>{{ able.name }}</div>
-        <div>必要カード{{ able.contain }}</div>
+        <div>{{ able.name_en }}</div>
+        <div>必要カード{{ able.id_list }}</div>
       </div>
       <v-btn @click="deleteCards">発動</v-btn>
   </v-container>
@@ -85,6 +85,7 @@ import VueDrag from 'vuedraggable'
         selecteddata: [],
         mydata: [],
         mydata_len: [],
+        combo_data: [],
         recent_mydata_len: [],
         recent_selectdata_id: [],
         tmp: 0
@@ -92,10 +93,20 @@ import VueDrag from 'vuedraggable'
     },
     mounted() {
     window.onload = ()=>{
+      //windowsリロード時に発火するコードです
+      //combo_dataをバックから貰って、それをフロント側で保存します。
+      this.$axios.get('/combo_data')
+        .then(res => {
+          for (let i = 0;i < res.data.length; i++){
+            this.combo_data.push(res.data[i])
+          }
+          console.log(this.combo_data)
+        })
+      //初期ドローを行います。6枚もらいます。いえい
       this.$axios.get('/data')
         .then(res => {
           for (let i = this.mydata.length; i < 6;){
-          this.tmp = Number(Math.floor(Math.random() * 10));
+          this.tmp = Number(Math.floor(Math.random() * 57));
           if(!this.mydata_len.includes(this.tmp)){
             this.mydata_len.push(this.tmp);
             this.mydata.push(res.data[this.mydata_len[i]])
@@ -108,20 +119,22 @@ import VueDrag from 'vuedraggable'
       }
     },
     methods: {
+    //カードを消します。本来は、ここでデータを送信します。
     deleteCards: function(index){
       this.selecteddata.splice(index, this.selecteddata.length)
     },
     getDatas: function() {
+    //ドロー機能です。
 		this.$axios.get('/data')
     .then(res => {
       this.recent_mydata_len = []
-      console.log(this.mydata)
-      console.log(this.selecteddata)
+      //現在の手札のidリストを初期化しています
       for(let i = 0; i < this.mydata.length; i++){
         this.recent_mydata_len.push(this.mydata[i].id-1)
+        //現在の手札idをいれました。
       }
       for (let i = this.mydata.length-1; i < 5;){
-        this.tmp = Number(Math.floor(Math.random() * 10));
+        this.tmp = Number(Math.floor(Math.random() * 57));
         if(!this.recent_mydata_len.includes(this.tmp)){
           this.mydata_len.push(this.tmp);
           this.mydata.push(res.data[this.mydata_len[i-this.mydata.length+this.mydata_len.length]])
@@ -137,12 +150,10 @@ import VueDrag from 'vuedraggable'
     sendDatas: function() {
       this.$axios.get('/combo_data')
       .then(res => {
-        console.log(res.data)
         this.recent_selectdata_id = []
         for (let i = 0; i < this.selecteddata.length; i++){
           this.recent_selectdata_id.push(this.selecteddata[i].id)
         }
-        console.log(this.recent_selectdata_id)
         for (let i = 0; i < res.data.length; i++){
           console.log(res.data[i].id_list)
           if(JSON.stringify(res.data[i].id_list) === JSON.stringify(this.recent_selectdata_id)){
@@ -154,11 +165,12 @@ import VueDrag from 'vuedraggable'
       })
         //ここにwebsocketを使って通信するシステムを記述、あるいはその内容をbackendに飛ばす処理を行う
         
-    },
-    computed: {
+    }
+  },
+  computed: {
       ableattacks: function(){
-        // selecteddataのnameだけを集めた
-        let updateddata = this.selecteddata.map(obj => obj.name)
+        // selecteddataのidだけを集めた
+        let updateddata = this.selecteddata.map(obj => obj.id)
         // 配列の完全一致を判定
         const isIncludes = (arr, target) => arr.every(el => target.includes(el))
         if(updateddata.length === 0){
@@ -166,13 +178,12 @@ import VueDrag from 'vuedraggable'
           return []
         }else{
           // 完全一致した攻撃だけを返す
-          return this.specialAttack.filter(attack => {
-            return isIncludes(updateddata, attack.contain)
-          })
+            return this.combo_data.filter(combo_data => {
+              return isIncludes(updateddata, combo_data.id_list)
+            })
         }
       }
     }
-  }
 }
 </script>
 
