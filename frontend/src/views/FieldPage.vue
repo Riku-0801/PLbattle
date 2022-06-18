@@ -1,6 +1,7 @@
 <template>
 <v-app>
   <v-container>
+    <!-- カードを出す場所 -->
     <div class="field">
       <VueDrag
         v-model="selecteddata"
@@ -23,6 +24,9 @@
       </div>
       </VueDrag>
     </div>
+    <!-- 自分の手札 -->
+    <div class="mycards">
+    </div>
       <VueDrag
         v-model="mydata"
         group="myGroup"
@@ -43,6 +47,14 @@
           </v-card>
         </div>
       </VueDrag>
+      <div
+        v-for='able in ableattacks'
+        :key="able.name"
+      >
+        <div>{{ able.name }}</div>
+        <div>必要カード{{ able.contain }}</div>
+      </div>
+      <v-btn @click="deleteCards">発動</v-btn>
   </v-container>
   
   <v-main>
@@ -96,6 +108,9 @@ import VueDrag from 'vuedraggable'
       }
     },
     methods: {
+    deleteCards: function(index){
+      this.selecteddata.splice(index, this.selecteddata.length)
+    },
     getDatas: function() {
 		this.$axios.get('/data')
     .then(res => {
@@ -138,6 +153,24 @@ import VueDrag from 'vuedraggable'
         }
       })
         //ここにwebsocketを使って通信するシステムを記述、あるいはその内容をbackendに飛ばす処理を行う
+        
+    },
+    computed: {
+      ableattacks: function(){
+        // selecteddataのnameだけを集めた
+        let updateddata = this.selecteddata.map(obj => obj.name)
+        // 配列の完全一致を判定
+        const isIncludes = (arr, target) => arr.every(el => target.includes(el))
+        if(updateddata.length === 0){
+          // 何も選択されていないとき空の配列を返す
+          return []
+        }else{
+          // 完全一致した攻撃だけを返す
+          return this.specialAttack.filter(attack => {
+            return isIncludes(updateddata, attack.contain)
+          })
+        }
+      }
     }
   }
 }
@@ -166,6 +199,6 @@ import VueDrag from 'vuedraggable'
 
 .area {
   width: 100%;
-  height: 400px;
+  height: 300px;
 }
 </style>
