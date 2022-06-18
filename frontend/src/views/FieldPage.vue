@@ -77,6 +77,7 @@
         <div>相手:{{ sampleHp.yours }}</div>
       </div>
       <v-btn @click="useCards">発動</v-btn>
+      <v-btn @click="getTurnFlag">turn_flagを入手</v-btn>
     </v-container>
     <v-main>
       <v-btn @click="getDatas">ドロー</v-btn>
@@ -86,6 +87,7 @@
 
 <script>
 import VueDrag from "vuedraggable";
+import io from "socket.io-client";
 
 export default {
   name: "field",
@@ -94,6 +96,14 @@ export default {
   },
   data() {
     return {
+    cardValue: [{
+      value: 0,
+      name_list: ""
+    }],
+    turn_flag: 0,
+    recieved_cardValue: [],
+    // 1) サーバ連結
+    socket: io("localhost:3000"),
     combo_data_db: [
   {
     combo_id: 1,
@@ -1064,14 +1074,11 @@ export default {
       sampleHp: {
         mine: 300,
         yours: 300,
-      },
+      }
     };
   },
-  mounted() {
-  window.onload = ()=>{
-    //windowsリロード時に発火するコードです
-    //combo_dataをバックから貰って、それをフロント側で保存します。
-        for (let i = 0;i < this.combo_data_db.length; i++){
+  created(){
+    for (let i = 0;i < this.combo_data_db.length; i++){
           this.combo_data.push(this.combo_data_db[i])
         }
         console.log(this.combo_data)
@@ -1086,14 +1093,42 @@ export default {
       }
       console.log(this.mydata);
       console.log("初期データ移行完了");
-    };
+      this.socket.on("turnflag", function (turn_flag) {
+        this.turn_flag = turn_flag;
+        console.log(this.turn_flag)
+      });
+  },
+  mounted() {
+  //cardValueを受け取った時の処理
+  this.socket.on("cardValue", function (cardValue) {
+    //ここに処理を書く
+    this.recieved_cardValue = [cardValue];
+    this.turn_flag = 1;
+    console.log(this.turn_flag);
+  });
   },
   methods: {
+    getTurnFlag(){
+      //turn_flagのデータをlocalstorageからもらいます
+      this.turn_flag = localStorage.getItem('turn_flag')
+      console.log(this.turn_flag)
+    },
+    //カードのデータの送信
+    sendValue(cardValue) {
+      this.turn_flag = 1;
+      this.socket.emit("value", cardValue);
+    },
+    //roomIdをサーバーサイドへ送信
+    sendRoomId(roomId) {
+      this.socket.emit("login", roomId);
+      turn_flag = 0;
+    },
     //カードを消します。本来は、ここでデータを送信します。
     useCards: function (index) {
       this.showAttack = true;
       // todo: 必殺技からもvalueをとってくるようにする
-      this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value;
+      this.sampleHp.yours = this.sampleHp.yours - this.cardValue.value;
+      console.log(this.cardValue.value)
       this.selecteddata.splice(index, this.selecteddata.length);
     },
     closeModal: function () {
@@ -1150,11 +1185,13 @@ export default {
       if (updateddata.length === 0) {
         return true;
       } else if (updateddata.length === 1) {
+        this.cardValue.value = this.selecteddata[0].value
         return false;
       } else {
         // 完全一致した攻撃だけを返す
         this.combo_data.filter((combo_data) => {
           if (isIncludes(updateddata, combo_data.id_list) === true) {
+            this.cardValue.value = combo_data.action_value
             return false;
           }
         });
