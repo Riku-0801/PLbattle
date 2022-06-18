@@ -29,6 +29,9 @@ io.sockets.on("connection", function (socket) {
     //ルーム入室
     socket.join(RoomId);
   });
+  socket.on("value", function (cardValue) {
+    io.to(RoomId).emit("cardValue", cardValue);
+  });
 });
 
 http.listen(PORT, function () {
