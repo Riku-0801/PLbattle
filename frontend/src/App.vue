@@ -29,13 +29,30 @@ export default {
     components: {
       BattleExplanation
     },
+
     data() {
         return {
+          
           // モーダルを非表示
           showExplanation: false
         }
     },
+    
     methods: {
+    // getDatas: function() {
+		// this.$axios.get('/message')
+    // .then(res => {
+    //   //this.num = []
+    //   console.log(res.data)
+    //   // for (let i = 0 ; i < 5 ; i++){
+    //   //   this.num.push(Number(Math.floor(Math.random() * 10)));
+    //   // }
+    //   this.file = res.data
+		// })
+    // .catch(err => {
+    //     console.error(err)
+    // })
+	  // },
         openModal: function(){
             this.showExplanation = true
         },

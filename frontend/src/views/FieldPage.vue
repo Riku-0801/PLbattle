@@ -1,4 +1,5 @@
 <template>
+<v-app>
   <v-container>
     <!-- 攻撃エフェクト -->
     <div
@@ -19,8 +20,8 @@
         class="area"
       >
       <div
-        v-for="(select) in selecteddata"
-        :key="select.id"
+        v-for="select in selecteddata"
+        :key="`first-${select.id}`"
         class="item"
       >
         <v-card
@@ -44,7 +45,7 @@
       >
         <div
           v-for="mine in mydata"
-          :key="mine.id"
+          :key="`second-${mine.id}`"
           class="item"
         >
           <v-card
@@ -57,10 +58,10 @@
       <!-- 使える技を表示 -->
       <div
         v-for='able in ableattacks'
-        :key="able.name"
+        :key="able.name_en"
       >
-        <div>{{ able.name }}</div>
-        <div>必要カード{{ able.contain }}</div>
+        <div>{{ able.name_en }}</div>
+        <div>必要カード{{ able.id_list }}</div>
       </div>
       <!-- 自分と相手のHPを表示 -->
       <div>
@@ -70,6 +71,16 @@
       </div>
       <v-btn @click="useCards">発動</v-btn>
   </v-container>
+  
+  <v-main>
+    <v-btn
+        @click = "getDatas"
+      >ドロー</v-btn>
+    <v-btn
+        @click = "sendDatas"
+      >コンボ判定</v-btn>
+  </v-main>
+  </v-app>
 </template>
 
 <script>
@@ -87,84 +98,104 @@ import VueDrag from 'vuedraggable'
           group: "myGroup",
           animation: 200
         },
-        selecteddata: [
-        ],
-        mydata: [
-          {
-            id: 1,
-            name: "C",
-            type: "language",
-            value: 50
-          },
-          {
-            id: 2,
-            name: "C++",
-            type: "language",
-            value: 60
-          },
-          {
-            id: 3,
-            name: "C#",
-            type: "language",
-            value: 50
-          },
-          {
-            id: 4,
-            name: "python",
-            type: "language",
-            value: 20
-          },
-          {
-            id: 5,
-            name: "Java",
-            type: "language",
-            value: 50
-          },
-          {
-            id: 6,
-            name: "R",
-            type: "language",
-            value: 20
-          },
-        ],
-        specialAttack:[
-          {
-            name: "Cアタック",
-            contain: [
-              "C", "C++", "C#"
-            ],
-            value: 500
-          },
-          {
-            name: "pythonアタック",
-            contain: [
-              "python", "django"
-            ],
-            value: 300
-          }
-        ],
+        selecteddata: [],
+        mydata: [],
+        mydata_len: [],
+        combo_data: [],
+        recent_mydata_len: [],
+        recent_selectdata_id: [],
+        tmp: 0,
         sampleHp:{
             mine: 300,
             yours: 300
         }
       }
     },
+    mounted() {
+    window.onload = ()=>{
+      //windowsリロード時に発火するコードです
+      //combo_dataをバックから貰って、それをフロント側で保存します。
+      this.$axios.get('/combo_data')
+        .then(res => {
+          for (let i = 0;i < res.data.length; i++){
+            this.combo_data.push(res.data[i])
+          }
+          console.log(this.combo_data)
+        })
+      //初期ドローを行います。6枚もらいます。いえい
+      this.$axios.get('/data')
+        .then(res => {
+          for (let i = this.mydata.length; i < 6;){
+          this.tmp = Number(Math.floor(Math.random() * 57));
+          if(!this.mydata_len.includes(this.tmp)){
+            this.mydata_len.push(this.tmp);
+            this.mydata.push(res.data[this.mydata_len[i]])
+            i++;
+          }
+        }
+        })
+        console.log(this.mydata)
+        console.log("初期データ移行完了")
+      }
+    },
     methods: {
-      // ボタンを押したらカードを削除
+    //カードを消します。本来は、ここでデータを送信します。
       useCards: function(index){
-        this.showAttack = true
-        // todo: 必殺技からもvalueをとってくるようにする
-        this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value
-        this.selecteddata.splice(index, this.selecteddata.length);
+          this.showAttack = true
+          // todo: 必殺技からもvalueをとってくるようにする
+          this.sampleHp.yours = this.sampleHp.yours - this.selecteddata[0].value
+          this.selecteddata.splice(index, this.selecteddata.length);
       },
       closeModal: function(){
         this.showAttack = false
-      }
-    },
-    computed: {
+      },
+      getDatas: function() {
+        //ドロー機能です。
+        this.$axios.get('/data')
+        .then(res => {
+          this.recent_mydata_len = []
+          //現在の手札のidリストを初期化しています
+          for(let i = 0; i < this.mydata.length; i++){
+            this.recent_mydata_len.push(this.mydata[i].id-1)
+            //現在の手札idをいれました。
+          }
+          for (let i = this.mydata.length-1; i < 5;){
+            this.tmp = Number(Math.floor(Math.random() * 57));
+            if(!this.recent_mydata_len.includes(this.tmp)){
+              this.mydata_len.push(this.tmp);
+              this.mydata.push(res.data[this.mydata_len[i-this.mydata.length+this.mydata_len.length]])
+              i++;
+            }
+          }
+        console.log("ドロー完了")
+        })
+        .catch(err => {
+          console.error(err)
+        })
+      },
+      sendDatas: function() {
+        this.$axios.get('/combo_data')
+        .then(res => {
+          this.recent_selectdata_id = []
+          for (let i = 0; i < this.selecteddata.length; i++){
+            this.recent_selectdata_id.push(this.selecteddata[i].id)
+          }
+          for (let i = 0; i < res.data.length; i++){
+            console.log(res.data[i].id_list)
+            if(JSON.stringify(res.data[i].id_list) === JSON.stringify(this.recent_selectdata_id)){
+              console.log("成功です")
+            }else{
+              console.log("これはコンボじゃないよ")
+            }
+          }
+        })
+        //ここにwebsocketを使って通信するシステムを記述、あるいはその内容をbackendに飛ばす処理を行う
+    }
+  },
+  computed: {
       ableattacks: function(){
-        // selecteddataのnameだけを集めた
-        let updateddata = this.selecteddata.map(obj => obj.name)
+        // selecteddataのidだけを集めた
+        let updateddata = this.selecteddata.map(obj => obj.id)
         // 配列の完全一致を判定
         const isIncludes = (arr, target) => arr.every(el => target.includes(el))
         if(updateddata.length === 0){
@@ -172,13 +203,13 @@ import VueDrag from 'vuedraggable'
           return []
         }else{
           // 完全一致した攻撃だけを返す
-          return this.specialAttack.filter(attack => {
-            return isIncludes(updateddata, attack.contain)
-          })
+            return this.combo_data.filter(combo_data => {
+              return isIncludes(updateddata, combo_data.id_list)
+            })
         }
       }
     }
-  }
+}
 </script>
 
 <style scoped>
