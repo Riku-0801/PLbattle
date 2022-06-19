@@ -11,11 +11,11 @@
         <v-card height="475px" width="400px" class="black">
           <v-img src="../assets/cards/Angular.png"></v-img>
         </v-card>
-        <div class="dalayEffect">倒れろ 逆撫</div>
+        <div class="dalayEffect">Mark Up</div>
       </div>
       <!-- 自分の攻撃エフェクト -->
       <div v-show="showAttack" class="overlay" @click="getCardValue">
-        <div class="effect">卍解千本桜景厳</div>
+        <div class="effect">{{ effect }}</div>
       </div>
       <!-- カードを出す場所 -->
       <v-row class="field-row"
@@ -100,6 +100,7 @@ export default {
   },
   data() {
     return {
+      effect: "action",
       cardValue: [
         {
           value: 0,
@@ -1154,23 +1155,29 @@ export default {
     },
     //カードを消します。本来は、ここでデータを送信します。
     useCards: function (index) {
+      //処理
       if (this.selecteddata.length == 1) {
         if (this.selecteddata[0].action == "enhancement") {
           // 回復の処理
+          this.effect = "enhancement";
           const action = this.selecteddata[0].name_en;
           this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
         } else if (this.selecteddata[0].action == "steal") {
           // 吸収の処理
+          this.effect = "steal";
           this.sampleHp.yours =
             this.sampleHp.yours - this.selecteddata[0].value;
           this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
         } else {
           // 攻撃の処理
+          this.effect = "attack";
           this.sampleHp.yours =
             this.sampleHp.yours - this.selecteddata[0].value;
         }
       } else {
         // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
+        console.log(this.ableattacks[0].action_value);
+        this.effect = this.ableattacks[0].name_en;
         this.sampleHp.yours =
           this.sampleHp.yours - this.ableattacks[0].action_value;
       }
@@ -1290,6 +1297,11 @@ export default {
         }
       }
     },
+    // コンボ名を取得する
+    getComboName: function () {
+      let updateddata = this.selecteddata.map((obj) => obj.id);
+      console.log(updateddata);
+    },
   },
 };
 </script>
@@ -1362,7 +1374,7 @@ export default {
   color: white;
   font-size: 128px;
   animation: SlideIn 0.4s;
-  background: radial-gradient(#3973a9, #102335);
+  background: radial-gradient(#134e61, #102335);
   font: "Oxanium";
 }
 .effect:before {
