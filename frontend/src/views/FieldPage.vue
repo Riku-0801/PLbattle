@@ -1,11 +1,9 @@
 <template>
   <v-app>
     <v-container>
-      <<<<<<< HEAD =======
       <div v-show="oponentTurn" class="overlay">
         <v-card class="caution">相手のターン</v-card>
       </div>
-      >>>>>>> 9c8035b6f4d2f0c1218a96344617375294802e66
       <v-btn @click="oponentAttack">相手の攻撃</v-btn>
       <!-- 相手の攻撃エフェクト -->
       <div v-show="showOponent" class="overlay" @click="closeOponent">
@@ -1106,6 +1104,15 @@ export default {
     console.log("初期データ移行完了");
 
     this.socket.emit("getTurnFlag", this.userId);
+    console.log(this.userId);
+  },
+  mounted() {
+    this.socket.on("turnFlag", function (turnFlag) {
+      let flag = true;
+      if (turnFlag == 1) {
+        flag = false;
+      }
+    });
   },
   // mounted() {
   //   //cardValueを受け取った時の処理
