@@ -15,7 +15,7 @@
       </div>
       <!-- 自分の攻撃エフェクト -->
       <div v-show="showAttack" class="overlay" @click="getCardValue">
-        <div class="effect">{{ effect }}</div>
+        <div class="dalayEffect">{{ effect }}</div>
       </div>
       <!-- カードを出す場所 -->
       <v-row class="field-row"
@@ -1326,8 +1326,8 @@ export default {
   width: 100%;
   height: 30%;
   color: white;
-  font-size: 128px;
-  background: radial-gradient(#3973a9, #102335);
+  font-size: 100px;
+  background: radial-gradient(#134e61, #102335);
   font: "Oxanium";
   opacity: 0;
   animation: SlideIn 0.4s;
@@ -1363,39 +1363,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.effect {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  color: white;
-  font-size: 128px;
-  animation: SlideIn 0.4s;
-  background: radial-gradient(#134e61, #102335);
-  font: "Oxanium";
-}
-.effect:before {
-  background: #000;
-  content: "";
-  position: absolute;
-  top: -30px;
-  left: -10%;
-  transform: rotate(0deg);
-  width: 200%;
-  height: 200px;
-}
-.effect:after {
-  background: #000;
-  content: "";
-  position: absolute;
-  bottom: 0px;
-  left: -10%;
-  transform: rotate(0deg);
-  width: 200%;
-  height: 200px;
 }
 
 .field {
