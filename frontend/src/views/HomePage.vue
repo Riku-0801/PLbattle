@@ -142,6 +142,7 @@ export default {
 }
 
 .input input {
+  color: #fff;
   border: 1px solid #fff;
 }
 
