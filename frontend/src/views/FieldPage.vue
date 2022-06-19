@@ -29,7 +29,7 @@
       </div>
       <!-- 自分の攻撃エフェクト -->
       <div v-show="showAttack" class="overlay" @click="getCardValue">
-        <div class="dalayEffect">{{ effect }}</div>
+        <div class="dalayEffect">{{ effect }}　{{ damageValue }} pt</div>
       </div>
       <!-- 相手のhpが0になった時の処理 -->
       <div
@@ -129,6 +129,7 @@ export default {
   data() {
     return {
       effect: "action",
+      damageValue: 0,
       cardValue: [
         {
           value: 0,
@@ -1208,6 +1209,7 @@ export default {
         if (this.selecteddata[0].action == "enhancement") {
           // 回復の処理
           this.effect = "enhancement";
+          this.damageValue = this.selecteddata[0].value;
           const action = this.selecteddata[0].name_en;
           this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
         } else if (this.selecteddata[0].action == "steal") {
@@ -1219,6 +1221,7 @@ export default {
         } else {
           // 攻撃の処理
           this.effect = "attack";
+          this.damageValue = this.selecteddata[0].value;
           this.sampleHp.yours =
             this.sampleHp.yours - this.selecteddata[0].value;
         }
