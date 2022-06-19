@@ -1,6 +1,11 @@
 <template>
   <v-app>
     <v-container>
+      <<<<<<< HEAD =======
+      <div v-show="oponentTurn" class="overlay">
+        <v-card class="caution">相手のターン</v-card>
+      </div>
+      >>>>>>> 9c8035b6f4d2f0c1218a96344617375294802e66
       <v-btn @click="oponentAttack">相手の攻撃</v-btn>
       <!-- 相手の攻撃エフェクト -->
       <div v-show="showOponent" class="overlay" @click="closeOponent">
@@ -11,7 +16,7 @@
         <div class="dalayEffect">倒れろ 逆撫</div>
       </div>
       <!-- 自分の攻撃エフェクト -->
-      <div v-show="showAttack" class="overlay" @click="closeModal">
+      <div v-show="showAttack" class="overlay" @click="getCardValue">
         <div class="effect">卍解千本桜景厳</div>
       </div>
       <!-- カードを出す場所 -->
@@ -1064,6 +1069,7 @@ export default {
       showAttack: false,
       showOponent: false,
       dalayItem: false,
+      oponentTurn: false,
       options: {
         group: "myGroup",
         animation: 200,
@@ -1101,25 +1107,39 @@ export default {
 
     this.socket.emit("getTurnFlag", this.userId);
   },
-  mounted() {
-    //cardValueを受け取った時の処理
-    this.socket.on("cardValue", function (cardValue) {
-      //ここに処理を書く
-      this.recieved_cardValue = [cardValue];
-      this.turn_flag = 1;
-      console.log(this.turn_flag);
-    });
-  },
+  // mounted() {
+  //   //cardValueを受け取った時の処理
+  //   this.socket.on("cardValue", function (cardValue) {
+  //     if (cardValue.userId == this.userId) {
+  //       //攻撃できなくしたい（相手のターンにする）
+  //       this.oponentTurn = true
+  //     } else {
+  //       //攻撃を受ける処理＋自分のターンにする（攻撃できるようにする）
+  //       if (cardValue.selecteddata.length == 1) {
+  //         if (cardValue.selecteddata[0].action == "enhancement") {
+  //           // 回復の処理
+  //           this.sampleHp.yours = this.sampleHp.yours + cardValue.selecteddata[0].value;
+  //         } else if (cardValue.selecteddata[0].action == "steal") {
+  //           // 吸収の処理
+  //           this.sampleHp.yours = this.sampleHp.yours + cardValue.selecteddata[0].value;
+  //           this.sampleHp.mine = this.sampleHp.mine - cardValue.selecteddata[0].value;
+  //         } else {
+  //           // 攻撃の処理
+  //           this.sampleHp.mine = this.sampleHp.mine - cardValue.selecteddata[0].value;
+  //         }
+  //       } else {
+  //         // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
+  //         this.sampleHp.mine =
+  //           this.sampleHp.mine - this.ableattacks[0].action_value;
+  //       }
+  //     }
+  //   });
+  // },
   methods: {
     getTurnFlag() {
       //turn_flagのデータをlocalstorageからもらいます
       this.turn_flag = localStorage.getItem("turn_flag");
       console.log(this.turn_flag);
-    },
-    //カードのデータの送信
-    sendValue(cardValue) {
-      this.turn_flag = 1;
-      this.socket.emit("value", cardValue);
     },
     //roomIdをサーバーサイドへ送信
     sendRoomId(roomId) {
@@ -1168,10 +1188,15 @@ export default {
           i++;
         }
       }
+      let cardValue = {
+        userId: this.userId,
+        selecteddata: this.selecteddata,
+      };
+      this.socket.emit("cardValue", cardValue);
     },
-    closeModal: function () {
-      this.showAttack = false;
-    },
+    // closeModal: function () {
+    //   this.showAttack = false;
+    // },
     // 相手の攻撃のエフェクト用
     oponentAttack: function () {
       this.showOponent = true;
@@ -1179,10 +1204,37 @@ export default {
     closeOponent: function () {
       this.showOponent = false;
     },
-    showAction: function () {
-      if (updateddata.length === 1) {
-        console.log(updateddata.id);
-      }
+    getCardValue: function () {
+      this.showAttack = false;
+      this.socket.on("cardValue", function (cardValue) {
+        if (cardValue.userId == this.userId) {
+          //攻撃できなくしたい（相手のターンにする）
+          this.oponentTurn = true;
+        } else {
+          //攻撃を受ける処理＋自分のターンにする（攻撃できるようにする）
+          if (cardValue.selecteddata.length == 1) {
+            if (cardValue.selecteddata[0].action == "enhancement") {
+              // 回復の処理
+              this.sampleHp.yours =
+                this.sampleHp.yours + cardValue.selecteddata[0].value;
+            } else if (cardValue.selecteddata[0].action == "steal") {
+              // 吸収の処理
+              this.sampleHp.yours =
+                this.sampleHp.yours + cardValue.selecteddata[0].value;
+              this.sampleHp.mine =
+                this.sampleHp.mine - cardValue.selecteddata[0].value;
+            } else {
+              // 攻撃の処理
+              this.sampleHp.mine =
+                this.sampleHp.mine - cardValue.selecteddata[0].value;
+            }
+          } else {
+            // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
+            this.sampleHp.mine =
+              this.sampleHp.mine - this.ableattacks[0].action_value;
+          }
+        }
+      });
     },
   },
   computed: {
