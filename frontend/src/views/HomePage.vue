@@ -50,7 +50,6 @@ export default {
   mounted() {
     this.socket.on("logined", function (userId) {
       console.log(userId);
-      localStorage.setItem("userId", userId);
       //this.push();
     });
   },
@@ -61,7 +60,6 @@ export default {
     },
     sendRoomId: function (RoomId) {
       this.socket.emit("login", RoomId);
-
       console.log(RoomId);
     },
     push() {
