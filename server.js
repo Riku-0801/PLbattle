@@ -79,7 +79,7 @@ io.sockets.on("connection", function (socket) {
     socket.emit("turnflag", turnFlag);
   });
   socket.on("cardValue", function (cardValue) {
-    socket.emit("cardvalue", cardValue);
+    io.emit("card-value", cardValue);
     console.log(cardValue.userId);
     console.log(cardValue.selecteddata);
   });

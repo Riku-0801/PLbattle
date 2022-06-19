@@ -4,7 +4,7 @@
       <div v-show="oponentTurn" class="overlay">
         <v-card class="caution">相手のターンです</v-card>
       </div>
-      <v-btn @click="getCardValue()">相手の攻撃</v-btn>
+      <v-btn @click="oponentAttack">相手の攻撃</v-btn>
       <!-- 相手の攻撃エフェクト -->
       <div v-show="showOponent" class="overlay" @click="closeOponent">
         <!-- 相手の攻撃情報をここに持ってくる -->
@@ -35,7 +35,7 @@
         <v-col cols="3">
           <div class="action-list">
             <div>></div>
-            <div v-for="able in ableattacks" :key="able.name_en">
+            <div v-for="able in ableattacks" :key="able.combo_id">
               <div>>　action：{{ able.name_en }}</div>
               <div>>　必要なカード：{{ able.name_list }}</div>
             </div>
@@ -1080,7 +1080,7 @@ export default {
       recent_mydata_len: [],
       recent_selectdata_id: [],
       tmp: 0,
-      userId: "",
+      userId: Math.random().toString(32).substring(2),
       sampleHp: {
         mine: 300,
         yours: 300,
@@ -1101,39 +1101,50 @@ export default {
         i++;
       }
     }
-    this.userId = Math.random().toString(32).substring(2);
     //console.log(this.mydata);
     //console.log("初期データ移行完了");
     //this.socket.emit("getTurnFlag", this.userId);
   },
-  // mounted() {
-  //   //cardValueを受け取った時の処理
-  //   this.socket.on("cardValue", function (cardValue) {
-  //     if (cardValue.userId == this.userId) {
-  //       //攻撃できなくしたい（相手のターンにする）
-  //       this.oponentTurn = true
-  //     } else {
-  //       //攻撃を受ける処理＋自分のターンにする（攻撃できるようにする）
-  //       if (cardValue.selecteddata.length == 1) {
-  //         if (cardValue.selecteddata[0].action == "enhancement") {
-  //           // 回復の処理
-  //           this.sampleHp.yours = this.sampleHp.yours + cardValue.selecteddata[0].value;
-  //         } else if (cardValue.selecteddata[0].action == "steal") {
-  //           // 吸収の処理
-  //           this.sampleHp.yours = this.sampleHp.yours + cardValue.selecteddata[0].value;
-  //           this.sampleHp.mine = this.sampleHp.mine - cardValue.selecteddata[0].value;
-  //         } else {
-  //           // 攻撃の処理
-  //           this.sampleHp.mine = this.sampleHp.mine - cardValue.selecteddata[0].value;
-  //         }
-  //       } else {
-  //         // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
-  //         this.sampleHp.mine =
-  //           this.sampleHp.mine - this.ableattacks[0].action_value;
-  //       }
-  //     }
-  //   });
-  // },
+  mounted() {
+    //cardValueを受け取った時の処理
+    console.log("fire");
+    let tmp = this;
+    this.socket.on("card-value", function (cardValue) {
+      console.log(this);
+      console.log(tmp);
+      console.log(tmp.userId);
+      console.log(cardValue.userId);
+      console.log(cardValue.selecteddata);
+      if (cardValue.userId == tmp.userId) {
+        //攻撃できなくしたい（相手のターンにする）
+        tmp.oponentTurn = true;
+      } else {
+        tmp.oponentTurn = false;
+        //攻撃を受ける処理＋自分のターンにする（攻撃できるようにする）
+        if (cardValue.selecteddata.length == 1) {
+          if (cardValue.selecteddata[0].action == "enhancement") {
+            // 回復の処理
+            tmp.sampleHp.yours =
+              tmp.sampleHp.yours + cardValue.selecteddata[0].value;
+          } else if (cardValue.selecteddata[0].action == "steal") {
+            // 吸収の処理
+            tmp.sampleHp.yours =
+              tmp.sampleHp.yours + cardValue.selecteddata[0].value;
+            tmp.sampleHp.mine =
+              tmp.sampleHp.mine - cardValue.selecteddata[0].value;
+          } else {
+            // 攻撃の処理
+            tmp.sampleHp.mine =
+              tmp.sampleHp.mine - cardValue.selecteddata[0].value;
+          }
+        } else {
+          // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
+          tmp.sampleHp.mine =
+            tmp.sampleHp.mine - tmp.ableattacks[0].action_value;
+        }
+      }
+    });
+  },
   methods: {
     chengeTurn() {
       console.log(this.oponentTurn);
@@ -1152,6 +1163,11 @@ export default {
     //カードを消します。本来は、ここでデータを送信します。
     useCards: function (index) {
       //処理
+      let cardValue = {
+        userId: this.userId,
+        selecteddata: this.selecteddata,
+      };
+      this.socket.emit("cardValue", cardValue);
       if (this.selecteddata.length == 1) {
         if (this.selecteddata[0].action == "enhancement") {
           // 回復の処理
@@ -1198,13 +1214,6 @@ export default {
           i++;
         }
       }
-      let cardValue = {
-        userId: this.userId,
-        selecteddata: this.selecteddata,
-      };
-      this.socket.emit("cardValue", cardValue);
-      console.log("cardValue" + cardValue);
-      console.log(this.userId);
       this.oponentTurn = true;
     },
     // closeModal: function () {
@@ -1218,39 +1227,7 @@ export default {
       this.showOponent = false;
     },
     getCardValue: function () {
-      console.log("fire");
       this.showAttack = false;
-      this.socket.on("cardvalue", function (cardValue) {
-        console.log("aa" + cardValue);
-
-        if (cardValue.userId == this.userId) {
-          //攻撃できなくしたい（相手のターンにする）
-          this.oponentTurn = true;
-        } else {
-          //攻撃を受ける処理＋自分のターンにする（攻撃できるようにする）
-          if (cardValue.selecteddata.length == 1) {
-            if (cardValue.selecteddata[0].action == "enhancement") {
-              // 回復の処理
-              this.sampleHp.yours =
-                this.sampleHp.yours + cardValue.selecteddata[0].value;
-            } else if (cardValue.selecteddata[0].action == "steal") {
-              // 吸収の処理
-              this.sampleHp.yours =
-                this.sampleHp.yours + cardValue.selecteddata[0].value;
-              this.sampleHp.mine =
-                this.sampleHp.mine - cardValue.selecteddata[0].value;
-            } else {
-              // 攻撃の処理
-              this.sampleHp.mine =
-                this.sampleHp.mine - cardValue.selecteddata[0].value;
-            }
-          } else {
-            // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
-            this.sampleHp.mine =
-              this.sampleHp.mine - this.ableattacks[0].action_value;
-          }
-        }
-      });
     },
   },
 
