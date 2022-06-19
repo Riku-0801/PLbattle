@@ -14,16 +14,9 @@
         <div class="dalayEffect">Mark Up</div>
       </div>
       <!-- 自分のhpが0になった時の処理 -->
-      <div
-        v-show="judgeLose"
-        class="overwrap items"
-      >
+      <div v-show="judgeLose" class="overwrap items">
         <p class="judge">Lose...</p>
-        <v-btn
-          outlined
-          class="btn big"
-          @click="goHome()"
-        >
+        <v-btn outlined class="btn big" @click="goHome()">
           <span>home</span>
         </v-btn>
       </div>
@@ -32,16 +25,9 @@
         <div class="dalayEffect">{{ effect }}　{{ damageValue }} pt</div>
       </div>
       <!-- 相手のhpが0になった時の処理 -->
-      <div
-        v-show="judgeWin"
-        class="overwrap items"
-      >
+      <div v-show="judgeWin" class="overwrap items">
         <p class="judge">Win!</p>
-        <v-btn
-          outlined
-          class="btn big"
-          @click="goHome()"
-        >
+        <v-btn outlined class="btn big" @click="goHome()">
           <span>home</span>
         </v-btn>
       </div>
@@ -1138,7 +1124,6 @@ export default {
 
     this.socket.emit("getTurnFlag", this.userId);
     console.log(this.userId);
-
   },
   mounted() {
     //cardValueを受け取った時の処理
@@ -1197,7 +1182,6 @@ export default {
     },
     //カード発動時の処理
     useCards: function (index) {
-
       //処理
       let cardValue = {
         userId: this.userId,
@@ -1263,8 +1247,8 @@ export default {
     closeOponent: function () {
       this.showOponent = false;
       // 自分のhpが０だった時の負け表示
-      if(this.sampleHp.mine <= 0){
-        this.judgeLose = true
+      if (this.sampleHp.mine <= 0) {
+        this.judgeLose = true;
       }
     },
     // 自分の攻撃エフェクトを閉じる時に発火する処理
@@ -1276,8 +1260,8 @@ export default {
     },
     // homeボタン
     goHome: function () {
-      this.$router.push('/')
-    }
+      this.$router.push("/");
+    },
   },
 
   computed: {
@@ -1341,7 +1325,7 @@ export default {
   flex-direction: column;
 }
 
-.judge{
+.judge {
   font-size: 64px;
   animation: neon_blink 2s infinite alternate;
 }
