@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <v-row class="home-container">
       <v-col cols="8">
         <div>>　Program Card Battle</div>
@@ -27,13 +26,11 @@
         </div>
       </v-col>
       <v-col cols="4" class="start">
-        <v-btn outlined class="btn big"
-          @click="push()">
-            <span>start</span></v-btn
+        <v-btn outlined class="btn big" @click="push()">
+          <span>start</span></v-btn
         >
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
@@ -51,12 +48,9 @@ export default {
     };
   },
   mounted() {
-
     this.socket.on("logined", function (userId) {
       console.log(userId);
-      localStorage.setItem("userId", userId);
       //this.push();
-
     });
   },
   methods: {
@@ -66,12 +60,10 @@ export default {
     },
     sendRoomId: function (RoomId) {
       this.socket.emit("login", RoomId);
-
       console.log(RoomId);
     },
     push() {
       this.$router.push({ name: "field", query: { room: "hogehoge" } });
-
     },
     set() {
       localStorage.setItem(

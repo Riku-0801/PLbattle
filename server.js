@@ -75,11 +75,13 @@ io.sockets.on("connection", function (socket) {
     //ルーム入室
   });
   socket.on("getTurnFlag", function (userId) {
-    socket.to("hogehoge").emit("turnflag", turn_flag["hogehoge"][userId]);
+    var turnFlag = turn_flag["hogehoge"][userId];
+    socket.emit("turnflag", turnFlag);
   });
-  socket.on("cardvalue", function (cardValue) {
-    console.log("aaaaaaaaaaaaaaaaaaaa");
-    io.to("hogehoge").emit("cardValue", cardValue);
+  socket.on("cardValue", function (cardValue) {
+    socket.emit("cardvalue", cardValue);
+    console.log(cardValue.userId);
+    console.log(cardValue.selecteddata);
   });
 });
 
