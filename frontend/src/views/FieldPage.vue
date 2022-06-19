@@ -107,7 +107,7 @@
           class="area"
         >
           <div v-for="mine in mydata" :key="`second-${mine.id}`" class="item">
-            <v-card hover>
+            <v-card hover class="black">
               <v-img :src="mine.img"> </v-img>
             </v-card>
           </div>
