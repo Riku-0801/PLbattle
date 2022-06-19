@@ -13,11 +13,39 @@
         </v-card>
         <div class="dalayEffect">Mark Up</div>
       </div>
+      <!-- 自分のhpが0になった時の処理 -->
+      <div
+        v-show="judgeLose"
+        class="overwrap items"
+      >
+        <p class="judge">Lose...</p>
+        <v-btn
+          outlined
+          class="btn big"
+          @click="goHome()"
+        >
+          <span>home</span>
+        </v-btn>
+      </div>
       <!-- 自分の攻撃エフェクト -->
       <div v-show="showAttack" class="overlay" @click="getCardValue">
         <div class="dalayEffect">{{ effect }}</div>
       </div>
-      <!-- カードを出す場所 -->
+      <!-- 相手のhpが0になった時の処理 -->
+      <div
+        v-show="judgeWin"
+        class="overwrap items"
+      >
+        <p class="judge">Win!</p>
+        <v-btn
+          outlined
+          class="btn big"
+          @click="goHome()"
+        >
+          <span>home</span>
+        </v-btn>
+      </div>
+      <!-- -------通常画面------- -->
       <v-row class="field-row"
         ><div>
           <h4 class="text">HP</h4>
@@ -79,7 +107,7 @@
           class="area"
         >
           <div v-for="mine in mydata" :key="`second-${mine.id}`" class="item">
-            <v-card hover>
+            <v-card hover class="black">
               <v-img :src="mine.img"> </v-img>
             </v-card>
           </div>
@@ -1065,10 +1093,14 @@ export default {
           set_id: 3,
         },
       ],
+      // 普段表示していない要素
       showAttack: false,
       showOponent: false,
       dalayItem: false,
       oponentTurn: false,
+      judgeLose: false,
+      judgeWin: false,
+      // draganddrop用のデータ
       options: {
         group: "myGroup",
         animation: 200,
@@ -1082,17 +1114,18 @@ export default {
       tmp: 0,
       userId: Math.random().toString(32).substring(2),
       sampleHp: {
-        mine: 300,
-        yours: 300,
+        mine: 0,
+        yours: 10,
       },
     };
   },
   created() {
+    // axios使用時の名残？
     for (let i = 0; i < this.combo_data_db.length; i++) {
       this.combo_data.push(this.combo_data_db[i]);
     }
     console.log(this.combo_data);
-    //初期ドローを行います。6枚もらいます。いえい
+    //初期ドローを行う。
     for (let i = this.mydata.length; i < 6; ) {
       this.tmp = Number(Math.floor(Math.random() * 56));
       if (!this.mydata_len.includes(this.tmp)) {
@@ -1101,9 +1134,10 @@ export default {
         i++;
       }
     }
-    //console.log(this.mydata);
-    //console.log("初期データ移行完了");
-    //this.socket.emit("getTurnFlag", this.userId);
+
+    this.socket.emit("getTurnFlag", this.userId);
+    console.log(this.userId);
+
   },
   mounted() {
     //cardValueを受け取った時の処理
@@ -1160,14 +1194,16 @@ export default {
     sendRoomId(roomId) {
       this.socket.emit("login", roomId);
     },
-    //カードを消します。本来は、ここでデータを送信します。
+    //カード発動時の処理
     useCards: function (index) {
+
       //処理
       let cardValue = {
         userId: this.userId,
         selecteddata: this.selecteddata,
       };
       this.socket.emit("cardValue", cardValue);
+
       if (this.selecteddata.length == 1) {
         if (this.selecteddata[0].action == "enhancement") {
           // 回復の処理
@@ -1187,21 +1223,22 @@ export default {
             this.sampleHp.yours - this.selecteddata[0].value;
         }
       } else {
-        // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
-        console.log(this.ableattacks[0].action_value);
+        // 攻撃可能な配列を取得してaction_valueを相手のhpから引く
         this.effect = this.ableattacks[0].name_en;
         this.sampleHp.yours =
           this.sampleHp.yours - this.ableattacks[0].action_value;
       }
+      // attackのカットインを表示
       this.showAttack = true;
+      // 出されたカードを削除
       this.selecteddata.splice(index, this.selecteddata.length);
-      // ドロー
+      // ドローする処理
+      // 今ある手札の取得
       this.recent_mydata_len = [];
-      //現在の手札のidリストを初期化しています
       for (let i = 0; i < this.mydata.length; i++) {
         this.recent_mydata_len.push(this.mydata[i].id - 1);
-        //現在の手札idをいれました。
       }
+      // ６枚以下ならカードを取得するのをループ
       for (let i = this.mydata.length - 1; i < 5; ) {
         this.tmp = Number(Math.floor(Math.random() * 56));
         if (!this.recent_mydata_len.includes(this.tmp)) {
@@ -1216,19 +1253,28 @@ export default {
       }
       this.oponentTurn = true;
     },
-    // closeModal: function () {
-    //   this.showAttack = false;
-    // },
-    // 相手の攻撃のエフェクト用
+    // 相手の攻撃のカットインを表示
     oponentAttack: function () {
       this.showOponent = true;
     },
+    // カットインを閉じる
     closeOponent: function () {
       this.showOponent = false;
+      // 自分のhpが０だった時の負け表示
+      if(this.sampleHp.mine <= 0){
+        this.judgeLose = true
+      }
     },
+    // 自分の攻撃エフェクトを閉じる時に発火する処理
     getCardValue: function () {
       this.showAttack = false;
+
+
     },
+    // homeボタン
+    goHome: function () {
+      this.$router.push('/')
+    }
   },
 
   computed: {
@@ -1287,6 +1333,46 @@ export default {
 </script>
 
 <style scoped>
+.items {
+  display: flex;
+  flex-direction: column;
+}
+
+.judge{
+  font-size: 64px;
+  animation: neon_blink 2s infinite alternate;
+}
+
+@keyframes neon_blink {
+  0% {
+    text-shadow: 0 0 10px #00fff2, 0 0 5px #fff, 0 0 13px #d3fffd;
+  }
+  100% {
+    text-shadow: 0 0 30px #00fff2, 0 0 15px #fff, 0 0 40px #d3fffd;
+  }
+}
+
+.btn {
+  color: #ffffff;
+  text-align: center;
+  text-decoration: none;
+  text-decoration-color: transparent;
+  margin: 1rem;
+  justify-content: center;
+  box-shadow: 0 0 0.75rem #d3fffd;
+}
+.btn.play {
+  margin: 0 1rem;
+}
+.btn.big {
+  width: 250px;
+  height: 75px;
+  margin: 1rem;
+  justify-content: center;
+  font-size: 28px;
+  text-decoration: none;
+}
+
 .oponent {
   height: 200px;
   display: flex;
@@ -1338,6 +1424,23 @@ export default {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+
+  /*　画面の中央に要素を表示させる設定　*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.overwrap {
+  /*　要素を重ねた時の順番　*/
+  z-index: 1;
+
+  /*　画面全体を覆う設定　*/
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
 
   /*　画面の中央に要素を表示させる設定　*/
   display: flex;
