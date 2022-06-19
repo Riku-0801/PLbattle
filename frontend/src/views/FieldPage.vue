@@ -11,11 +11,11 @@
         <v-card height="475px" width="400px" class="black">
           <v-img src="../assets/cards/Angular.png"></v-img>
         </v-card>
-        <div class="dalayEffect">倒れろ 逆撫</div>
+        <div class="dalayEffect">Mark Up</div>
       </div>
       <!-- 自分の攻撃エフェクト -->
       <div v-show="showAttack" class="overlay" @click="getCardValue">
-        <div class="effect">卍解千本桜景厳</div>
+        <div class="dalayEffect">{{ effect }}</div>
       </div>
       <!-- カードを出す場所 -->
       <v-row class="field-row"
@@ -100,6 +100,7 @@ export default {
   },
   data() {
     return {
+      effect: "action",
       cardValue: [
         {
           value: 0,
@@ -1104,6 +1105,15 @@ export default {
     console.log("初期データ移行完了");
 
     this.socket.emit("getTurnFlag", this.userId);
+    console.log(this.userId);
+  },
+  mounted() {
+    this.socket.on("turnFlag", function (turnFlag) {
+      let flag = true;
+      if (turnFlag == 1) {
+        flag = false;
+      }
+    });
   },
   // mounted() {
   //   //cardValueを受け取った時の処理
@@ -1145,22 +1155,29 @@ export default {
     },
     //カードを消します。本来は、ここでデータを送信します。
     useCards: function (index) {
+      //処理
       if (this.selecteddata.length == 1) {
         if (this.selecteddata[0].action == "enhancement") {
           // 回復の処理
+          this.effect = "enhancement";
+          const action = this.selecteddata[0].name_en;
           this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
         } else if (this.selecteddata[0].action == "steal") {
           // 吸収の処理
+          this.effect = "steal";
           this.sampleHp.yours =
             this.sampleHp.yours - this.selecteddata[0].value;
           this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
         } else {
           // 攻撃の処理
+          this.effect = "attack";
           this.sampleHp.yours =
             this.sampleHp.yours - this.selecteddata[0].value;
         }
       } else {
         // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
+        console.log(this.ableattacks[0].action_value);
+        this.effect = this.ableattacks[0].name_en;
         this.sampleHp.yours =
           this.sampleHp.yours - this.ableattacks[0].action_value;
       }
@@ -1204,31 +1221,35 @@ export default {
     getCardValue: function () {
       this.showAttack = false;
       this.socket.on("cardValue", function (cardValue) {
-      if (cardValue.userId == this.userId) {
-        //攻撃できなくしたい（相手のターンにする）
-        this.oponentTurn = true
-      } else {
-        //攻撃を受ける処理＋自分のターンにする（攻撃できるようにする）
-        if (cardValue.selecteddata.length == 1) {
-          if (cardValue.selecteddata[0].action == "enhancement") {
-            // 回復の処理
-            this.sampleHp.yours = this.sampleHp.yours + cardValue.selecteddata[0].value;
-          } else if (cardValue.selecteddata[0].action == "steal") {
-            // 吸収の処理
-            this.sampleHp.yours = this.sampleHp.yours + cardValue.selecteddata[0].value;
-            this.sampleHp.mine = this.sampleHp.mine - cardValue.selecteddata[0].value;
-          } else {
-            // 攻撃の処理
-            this.sampleHp.mine = this.sampleHp.mine - cardValue.selecteddata[0].value;
-          }
+        if (cardValue.userId == this.userId) {
+          //攻撃できなくしたい（相手のターンにする）
+          this.oponentTurn = true;
         } else {
-          // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
-          this.sampleHp.mine =
-            this.sampleHp.mine - this.ableattacks[0].action_value;
+          //攻撃を受ける処理＋自分のターンにする（攻撃できるようにする）
+          if (cardValue.selecteddata.length == 1) {
+            if (cardValue.selecteddata[0].action == "enhancement") {
+              // 回復の処理
+              this.sampleHp.yours =
+                this.sampleHp.yours + cardValue.selecteddata[0].value;
+            } else if (cardValue.selecteddata[0].action == "steal") {
+              // 吸収の処理
+              this.sampleHp.yours =
+                this.sampleHp.yours + cardValue.selecteddata[0].value;
+              this.sampleHp.mine =
+                this.sampleHp.mine - cardValue.selecteddata[0].value;
+            } else {
+              // 攻撃の処理
+              this.sampleHp.mine =
+                this.sampleHp.mine - cardValue.selecteddata[0].value;
+            }
+          } else {
+            // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
+            this.sampleHp.mine =
+              this.sampleHp.mine - this.ableattacks[0].action_value;
+          }
         }
-      }
-    });
-    }
+      });
+    },
   },
   computed: {
     ableattacks: function () {
@@ -1276,6 +1297,11 @@ export default {
         }
       }
     },
+    // コンボ名を取得する
+    getComboName: function () {
+      let updateddata = this.selecteddata.map((obj) => obj.id);
+      console.log(updateddata);
+    },
   },
 };
 </script>
@@ -1300,8 +1326,8 @@ export default {
   width: 100%;
   height: 30%;
   color: white;
-  font-size: 128px;
-  background: radial-gradient(#3973a9, #102335);
+  font-size: 100px;
+  background: radial-gradient(#134e61, #102335);
   font: "Oxanium";
   opacity: 0;
   animation: SlideIn 0.4s;
@@ -1337,39 +1363,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.effect {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  color: white;
-  font-size: 128px;
-  animation: SlideIn 0.4s;
-  background: radial-gradient(#3973a9, #102335);
-  font: "Oxanium";
-}
-.effect:before {
-  background: #000;
-  content: "";
-  position: absolute;
-  top: -30px;
-  left: -10%;
-  transform: rotate(0deg);
-  width: 200%;
-  height: 200px;
-}
-.effect:after {
-  background: #000;
-  content: "";
-  position: absolute;
-  bottom: 0px;
-  left: -10%;
-  transform: rotate(0deg);
-  width: 200%;
-  height: 200px;
 }
 
 .field {
