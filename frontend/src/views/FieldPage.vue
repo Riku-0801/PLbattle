@@ -1114,8 +1114,8 @@ export default {
       tmp: 0,
       userId: localStorage.getItem("userId"),
       sampleHp: {
-        mine: 0,
-        yours: 10,
+        mine: 300,
+        yours: 300,
       },
     };
   },
@@ -1186,6 +1186,8 @@ export default {
     //カード発動時の処理
     useCards: function (index) {
       // カードが一枚出しの時の条件分岐
+      let music = new Audio("../assets/light_saber1.mp3")
+      music.play();
       if (this.selecteddata.length == 1) {
         if (this.selecteddata[0].action == "enhancement") {
           // 回復の処理
