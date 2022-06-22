@@ -2,9 +2,9 @@
   <v-app>
     <v-container>
       <div v-show="oponentTurn" class="overlay">
-        <v-card class="caution">相手のターンです</v-card>
+        <p class="judge">相手のターンです</p>
       </div>
-      <v-btn @click="oponentAttack">相手の攻撃</v-btn>
+      <!-- <v-btn @click="oponentAttack">相手の攻撃</v-btn> -->
       <!-- 相手の攻撃エフェクト -->
       <div v-show="showOponent" class="overlay" @click="closeOponent">
         <!-- 相手の攻撃情報をここに持ってくる -->
@@ -1385,7 +1385,7 @@ export default {
   opacity: 0;
   animation: SlideIn 0.4s;
   /* 0.8秒遅らせる */
-  animation-delay: 0.8s;
+  /* animation-delay: 0.8s; */
   /* opacityが戻らないようにする */
   animation-fill-mode: forwards;
 }
