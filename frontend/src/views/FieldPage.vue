@@ -1189,9 +1189,11 @@ export default {
     //カード発動時の処理
     useCards: function (index) {
       //処理
+      const searchParams = new URLSearchParams(window.location.search)
       let cardValue = {
         userId: this.userId,
         selecteddata: this.selecteddata,
+        roomId: searchParams.get('room')
       };
       this.socket.emit("cardValue", cardValue);
 

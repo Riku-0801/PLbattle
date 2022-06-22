@@ -43,11 +43,6 @@ let turn_flag = {
 io.sockets.on("connection", function (socket) {
   console.log("connected");
   //接続切断処理
-  socket.on("disconnect", function () {
-    console.log("disconnect");
-    socket.leave("hogehoge");
-    numClients["hogehoge"]--;
-  });
   //ログイン時処理
   socket.on("login", function (RoomId) {
     console.log("ログインが出来ています");
@@ -62,27 +57,41 @@ io.sockets.on("connection", function (socket) {
     } else {
       socket.join(RoomId);
       console.log("Roomに入室が完了しました");
+      console.log(RoomId)
+      console.log('rooms:',socket.rooms);
       console.log(numClients[RoomId]);
-      let userId = Math.random().toString(32).substring(2);
-      console.log(userId);
-      turn_flag[RoomId][userId] = 0;
-      if (numClients[RoomId] == 2) {
-        turn_flag[RoomId][userId] = 1;
-      }
-      console.log(turn_flag[RoomId][userId]);
-      socket.emit("logined", userId);
+      
+      //let userId = Math.random().toString(32).substring(2);
+      //console.log(userId);
+      //turn_flag[RoomId][userId] = 0;
+      // if (numClients[RoomId] == 2) {
+      //   turn_flag[RoomId][userId] = 1;
+      // }
+      //console.log(turn_flag[RoomId][userId]);
+      //socket.emit("logined", userId);
     }
     //ルーム入室
   });
-  socket.on("getTurnFlag", function (userId) {
-    var turnFlag = turn_flag["hogehoge"][userId];
-    socket.emit("turnflag", turnFlag);
-  });
+  // socket.on("disconnect", function () {
+  //   console.log("disconnect");
+  //   socket.leave(RoomId);
+  //   numClients[RoomId]--;
+  // });
   socket.on("cardValue", function (cardValue) {
-    io.emit("card-value", cardValue);
+    // var queryStr = window.location.search.slice(1);
+    // console.log(queryStr)
+    console.log('rooms:', socket.rooms);
+    io.to(cardValue.roomId).emit("card-value", cardValue);
     console.log(cardValue.userId);
+    console.log(cardValue.roomId);
     console.log(cardValue.selecteddata);
   });
+  socket.on("getTurnFlag", function (userId) {
+    //var turnFlag = turn_flag[RoomId][userId];
+    //console.log(RoomId)
+    //socket.emit("turnflag", turnFlag);
+  });
+  
 });
 
 http.listen(PORT, function () {
