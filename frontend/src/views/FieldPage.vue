@@ -245,6 +245,7 @@ export default {
           name_ja: "バード",
           action_value: 70,
           id_list: [30, 31],
+          name_list: ["Swift", "Kotlin"],
         },
         {
           combo_id: 16,
@@ -252,6 +253,7 @@ export default {
           name_ja: "グーグル",
           action_value: 80,
           id_list: [32, 37],
+          name_list: ["dart", "Go"],
         },
         {
           combo_id: 17,
@@ -259,6 +261,7 @@ export default {
           name_ja: "アップル",
           action_value: 70,
           id_list: [29, 30],
+          name_list: ["Objective-C", "Swift"],
         },
         {
           combo_id: 18,
@@ -266,6 +269,7 @@ export default {
           name_ja: "パイソンズ1",
           action_value: 40,
           id_list: [4, 5],
+          name_list: ["Django", "FastAPI"],
         },
         {
           combo_id: 19,
@@ -273,6 +277,7 @@ export default {
           name_ja: "パイソンズ2",
           action_value: 50,
           id_list: [4, 16],
+          name_list: ["Django", "Flask"],
         },
         {
           combo_id: 20,
@@ -280,6 +285,7 @@ export default {
           name_ja: "パイソンズ3",
           action_value: 50,
           id_list: [5, 16],
+          name_list: ["FastAPI", "Flask"],
         },
         {
           combo_id: 21,
@@ -1183,9 +1189,11 @@ export default {
     //カード発動時の処理
     useCards: function (index) {
       //処理
+      const searchParams = new URLSearchParams(window.location.search);
       let cardValue = {
         userId: this.userId,
         selecteddata: this.selecteddata,
+        roomId: searchParams.get("room"),
       };
       this.socket.emit("cardValue", cardValue);
       if (this.selecteddata.length == 1) {
@@ -1254,8 +1262,8 @@ export default {
     // 自分の攻撃エフェクトを閉じる時に発火する処理
     getCardValue: function () {
       this.showAttack = false;
-      if(this.sampleHp.yours <= 0){
-        this.judgeWin = true
+      if (this.sampleHp.yours <= 0) {
+        this.judgeWin = true;
       }
     },
     // homeボタン
