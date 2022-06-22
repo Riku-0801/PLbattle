@@ -59,7 +59,6 @@ io.sockets.on("connection", function (socket) {
       console.log("Roomに入室が完了しました");
       console.log(RoomId);
       console.log(numClients[RoomId]);
-
       //let userId = Math.random().toString(32).substring(2);
       //console.log(userId);
       //turn_flag[RoomId][userId] = 0;
@@ -86,6 +85,7 @@ io.sockets.on("connection", function (socket) {
     console.log(cardValue.roomId);
     console.log(cardValue.selecteddata);
   });
+  
 });
 
 http.listen(PORT, function () {
