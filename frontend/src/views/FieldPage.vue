@@ -1127,8 +1127,9 @@ export default {
         i++;
       }
     }
-
-    this.socket.emit("getTurnFlag", this.userId);
+    const searchParams = new URLSearchParams(window.location.search);
+    let RoomID = searchParams.get("room");
+    this.socket.emit("room-join", RoomID);
     console.log(this.userId);
   },
   mounted() {
@@ -1189,11 +1190,11 @@ export default {
     //カード発動時の処理
     useCards: function (index) {
       //処理
-      const searchParams = new URLSearchParams(window.location.search)
+      const searchParams = new URLSearchParams(window.location.search);
       let cardValue = {
         userId: this.userId,
         selecteddata: this.selecteddata,
-        roomId: searchParams.get('room')
+        roomId: searchParams.get("room"),
       };
       this.socket.emit("cardValue", cardValue);
       if (this.selecteddata.length == 1) {
@@ -1262,9 +1263,8 @@ export default {
     // 自分の攻撃エフェクトを閉じる時に発火する処理
     getCardValue: function () {
       this.showAttack = false;
-
-      if(this.sampleHp.yours <= 0){
-        this.judgeWin = true
+      if (this.sampleHp.yours <= 0) {
+        this.judgeWin = true;
       }
 
     },
