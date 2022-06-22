@@ -781,7 +781,7 @@ export default {
           type: "attachment",
           img: require("../assets/cards/External-HDD.png"),
           action: "enhancement",
-          value: 20,
+          value: 40,
           field: "",
           set_id: 0,
         },
