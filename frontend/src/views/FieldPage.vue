@@ -14,16 +14,9 @@
         <div class="dalayEffect">Mark Up</div>
       </div>
       <!-- 自分のhpが0になった時の処理 -->
-      <div
-        v-show="judgeLose"
-        class="overwrap items"
-      >
+      <div v-show="judgeLose" class="overwrap items">
         <p class="judge">Lose...</p>
-        <v-btn
-          outlined
-          class="btn big"
-          @click="goHome()"
-        >
+        <v-btn outlined class="btn big" @click="goHome()">
           <span>home</span>
         </v-btn>
       </div>
@@ -32,16 +25,9 @@
         <div class="dalayEffect">{{ effect }}　{{ damageValue }} pt</div>
       </div>
       <!-- 相手のhpが0になった時の処理 -->
-      <div
-        v-show="judgeWin"
-        class="overwrap items"
-      >
+      <div v-show="judgeWin" class="overwrap items">
         <p class="judge">Win!</p>
-        <v-btn
-          outlined
-          class="btn big"
-          @click="goHome()"
-        >
+        <v-btn outlined class="btn big" @click="goHome()">
           <span>home</span>
         </v-btn>
       </div>
@@ -259,6 +245,7 @@ export default {
           name_ja: "バード",
           action_value: 70,
           id_list: [30, 31],
+          name_list: ["Swift","Kotlin"]
         },
         {
           combo_id: 16,
@@ -266,6 +253,7 @@ export default {
           name_ja: "グーグル",
           action_value: 80,
           id_list: [32, 37],
+          name_list: ["dart","Go"]
         },
         {
           combo_id: 17,
@@ -273,6 +261,7 @@ export default {
           name_ja: "アップル",
           action_value: 70,
           id_list: [29, 30],
+          name_list: ["Objective-C","Swift"]
         },
         {
           combo_id: 18,
@@ -280,6 +269,7 @@ export default {
           name_ja: "パイソンズ1",
           action_value: 40,
           id_list: [4, 5],
+          name_list: ["Django","FastAPI"]
         },
         {
           combo_id: 19,
@@ -287,6 +277,7 @@ export default {
           name_ja: "パイソンズ2",
           action_value: 50,
           id_list: [4, 16],
+          name_list: ["Django","Flask"]
         },
         {
           combo_id: 20,
@@ -294,6 +285,7 @@ export default {
           name_ja: "パイソンズ3",
           action_value: 50,
           id_list: [5, 16],
+          name_list: ["FastAPI","Flask"]
         },
         {
           combo_id: 21,
@@ -1115,8 +1107,8 @@ export default {
       tmp: 0,
       userId: Math.random().toString(32).substring(2),
       sampleHp: {
-        mine: 0,
-        yours: 10,
+        mine: 300,
+        yours: 300,
       },
     };
   },
@@ -1138,7 +1130,6 @@ export default {
 
     this.socket.emit("getTurnFlag", this.userId);
     console.log(this.userId);
-
   },
   mounted() {
     //cardValueを受け取った時の処理
@@ -1197,7 +1188,6 @@ export default {
     },
     //カード発動時の処理
     useCards: function (index) {
-
       //処理
       let cardValue = {
         userId: this.userId,
@@ -1264,20 +1254,18 @@ export default {
     closeOponent: function () {
       this.showOponent = false;
       // 自分のhpが０だった時の負け表示
-      if(this.sampleHp.mine <= 0){
-        this.judgeLose = true
+      if (this.sampleHp.mine <= 0) {
+        this.judgeLose = true;
       }
     },
     // 自分の攻撃エフェクトを閉じる時に発火する処理
     getCardValue: function () {
       this.showAttack = false;
-
-
     },
     // homeボタン
     goHome: function () {
-      this.$router.push('/')
-    }
+      this.$router.push("/");
+    },
   },
 
   computed: {
@@ -1341,7 +1329,7 @@ export default {
   flex-direction: column;
 }
 
-.judge{
+.judge {
   font-size: 64px;
   animation: neon_blink 2s infinite alternate;
 }
