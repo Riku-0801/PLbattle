@@ -366,7 +366,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 30,
-          id_list: [10, 4],
+          id_list: [4, 10],
           name_list: ["Python", "Django"],
         },
         {
@@ -374,7 +374,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 30,
-          id_list: [10, 5],
+          id_list: [5, 10],
           name_list: ["Python", "FastAPI"],
         },
         {
@@ -390,7 +390,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 90,
-          id_list: [27, 23],
+          id_list: [23, 27],
           name_list: ["PHP", "Laravel"],
         },
         {
@@ -398,7 +398,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 90,
-          id_list: [27, 8],
+          id_list: [8, 27],
           name_list: ["PHP", "CakePHP"],
         },
         {
@@ -406,7 +406,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 105,
-          id_list: [39, 17],
+          id_list: [17, 39],
           name_list: ["Ruby", "Rails"],
         },
         {
@@ -414,7 +414,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 75,
-          id_list: [30, 9],
+          id_list: [9, 30],
           name_list: ["Swift", "SwiftUI"],
         },
         {
@@ -422,7 +422,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 90,
-          id_list: [37, 20],
+          id_list: [20, 37],
           name_list: ["Go", "echo"],
         },
         {
@@ -430,7 +430,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 105,
-          id_list: [43, 19],
+          id_list: [19, 43],
           name_list: ["Java", "Spring"],
         },
         {
@@ -438,7 +438,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 75,
-          id_list: [33, 21],
+          id_list: [21, 33],
           name_list: ["Rust", "Rocket"],
         },
         {
@@ -446,7 +446,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 75,
-          id_list: [33, 22],
+          id_list: [22, 33],
           name_list: ["Rust", "Yew"],
         },
         {
@@ -454,7 +454,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 105,
-          id_list: [32, 24],
+          id_list: [24, 32],
           name_list: ["dart", "Flutter"],
         },
         {
@@ -462,7 +462,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 75,
-          id_list: [31, 7],
+          id_list: [7,31],
           name_list: ["Kotlin", "Ktor"],
         },
         {
@@ -470,7 +470,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 75,
-          id_list: [33, 14],
+          id_list: [14, 33],
           name_list: ["Rust", "warp"],
         },
         {
@@ -1126,6 +1126,9 @@ export default {
     console.log(this.userId);
   },
   mounted() {
+    
+
+
     //cardValueを受け取った時の処理
     console.log("fire");
     let tmp = this;
@@ -1285,25 +1288,30 @@ export default {
     //発動できるかどうかを判定する
     attack_decision: function () {
       let updateddata = this.selecteddata.map((obj) => obj.id);
-      let canattackdata = updateddata.sort((a,b) => (a < b ? -1 : 1));
+      console.log('updated' + updateddata)
+      updateddata.sort((a, b) => a - b)
       // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
-      if (canattackdata.length === 0) {
+      if (updateddata.length === 0) {
         return false;
-      } else if (canattackdata.length === 1) {
+      } else if (updateddata.length === 1) {
         this.cardValue.value = this.selecteddata[0].value;
         return true;
       } else {
         let ableCombo = this.combo_data_db.filter((combo_data) => {
-          return isIncludes(canattackdata, combo_data.id_list);
+          return isIncludes(updateddata, combo_data.id_list);
         });
         console.log(ableCombo);
         // 完全一致した攻撃だけを返す
-        for (let i = 0, n = canattackdata.length; i < n; ++i) {
+        for (let i = 0, n = updateddata.length; i < n; ++i) {
+          console.log(ableCombo)
           if (ableCombo.length == 0) {
             return false;
-          } else if (canattackdata[i] !== ableCombo[0].id_list[i]) {
+            conso
+          } else if (updateddata[i] === ableCombo[0].id_list[i]) {
+            console.log(updateddata[i])
+            console.log(ableCombo[0].id_list[i])
             return true;
           } else {
             return false;
