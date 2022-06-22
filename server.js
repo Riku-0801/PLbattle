@@ -57,10 +57,9 @@ io.sockets.on("connection", function (socket) {
     } else {
       socket.join(RoomId);
       console.log("Roomに入室が完了しました");
-      console.log(RoomId)
-      console.log('rooms:',socket);
+      console.log(RoomId);
       console.log(numClients[RoomId]);
-      
+
       //let userId = Math.random().toString(32).substring(2);
       //console.log(userId);
       //turn_flag[RoomId][userId] = 0;
@@ -77,19 +76,18 @@ io.sockets.on("connection", function (socket) {
   //   socket.leave(RoomId);
   //   numClients[RoomId]--;
   // });
+  socket.on("room-join", function (RoomID) {
+    socket.join(RoomID);
+  });
   socket.on("cardValue", function (cardValue) {
-    // var queryStr = window.location.search.slice(1);
-    // console.log(queryStr)
-    console.log('rooms:', socket);
+    socket.join(cardValue.roomId);
     io.to(cardValue.roomId).emit("card-value", cardValue);
     console.log(cardValue.userId);
     console.log(cardValue.roomId);
     console.log(cardValue.selecteddata);
   });
-  
 });
 
 http.listen(PORT, function () {
   console.log("server listening. Port:" + PORT);
 });
-

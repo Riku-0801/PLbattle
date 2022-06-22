@@ -1127,8 +1127,9 @@ export default {
         i++;
       }
     }
-
-    this.socket.emit("getTurnFlag", this.userId);
+    const searchParams = new URLSearchParams(window.location.search);
+    let RoomID = searchParams.get("room");
+    this.socket.emit("room-join", RoomID);
     console.log(this.userId);
   },
   mounted() {

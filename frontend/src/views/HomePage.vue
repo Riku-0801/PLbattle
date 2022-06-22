@@ -51,7 +51,6 @@ export default {
   mounted() {
     this.socket.on("logined", function (userId) {
       console.log(userId);
-      //this.push();
     });
   },
   methods: {
@@ -64,7 +63,7 @@ export default {
       this.socket.emit("login", this.RoomId);
     },
     push() {
-      console.log(this.RoomId)
+      console.log(this.RoomId);
       this.$router.push({ name: "field", query: { room: this.RoomId } });
     },
     set() {
