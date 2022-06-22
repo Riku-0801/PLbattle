@@ -1188,7 +1188,6 @@ export default {
         selecteddata: this.selecteddata,
       };
       this.socket.emit("cardValue", cardValue);
-
       if (this.selecteddata.length == 1) {
         if (this.selecteddata[0].action == "enhancement") {
           // 回復の処理
@@ -1255,6 +1254,9 @@ export default {
     // 自分の攻撃エフェクトを閉じる時に発火する処理
     getCardValue: function () {
       this.showAttack = false;
+      if(this.sampleHp.yours <= 0){
+        this.judgeWin = true
+      }
     },
     // homeボタン
     goHome: function () {
