@@ -1285,24 +1285,25 @@ export default {
     //発動できるかどうかを判定する
     attack_decision: function () {
       let updateddata = this.selecteddata.map((obj) => obj.id);
+      let canattackdata = updateddata.sort((a,b) => (a < b ? -1 : 1));
       // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
-      if (updateddata.length === 0) {
+      if (canattackdata.length === 0) {
         return false;
-      } else if (updateddata.length === 1) {
+      } else if (canattackdata.length === 1) {
         this.cardValue.value = this.selecteddata[0].value;
         return true;
       } else {
         let ableCombo = this.combo_data_db.filter((combo_data) => {
-          return isIncludes(updateddata, combo_data.id_list);
+          return isIncludes(canattackdata, combo_data.id_list);
         });
         console.log(ableCombo);
         // 完全一致した攻撃だけを返す
-        for (let i = 0, n = updateddata.length; i < n; ++i) {
+        for (let i = 0, n = canattackdata.length; i < n; ++i) {
           if (ableCombo.length == 0) {
             return false;
-          } else if (updateddata[i] !== ableCombo[0].id_list[i]) {
+          } else if (canattackdata[i] !== ableCombo[0].id_list[i]) {
             return true;
           } else {
             return false;
