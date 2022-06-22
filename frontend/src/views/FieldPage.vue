@@ -2,9 +2,9 @@
   <v-app>
     <v-container>
       <div v-show="oponentTurn" class="overlay">
-        <v-card class="caution">相手のターンです</v-card>
+        <p class="judge">相手のターンです</p>
       </div>
-      <v-btn @click="oponentAttack">相手の攻撃</v-btn>
+      <!-- <v-btn @click="oponentAttack">相手の攻撃</v-btn> -->
       <!-- 相手の攻撃エフェクト -->
       <div v-show="showOponent" class="overlay" @click="closeOponent">
         <!-- 相手の攻撃情報をここに持ってくる -->
@@ -1196,7 +1196,6 @@ export default {
         roomId: searchParams.get('room')
       };
       this.socket.emit("cardValue", cardValue);
-
       if (this.selecteddata.length == 1) {
         if (this.selecteddata[0].action == "enhancement") {
           // 回復の処理
@@ -1263,6 +1262,11 @@ export default {
     // 自分の攻撃エフェクトを閉じる時に発火する処理
     getCardValue: function () {
       this.showAttack = false;
+
+      if(this.sampleHp.yours <= 0){
+        this.judgeWin = true
+      }
+
     },
     // homeボタン
     goHome: function () {
@@ -1401,7 +1405,7 @@ export default {
   opacity: 0;
   animation: SlideIn 0.4s;
   /* 0.8秒遅らせる */
-  animation-delay: 0.8s;
+  /* animation-delay: 0.8s; */
   /* opacityが戻らないようにする */
   animation-fill-mode: forwards;
 }
