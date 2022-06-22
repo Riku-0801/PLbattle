@@ -245,6 +245,7 @@ export default {
           name_ja: "バード",
           action_value: 70,
           id_list: [30, 31],
+          name_list: ["Swift","Kotlin"]
         },
         {
           combo_id: 16,
@@ -252,6 +253,7 @@ export default {
           name_ja: "グーグル",
           action_value: 80,
           id_list: [32, 37],
+          name_list: ["dart","Go"]
         },
         {
           combo_id: 17,
@@ -259,6 +261,7 @@ export default {
           name_ja: "アップル",
           action_value: 70,
           id_list: [29, 30],
+          name_list: ["Objective-C","Swift"]
         },
         {
           combo_id: 18,
@@ -266,6 +269,7 @@ export default {
           name_ja: "パイソンズ1",
           action_value: 40,
           id_list: [4, 5],
+          name_list: ["Django","FastAPI"]
         },
         {
           combo_id: 19,
@@ -273,6 +277,7 @@ export default {
           name_ja: "パイソンズ2",
           action_value: 50,
           id_list: [4, 16],
+          name_list: ["Django","Flask"]
         },
         {
           combo_id: 20,
@@ -280,6 +285,7 @@ export default {
           name_ja: "パイソンズ3",
           action_value: 50,
           id_list: [5, 16],
+          name_list: ["FastAPI","Flask"]
         },
         {
           combo_id: 21,
@@ -366,7 +372,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 30,
-          id_list: [10, 4],
+          id_list: [4, 10],
           name_list: ["Python", "Django"],
         },
         {
@@ -374,7 +380,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 30,
-          id_list: [10, 5],
+          id_list: [5, 10],
           name_list: ["Python", "FastAPI"],
         },
         {
@@ -398,7 +404,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 90,
-          id_list: [27, 8],
+          id_list: [8, 27],
           name_list: ["PHP", "CakePHP"],
         },
         {
@@ -406,7 +412,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 105,
-          id_list: [39, 17],
+          id_list: [17, 39],
           name_list: ["Ruby", "Rails"],
         },
         {
@@ -414,7 +420,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 75,
-          id_list: [30, 9],
+          id_list: [9, 30],
           name_list: ["Swift", "SwiftUI"],
         },
         {
@@ -422,7 +428,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 90,
-          id_list: [37, 20],
+          id_list: [20, 37],
           name_list: ["Go", "echo"],
         },
         {
@@ -430,7 +436,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 105,
-          id_list: [43, 19],
+          id_list: [19, 43],
           name_list: ["Java", "Spring"],
         },
         {
@@ -438,7 +444,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 75,
-          id_list: [33, 21],
+          id_list: [21, 33],
           name_list: ["Rust", "Rocket"],
         },
         {
@@ -446,7 +452,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 75,
-          id_list: [33, 22],
+          id_list: [22, 33],
           name_list: ["Rust", "Yew"],
         },
         {
@@ -454,7 +460,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 105,
-          id_list: [32, 24],
+          id_list: [24, 32],
           name_list: ["dart", "Flutter"],
         },
         {
@@ -462,7 +468,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 75,
-          id_list: [31, 7],
+          id_list: [7, 31],
           name_list: ["Kotlin", "Ktor"],
         },
         {
@@ -470,7 +476,7 @@ export default {
           name_en: "Pair",
           name_ja: "ペア",
           action_value: 75,
-          id_list: [33, 14],
+          id_list: [14, 33],
           name_list: ["Rust", "warp"],
         },
         {
@@ -1183,9 +1189,11 @@ export default {
     //カード発動時の処理
     useCards: function (index) {
       //処理
+      const searchParams = new URLSearchParams(window.location.search)
       let cardValue = {
         userId: this.userId,
         selecteddata: this.selecteddata,
+        roomId: searchParams.get('room')
       };
       this.socket.emit("cardValue", cardValue);
       if (this.selecteddata.length == 1) {
@@ -1254,9 +1262,11 @@ export default {
     // 自分の攻撃エフェクトを閉じる時に発火する処理
     getCardValue: function () {
       this.showAttack = false;
+
       if(this.sampleHp.yours <= 0){
         this.judgeWin = true
       }
+
     },
     // homeボタン
     goHome: function () {
@@ -1268,23 +1278,33 @@ export default {
     ableattacks: function () {
       // selecteddataのidだけを集めた
       let updateddata = this.selecteddata.map((obj) => obj.id);
+      let canattackdata = updateddata.sort((a,b) => (a < b ? -1 : 1));
       // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
       //recent_selectdataに、idに対応するカードの名前を入れたい
-      if (updateddata.length === 0) {
+      if (canattackdata.length === 0) {
         // 何も選択されていないとき空の配列を返す
         return [];
       } else {
         // updateddataにあるのと一致した攻撃だけを返す
         return this.combo_data_db.filter((combo_data) => {
-          return isIncludes(updateddata, combo_data.id_list);
+          return isIncludes(canattackdata, combo_data.id_list);
         });
       }
     },
     //発動できるかどうかを判定する
-    attack_decision: function () {
+     attack_decision: function () {
       let updateddata = this.selecteddata.map((obj) => obj.id);
+      updateddata.sort(function(first, second){
+        if (first > second){
+          return 1;
+        }else if (first < second){
+          return -1;
+        }else{
+          return 0;
+        }
+      });
       // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
@@ -1297,12 +1317,12 @@ export default {
         let ableCombo = this.combo_data_db.filter((combo_data) => {
           return isIncludes(updateddata, combo_data.id_list);
         });
-        console.log(ableCombo);
         // 完全一致した攻撃だけを返す
         for (let i = 0, n = updateddata.length; i < n; ++i) {
           if (ableCombo.length == 0) {
+            cosole.log("0だよーーー！")
             return false;
-          } else if (updateddata[i] !== ableCombo[0].id_list[i]) {
+          } else if (updateddata[i] == ableCombo[0].id_list[i]) {
             return true;
           } else {
             return false;

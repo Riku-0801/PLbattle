@@ -14,7 +14,7 @@
           >　<span>相手のIDを入力してください：</span
           ><input v-model="id" placeholder="" /><v-btn
             outlined
-            @click="sendRoomId('hogehoge')"
+            @click="sendRoomId(id)"
             class="btn play"
             >このルームで遊ぶ</v-btn
           >
@@ -45,6 +45,7 @@ export default {
       id: "",
       socket: io("localhost:3000"),
       turn_flag: 0,
+      RoomId: "",
     };
   },
   mounted() {
@@ -58,12 +59,13 @@ export default {
       // HACK: ID作る関数入れておく
       this.number = Math.random().toString(32).substring(2);
     },
-    sendRoomId: function (RoomId) {
-      this.socket.emit("login", RoomId);
-      console.log(RoomId);
+    sendRoomId: function (id) {
+      this.RoomId = id;
+      this.socket.emit("login", this.RoomId);
     },
     push() {
-      this.$router.push({ name: "field", query: { room: "hogehoge" } });
+      console.log(this.RoomId)
+      this.$router.push({ name: "field", query: { room: this.RoomId } });
     },
     set() {
       localStorage.setItem(
