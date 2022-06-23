@@ -1,6 +1,9 @@
 <template>
   <v-app>
     <v-container>
+                    <v-btn @click="post">
+                フロントエンドからバックエンドにデータを送るテストボタン
+              </v-btn>
       <div v-show="oponentTurn" class="overlay">
         <p class="judge">相手のターンです</p>
       </div>
@@ -106,6 +109,7 @@
 <script>
 import VueDrag from "vuedraggable";
 import io from "socket.io-client";
+import axios from 'axios';
 
 export default {
   name: "field",
@@ -1167,11 +1171,6 @@ export default {
               tmp.sampleHp.mine - cardValue.selecteddata[0].value;
           }
         } else {
-          // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
-          //ableattacksが入ってないよ
-          /*
-          ここに、自分のHPを引く処理をしている。
-          */
         const isIncludes = (arr, target) => arr.every((el) => target.includes(el));
         let updateddata = cardValue.selecteddata.map((obj) => obj.id);
         tmp.combo_data_db.filter((combo_data) => {
@@ -1188,10 +1187,14 @@ export default {
     });
   },
   methods: {
+    post(){
+      const aaa = {firstname:"aaa"}
+      this.$axios.post('/message',  aaa)
+    },
     chengeTurn() {
       console.log(this.oponentTurn);
       this.oponentTurn = false;
-      //onsole.log(this.oponentTurn)
+      //console.log(this.oponentTurn)
     },
     getTurnFlag() {
       //turn_flagのデータをlocalstorageからもらいます
@@ -1236,14 +1239,6 @@ export default {
       } else {
         // 攻撃可能な配列を取得してaction_valueを相手のhpから引く
         this.effect = this.ableattacks[0].name_en;
-        /*
-        ここで、自分の画面での相手のHPから引く処理をしているが、ableattacksってやつは存在しない        
-        */
-       //ここに、selecteddataに一致するコンボのvalueを記述する。
-       /*
-       １．selecteddataに一致する、combo_dataのid_listを探す
-       ２．一致したid_listがもっているaciton_valueを取得
-       */
         const isIncludes = (arr, target) => arr.every((el) => target.includes(el));
         let updateddata = this.selecteddata.map((obj) => obj.id);
         this.combo_data_db.filter((combo_data) => {

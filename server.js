@@ -10,16 +10,19 @@ const io = require("socket.io")(http, {
 const PORT = process.env.PORT || 3000;
 const serveStatic = require("serve-static");
 const cors = require("cors");
-
-
+// const { response } = require("express");
+// const exp = require("constants");
+const bodyParser = require('body-parser');
+app.use(express.json())
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: true,
     credentials: true,
     optionsSuccessStatus: 200,
   })
 );
 
+app.use(bodyParser.urlencoded({ extended: true }));
 //おまじない
 if (process.env.NODE_ENV !== "production") {
   app.use(
@@ -33,15 +36,11 @@ if (process.env.NODE_ENV !== "production") {
 app.use(serveStatic(__dirname + "/dist"));
 
 
-app.get('/api/message', (req, res) => {
-	res.send(player_db)
+app.post('/api/message', (req, res) => {
+  console.log(req.body.firstname)
 })
 
-app.post('/api/test', function(req, res) {
-  res.send({
-    message: req.body.text
-  })
-})
+
 
 let numClients = {};
 
@@ -90,7 +89,7 @@ http.listen(PORT, function () {
 
 var player_db = [
   {
-    RoomID: "",
+    RoomID: "AAAA",
     card_list: [],
     my_HP: 0,
     enemy_HP: 0
