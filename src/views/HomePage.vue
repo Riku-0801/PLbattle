@@ -6,7 +6,11 @@
         <div>>>>>>>>>>>>>>>>>>>>></div>
         <br />
         <div class="a neon_title">><span>CODE DUEL</span></div>
-        <div>></div>
+        <div>>
+          <v-btn @click='post_data'>
+            RoomIDを取得してみよう
+          </v-btn>
+        </div>
         <div>></div>
         <div>></div>
         <!--<div class="typing">-->
@@ -54,6 +58,11 @@ export default {
     });
   },
   methods: {
+    post_data(){
+      this.$axios.get('/message').then((res) => {
+			  console.log("データもらえたよ"+res.RoomId)
+		})
+    },
     issue() {
       // HACK: ID作る関数入れておく
       this.number = Math.random().toString(32).substring(2);
