@@ -11,9 +11,6 @@ const PORT = process.env.PORT || 3000;
 const serveStatic = require("serve-static");
 const cors = require("cors");
 
-app.get('socket.io/message', (req, res) => {
-	res.send(player_db)
-})
 
 app.use(
   cors({
@@ -34,6 +31,17 @@ if (process.env.NODE_ENV !== "production") {
   );
 }
 app.use(serveStatic(__dirname + "/dist"));
+
+
+app.get('/api/message', (req, res) => {
+	res.send(player_db)
+})
+
+app.post('/api/test', function(req, res) {
+  res.send({
+    message: req.body.text
+  })
+})
 
 let numClients = {};
 

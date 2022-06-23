@@ -63,6 +63,11 @@ export default {
 			  console.log("データもらえたよ"+res.RoomId)
 		})
     },
+     async post() {
+      let element = { text: this.text }
+      let response = await Methods.testPosting(element)
+      console.log(response.data.message)
+    },
     issue() {
       // HACK: ID作る関数入れておく
       this.number = Math.random().toString(32).substring(2);
