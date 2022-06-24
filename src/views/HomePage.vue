@@ -47,6 +47,7 @@ export default {
       socket: io("localhost:3000"),
       turn_flag: 0,
       RoomId: "",
+      player_Id: "",
     };
   },
   mounted() {
@@ -59,13 +60,17 @@ export default {
       // HACK: ID作る関数入れておく
       this.number = Math.random().toString(32).substring(2);
     },
+    //追加機能：クエリにplayer_Idを追加。同じルーム内でのプレイヤーを識別するのに利用。
     sendRoomId: function (id) {
+      this.player_Id = Math.random().toString(32).substring(2);
       this.RoomId = id;
       this.socket.emit("login", this.RoomId);
+      this.$axios.post('/player_data',{RoomId: this.RoomId, player_Id: this.player_Id})
     },
+    //ページ遷移機能
     push() {
       console.log(this.RoomId);
-      this.$router.push({ name: "field", query: { room: this.RoomId } });
+      this.$router.push({ name: "field", query: { room: this.RoomId ,id: this.player_Id} });
     },
     set() {
       localStorage.setItem(

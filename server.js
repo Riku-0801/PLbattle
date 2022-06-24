@@ -10,18 +10,19 @@ const io = require("socket.io")(http, {
 const PORT = process.env.PORT || 3000;
 const serveStatic = require("serve-static");
 const cors = require("cors");
-// const { response } = require("express");
-// const exp = require("constants");
+//post時にbodyを参照できるようにする
 const bodyParser = require('body-parser');
+//post時にjsonファイルを扱えるようにする
 app.use(express.json())
 app.use(
   cors({
+    //魂のtrue　いつか直したい
     origin: true,
     credentials: true,
     optionsSuccessStatus: 200,
   })
 );
-
+//bodyを参照できるようにする
 app.use(bodyParser.urlencoded({ extended: true }));
 //おまじない
 if (process.env.NODE_ENV !== "production") {
@@ -40,12 +41,54 @@ app.post('/api/message', (req, res) => {
   console.log(req.body.firstname)
 })
 
+//フロントエンドからHP情報を受け取る。
+app.post('/api/HP', (req, res) => {
+  console.log(req.body)
+})
 
+//ログイン時に、player_IdとRoomIdを受け取る。それをplayer_dbに格納
+app.post('/api/player_data', (req, res) => {
+  player_db.push({
+    RoomId: req.body.RoomId, 
+    player_Id: req.body.player_Id, 
+    card_list: [],
+    my_HP: 200, 
+    enemy_HP: 200,
+    card_list_number:[]
+  })
+})
 
-let numClients = {};
+//コンボカードリストをフロントに送信
+app.get('/api/get_combo_db',(req,res) => {
+  res.send(combo_data_db)
+})
+
+//カードドローリクエストがフロントから走った場合に発火
+app.post('/api/card_draw',(req,res) => {
+  console.log("ドロー機能発火")
+  var select_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
+  card_draw(select_Id)
+  //フロントに新規リストを送信
+  res.send(player_db[select_Id].card_list)
+  console.log("フロントにデータ送信完了")
+})
+
+//カードドロー機能
+function card_draw(select_Id){
+  console.log("ドローが走った")
+  for (let j = player_db[select_Id].card_list.length; j < 6; ) {
+    var tmp = Number(Math.floor(Math.random() * 56));
+    if (!player_db[select_Id].card_list_number.includes(tmp)) {
+      player_db[select_Id].card_list_number.push(tmp);
+      player_db[select_Id].card_list.push(card_db[player_db[select_Id].card_list_number[j]]);
+      j++;
+    }
+  }
+};
 
 
 //接続時処理
+let numClients = {};
 io.sockets.on("connection", function (socket) {
   console.log("connected");
   //接続切断処理
@@ -88,11 +131,14 @@ http.listen(PORT, function () {
 /* データベース */
 
 var player_db = [
+  //初期化
   {
-    RoomID: "AAAA",
+    RoomId: "",
+    player_Id: "",
     card_list: [],
     my_HP: 0,
-    enemy_HP: 0
+    enemy_HP: 0,
+    card_list_number:[]
   },
 ]
 var combo_data_db=[
@@ -478,7 +524,7 @@ var card_db= [
     id: 1,
     name: "Javascript",
     type: "language",
-    img: "./frontend/src/assets/cards/JavaScript.png",
+    img: "../assets/cards/JavaScript.png",
     action: "attack",
     value: 10,
     field: "",
@@ -488,7 +534,7 @@ var card_db= [
     id: 1,
     name: "Javascript",
     type: "language",
-    img: "./frontend/src/assets/cards/JavaScript.png",
+    img: "../assets/cards/JavaScript.png",
     action: "attack",
     value: 10,
     field: "",
@@ -498,7 +544,7 @@ var card_db= [
     id: 1,
     name: "Javascript",
     type: "language",
-    img: "./frontend/src/assets/cards/JavaScript.png",
+    img: "../assets/cards/JavaScript.png",
     action: "attack",
     value: 10,
     field: "",
@@ -508,7 +554,7 @@ var card_db= [
     id: 2,
     name: "HTML",
     type: "language",
-    img: "./frontend/src/assets/cards/HTML.png",
+    img: "../assets/cards/HTML.png",
     action: "attack",
     value: 10,
     field: "",
@@ -518,7 +564,7 @@ var card_db= [
     id: 3,
     name: "CSS",
     type: "language",
-    img: "./frontend/src/assets/cards/CSS.png",
+    img: "../assets/cards/CSS.png",
     action: "attack",
     value: 10,
     field: "",
@@ -528,7 +574,7 @@ var card_db= [
     id: 4,
     name: "Django",
     type: "framework",
-    img: "./frontend/src/assets/cards/Django.png",
+    img: "../assets/cards/Django.png",
     action: "attack",
     value: 20,
     field: "LinuxOS",
@@ -538,7 +584,7 @@ var card_db= [
     id: 5,
     name: "FastAPI",
     type: "framework",
-    img: "./frontend/src/assets/cards/FastAPI.png",
+    img: "../assets/cards/FastAPI.png",
     action: "attack",
     value: 10,
     field: "LinuxOS",
@@ -548,7 +594,7 @@ var card_db= [
     id: 6,
     name: "jQuery",
     type: "framework",
-    img: "./frontend/src/assets/cards/jQuery.png",
+    img: "../assets/cards/jQuery.png",
     action: "attack",
     value: 10,
     field: "",
@@ -558,7 +604,7 @@ var card_db= [
     id: 7,
     name: "Ktor",
     type: "framework",
-    img: "./frontend/src/assets/cards/Ktor.png",
+    img: "../assets/cards/Ktor.png",
     action: "attack",
     value: 20,
     field: "AndroidOS",
@@ -568,7 +614,7 @@ var card_db= [
     id: 8,
     name: "Cake PHP",
     type: "framework",
-    img: "./frontend/src/assets/cards/CakePHP.png",
+    img: "../assets/cards/CakePHP.png",
     action: "attack",
     value: 20,
     field: "",
@@ -578,7 +624,7 @@ var card_db= [
     id: 9,
     name: "SwiftUI",
     type: "framework",
-    img: "./frontend/src/assets/cards/SwiftUI.png",
+    img: "../assets/cards/SwiftUI.png",
     action: "attack",
     value: 20,
     field: "iOS,macOS",
@@ -588,7 +634,7 @@ var card_db= [
     id: 10,
     name: "Python",
     type: "language",
-    img: "./frontend/src/assets/cards/Python.png",
+    img: "../assets/cards/Python.png",
     action: "attack",
     value: 30,
     field: "LinuxOS",
@@ -598,7 +644,7 @@ var card_db= [
     id: 10,
     name: "Python",
     type: "language",
-    img: "./frontend/src/assets/cards/Python.png",
+    img: "../assets/cards/Python.png",
     action: "attack",
     value: 30,
     field: "LinuxOS",
@@ -608,7 +654,7 @@ var card_db= [
     id: 10,
     name: "Python",
     type: "language",
-    img: "./frontend/src/assets/cards/Python.png",
+    img: "../assets/cards/Python.png",
     action: "attack",
     value: 30,
     field: "LinuxOS",
@@ -618,7 +664,7 @@ var card_db= [
     id: 11,
     name: "R",
     type: "language",
-    img: "./frontend/src/assets/cards/R.png",
+    img: "../assets/cards/R.png",
     action: "attack",
     value: 20,
     field: "",
@@ -628,7 +674,7 @@ var card_db= [
     id: 12,
     name: "TypeScript",
     type: "language",
-    img: "./frontend/src/assets/cards/TypeScript.png",
+    img: "../assets/cards/TypeScript.png",
     action: "attack",
     value: 30,
     field: "",
@@ -638,7 +684,7 @@ var card_db= [
     id: 13,
     name: "Julia",
     type: "language",
-    img: "./frontend/src/assets/cards/Julia.png",
+    img: "../assets/cards/Julia.png",
     action: "attack",
     value: 20,
     field: "",
@@ -648,7 +694,7 @@ var card_db= [
     id: 15,
     name: "Vue",
     type: "framework",
-    img: "./frontend/src/assets/cards/Vue.png",
+    img: "../assets/cards/Vue.png",
     action: "attack",
     value: 20,
     field: "",
@@ -658,7 +704,7 @@ var card_db= [
     id: 16,
     name: "Flask",
     type: "framework",
-    img: "./frontend/src/assets/cards/Flask.png",
+    img: "../assets/cards/Flask.png",
     action: "attack",
     value: 20,
     field: "LinuxOS",
@@ -668,7 +714,7 @@ var card_db= [
     id: 17,
     name: "Rails",
     type: "framework",
-    img: "./frontend/src/assets/cards/Rails.png",
+    img: "../assets/cards/Rails.png",
     action: "attack",
     value: 30,
     field: "",
@@ -678,7 +724,7 @@ var card_db= [
     id: 18,
     name: "Angular",
     type: "framework",
-    img: "./frontend/src/assets/cards/Angular.png",
+    img: "../assets/cards/Angular.png",
     action: "attack",
     value: 20,
     field: "",
@@ -688,7 +734,7 @@ var card_db= [
     id: 19,
     name: "Spring",
     type: "framework",
-    img: "./frontend/src/assets/cards/Spring.png",
+    img: "../assets/cards/Spring.png",
     action: "attack",
     value: 20,
     field: "",
@@ -698,7 +744,7 @@ var card_db= [
     id: 20,
     name: "echo",
     type: "framework",
-    img: "./frontend/src/assets/cards/echo.png",
+    img: "../assets/cards/echo.png",
     action: "attack",
     value: 20,
     field: "",
@@ -708,7 +754,7 @@ var card_db= [
     id: 21,
     name: "Rocket",
     type: "framework",
-    img: "./frontend/src/assets/cards/Rocket.png",
+    img: "../assets/cards/Rocket.png",
     action: "attack",
     value: 20,
     field: "",
@@ -718,7 +764,7 @@ var card_db= [
     id: 22,
     name: "Yew",
     type: "framework",
-    img: "./frontend/src/assets/cards/Yew.png",
+    img: "../assets/cards/Yew.png",
     action: "attack",
     value: 20,
     field: "",
@@ -728,7 +774,7 @@ var card_db= [
     id: 23,
     name: "Laravel",
     type: "framework",
-    img: "./frontend/src/assets/cards/Laravel.png",
+    img: "../assets/cards/Laravel.png",
     action: "attack",
     value: 30,
     field: "",
@@ -738,7 +784,7 @@ var card_db= [
     id: 24,
     name: "Flutter",
     type: "framework",
-    img: "./frontend/src/assets/cards/Flutter.png",
+    img: "../assets/cards/Flutter.png",
     action: "attack",
     value: 30,
     field: "",
@@ -748,7 +794,7 @@ var card_db= [
     id: 25,
     name: "外付けHDD",
     type: "attachment",
-    img: "./frontend/src/assets/cards/External-HDD.png",
+    img: "../assets/cards/External-HDD.png",
     action: "enhancement",
     value: 40,
     field: "",
@@ -758,7 +804,7 @@ var card_db= [
     id: 26,
     name: "外付けHDD",
     type: "attachment",
-    img: "./frontend/src/assets/cards/External-HDD.png",
+    img: "../assets/cards/External-HDD.png",
     action: "enhancement",
     value: 40,
     field: "",
@@ -768,7 +814,7 @@ var card_db= [
     id: 27,
     name: "PHP",
     type: "language",
-    img: "./frontend/src/assets/cards/PHP.png",
+    img: "../assets/cards/PHP.png",
     action: "attack",
     value: 30,
     field: "",
@@ -778,7 +824,7 @@ var card_db= [
     id: 28,
     name: "Perl",
     type: "language",
-    img: "./frontend/src/assets/cards/Perl.png",
+    img: "../assets/cards/Perl.png",
     action: "attack",
     value: 40,
     field: "",
@@ -788,7 +834,7 @@ var card_db= [
     id: 29,
     name: "Objective-C",
     type: "language",
-    img: "./frontend/src/assets/cards/Objective-C.png",
+    img: "../assets/cards/Objective-C.png",
     action: "attack",
     value: 30,
     field: "iOS,macOS",
@@ -798,7 +844,7 @@ var card_db= [
     id: 30,
     name: "Swift",
     type: "language",
-    img: "./frontend/src/assets/cards/Swift.png",
+    img: "../assets/cards/Swift.png",
     action: "attack",
     value: 30,
     field: "iOS,macOS",
@@ -808,7 +854,7 @@ var card_db= [
     id: 31,
     name: "Kotlin",
     type: "language",
-    img: "./frontend/src/assets/cards/Kotlin.png",
+    img: "../assets/cards/Kotlin.png",
     action: "attack",
     value: 30,
     field: "AndroidOS",
@@ -818,7 +864,7 @@ var card_db= [
     id: 32,
     name: "dart",
     type: "language",
-    img: "./frontend/src/assets/cards/dart.png",
+    img: "../assets/cards/dart.png",
     action: "attack",
     value: 30,
     field: "",
@@ -828,7 +874,7 @@ var card_db= [
     id: 33,
     name: "Rust",
     type: "language",
-    img: "./frontend/src/assets/cards/Rust.png",
+    img: "../assets/cards/Rust.png",
     action: "attack",
     value: 30,
     field: "",
@@ -838,7 +884,7 @@ var card_db= [
     id: 34,
     name: "tailwind",
     type: "framework",
-    img: "./frontend/src/assets/cards/tailwind.png",
+    img: "../assets/cards/tailwind.png",
     action: "attack",
     value: 30,
     field: "",
@@ -848,7 +894,7 @@ var card_db= [
     id: 35,
     name: "冷却ファン",
     type: "attachment",
-    img: "./frontend/src/assets/cards/Cooling-fan.png",
+    img: "../assets/cards/Cooling-fan.png",
     action: "enhancement",
     value: 30,
     field: "",
@@ -858,7 +904,7 @@ var card_db= [
     id: 36,
     name: "Node.js",
     type: "framework",
-    img: "./frontend/src/assets/cards/Node.js.png",
+    img: "../assets/cards/Node.js.png",
     action: "attack",
     value: 40,
     field: "WindowsOS",
@@ -868,7 +914,7 @@ var card_db= [
     id: 37,
     name: "Go",
     type: "language",
-    img: "./frontend/src/assets/cards/Go.png",
+    img: "../assets/cards/Go.png",
     action: "attack",
     value: 40,
     field: "",
@@ -878,7 +924,7 @@ var card_db= [
     id: 38,
     name: "Haskell",
     type: "language",
-    img: "./frontend/src/assets/cards/Haskell.png",
+    img: "../assets/cards/Haskell.png",
     action: "attack",
     value: 40,
     field: "",
@@ -888,7 +934,7 @@ var card_db= [
     id: 39,
     name: "Ruby",
     type: "language",
-    img: "./frontend/src/assets/cards/Ruby.png",
+    img: "../assets/cards/Ruby.png",
     action: "attack",
     value: 40,
     field: "",
@@ -898,7 +944,7 @@ var card_db= [
     id: 40,
     name: "外付けSSD",
     type: "attachment",
-    img: "./frontend/src/assets/cards/External-SSD.png",
+    img: "../assets/cards/External-SSD.png",
     action: "enhancement",
     value: 20,
     field: "",
@@ -908,7 +954,7 @@ var card_db= [
     id: 41,
     name: "C",
     type: "language",
-    img: "./frontend/src/assets/cards/C.png",
+    img: "../assets/cards/C.png",
     action: "attack",
     value: 50,
     field: "",
@@ -918,7 +964,7 @@ var card_db= [
     id: 42,
     name: "C#",
     type: "language",
-    img: "./frontend/src/assets/cards/Cs.png",
+    img: "../assets/cards/Cs.png",
     action: "attack",
     value: 50,
     field: "",
@@ -928,7 +974,7 @@ var card_db= [
     id: 43,
     name: "Java",
     type: "language",
-    img: "./frontend/src/assets/cards/Java.png",
+    img: "../assets/cards/Java.png",
     action: "attack",
     value: 50,
     field: "",
@@ -938,7 +984,7 @@ var card_db= [
     id: 44,
     name: "C++",
     type: "language",
-    img: "./frontend/src/assets/cards/C++.png",
+    img: "../assets/cards/C++.png",
     action: "attack",
     value: 60,
     field: "",
@@ -948,7 +994,7 @@ var card_db= [
     id: 45,
     name: "cobol",
     type: "language",
-    img: "./frontend/src/assets/cards/cobol.png",
+    img: "../assets/cards/cobol.png",
     action: "attack",
     value: 70,
     field: "",
@@ -958,7 +1004,7 @@ var card_db= [
     id: 46,
     name: "fortran",
     type: "language",
-    img: "./frontend/src/assets/cards/Fortran.png",
+    img: "../assets/cards/Fortran.png",
     action: "attack",
     value: 80,
     field: "",
@@ -968,7 +1014,7 @@ var card_db= [
     id: 47,
     name: "セカンドディスプレイ",
     type: "attachment",
-    img: "./frontend/src/assets/cards/PC-Monitor.png",
+    img: "../assets/cards/PC-Monitor.png",
     action: "enhancement",
     value: 30,
     field: "",
@@ -978,7 +1024,7 @@ var card_db= [
     id: 48,
     name: "キーボード",
     type: "attachment",
-    img: "./frontend/src/assets/cards/Keyboard.png",
+    img: "../assets/cards/Keyboard.png",
     action: "enhancement",
     value: 30,
     field: "",
@@ -988,7 +1034,7 @@ var card_db= [
     id: 49,
     name: "マウス",
     type: "attachment",
-    img: "./frontend/src/assets/cards/mouse.png",
+    img: "../assets/cards/mouse.png",
     action: "enhancement",
     value: 10,
     field: "",
@@ -998,7 +1044,7 @@ var card_db= [
     id: 50,
     name: "なでしこ",
     type: "language",
-    img: "./frontend/src/assets/cards/Nadeshiko.png",
+    img: "../assets/cards/Nadeshiko.png",
     action: "attack",
     value: 30,
     field: "",
@@ -1008,7 +1054,7 @@ var card_db= [
     id: 51,
     name: "ドリトル",
     type: "language",
-    img: "./frontend/src/assets/cards/dolittle.png",
+    img: "../assets/cards/dolittle.png",
     action: "attack",
     value: 30,
     field: "",
@@ -1018,7 +1064,7 @@ var card_db= [
     id: 52,
     name: "プロデル",
     type: "language",
-    img: "./frontend/src/assets/cards/Prodel.png",
+    img: "../assets/cards/Prodel.png",
     action: "attack",
     value: 30,
     field: "",
@@ -1028,7 +1074,7 @@ var card_db= [
     id: 53,
     name: "Scratch",
     type: "language",
-    img: "./frontend/src/assets/cards/Scratch.png",
+    img: "../assets/cards/Scratch.png",
     action: "attack",
     value: 20,
     field: "",
@@ -1038,7 +1084,7 @@ var card_db= [
     id: 55,
     name: "Hacker",
     type: "hack",
-    img: "./frontend/src/assets/cards/hacker2.png",
+    img: "../assets/cards/hacker2.png",
     action: "steal",
     value: 30,
     field: "",
@@ -1048,7 +1094,7 @@ var card_db= [
     id: 56,
     name: "BootStrap",
     type: "framework",
-    img: "./frontend/src/assets/cards/BootStrap.png",
+    img: "../assets/cards/BootStrap.png",
     action: "attack",
     value: 20,
     field: "",
