@@ -54,13 +54,14 @@ app.post('/api/player_data', (req, res) => {
     card_list: [],
     my_HP: 200, 
     enemy_HP: 200,
-    card_list_number:[]
+    card_list_number:[],
+    turn_flag: 0
   })
 })
 
 //コンボカードリストをフロントに送信
 app.get('/api/get_combo_db',(req,res) => {
-  res.send(combo_data_db)
+  res.json(combo_data_db)
 })
 
 //カードドローリクエストがフロントから走った場合に発火
@@ -71,14 +72,51 @@ app.post('/api/card_draw',(req,res) => {
   //フロントに新規リストを送信
   res.send(player_db[select_Id].card_list)
   console.log("フロントにデータ送信完了")
+  console.log(player_db[select_Id].turn_flag)
+})
+
+//ターンを指定するフラグの送受信
+app.post('/api/turn_flag',(req,res) => {
+  console.log("ターンを相手に渡す。")
+})
+
+//カードを出した直後の自分のカード情報を取得
+app.post('/api/card_data',(req,res) => {
+  var select_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
+  console.log("現在の手札の状態を取得完了")
+  console.log(req.body)
+  player_db[select_Id].card_list = req.body.carddata
+
+})
+
+//ページリロード時のターンを決定づける。
+app.post('/api/get_turn',(req,res) => {
+  console.log("リロード及びページ起動時のターンを取得しています。")
+  var select_turn_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
+  res.json(player_db[select_turn_Id].turn_flag)
+  //覚え書き：数字を送る際はjsonにしよう。
+})
+
+app.post('/api/control_turn',(req,res) => {
+  var select_turn_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
+  player_db[select_turn_Id].turn_flag += 1
+  console.log("今の状態"+player_db[select_turn_Id].turn_flag)
+})
+
+app.post('/api/control_turn_me',(req,res) => {
+  console.log("攻撃くらったよ")
+  var select_turn_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
+  player_db[select_turn_Id].turn_flag += 1
+  console.log("今の状態"+player_db[select_turn_Id].turn_flag)
 })
 
 //カードドロー機能
 function card_draw(select_Id){
-  console.log("ドローが走った")
+  console.log("ドロー機能が発火されました")
   for (let j = player_db[select_Id].card_list.length; j < 6; ) {
     var tmp = Number(Math.floor(Math.random() * 56));
     if (!player_db[select_Id].card_list_number.includes(tmp)) {
+      //ここ修正必要
       player_db[select_Id].card_list_number.push(tmp);
       player_db[select_Id].card_list.push(card_db[player_db[select_Id].card_list_number[j]]);
       j++;
@@ -107,7 +145,7 @@ io.sockets.on("connection", function (socket) {
       socket.join(RoomId);
       console.log("Roomに入室が完了しました");
       console.log(RoomId);
-      console.log(numClients[RoomId]);
+      console.log("今のRoomに居る人数"+numClients[RoomId]);
     }
     //ルーム入室
   });
@@ -117,9 +155,7 @@ io.sockets.on("connection", function (socket) {
   socket.on("cardValue", function (cardValue) {
     socket.join(cardValue.roomId);
     io.to(cardValue.roomId).emit("card-value", cardValue);
-    console.log(cardValue.userId);
-    console.log(cardValue.roomId);
-    console.log(cardValue.selecteddata);
+    console.log("カードの使用が認められました")
   });
   
 });
@@ -138,7 +174,8 @@ var player_db = [
     card_list: [],
     my_HP: 0,
     enemy_HP: 0,
-    card_list_number:[]
+    card_list_number:[],
+    turn_flag: 0
   },
 ]
 var combo_data_db=[
