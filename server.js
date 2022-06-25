@@ -158,15 +158,6 @@ io.sockets.on("connection", function (socket) {
   });
   socket.on("cardValue", function (cardValue,player_Id) {
     socket.join(cardValue.roomId);
-    // console.log("取得したID"+player_Id)
-    // var select_Id = player_db.findIndex(e => e.player_Id === player_Id);
-    // var this_RoomId = player_db[select_Id].RoomId
-    // var this_Room_player = player_db.filter(e => {
-    //   if(e.RoomId === this_RoomId){
-    //     return true
-    //   }
-    // });
-    // console.log("ルームに居る人のデータ"+this_Room_player)
     io.to(cardValue.roomId).emit("card-value", cardValue);
     console.log("カードの使用が認められました")
   });

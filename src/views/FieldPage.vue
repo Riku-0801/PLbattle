@@ -945,6 +945,7 @@ export default {
       // selecteddataのidだけを集めた
       let updateddata = this.selecteddata.map((obj) => obj.id);
       let canattackdata = updateddata.sort((a,b) => (a < b ? -1 : 1));
+      
       // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
@@ -961,6 +962,7 @@ export default {
     },
     //発動できるかどうかを判定する
      attack_decision: function () {
+      console.log("decision発火")
       let updateddata = this.selecteddata.map((obj) => obj.id);
       updateddata.sort(function(first, second){
         if (first > second){
@@ -971,6 +973,7 @@ export default {
           return 0;
         }
       });
+      console.log(updateddata)
       // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
@@ -989,8 +992,10 @@ export default {
             console.log("0だよーーー!")
             return false;
           } else if (updateddata[i] == ableCombo[0].id_list[i] && updateddata.length == ableCombo.length) {
+            console.log("OK")
             return true;
           } else {
+            console.log("不足")
             return false;
           }
         }
