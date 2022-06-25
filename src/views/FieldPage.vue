@@ -851,15 +851,19 @@ export default {
       */
       // ドローする処理
       // 今ある手札の取得
-      this.$axios.post('/card_draw',{carddata: this.mydata,player_Id: searchParams.get("id")}).then((res)=>{
-        console.log(res.data)
-        this.mydata = []
-        for (let i=0; i < res.data.length; i++){
-          this.mydata.push(res.data[i])
-        }
-        console.log(this.mydata)
-      })
+      setTimeout(() => {
+        this.$axios.post('/card_draw',{carddata: this.mydata,player_Id: searchParams.get("id")}).then((res)=>{
+            console.log(res.data)
+            this.mydata = []
+            for (let i=0; i < res.data.length; i++){
+              this.mydata.push(res.data[i])
+            }
+            console.log(this.mydata)
+        })
+      }, 1000)
+      
       this.oponentTurn = true;
+
       //バックエンドにデータを送信
       this.$axios.post('/HP',  this.sampleHp)
     },
@@ -896,7 +900,6 @@ export default {
     this.socket.on("card-value",  function(cardValue) {
 
       //ここに、自分のturn_flagを+1する処理を書く。
-      this.mydata = []
       console.log(this);
       console.log(tmp.userId);
       console.log(cardValue.userId);
@@ -992,6 +995,8 @@ export default {
             console.log("0だよーーー!")
             return false;
           } else if (updateddata[i] == ableCombo[0].id_list[i] && updateddata.length == ableCombo.length) {
+            console.log("updateの長さ"+updateddata.length)
+            console.log("ableComboの長さ"+ableCombo)
             console.log("OK")
             return true;
           } else {

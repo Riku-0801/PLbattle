@@ -68,23 +68,26 @@ app.get('/api/get_combo_db',(req,res) => {
 app.post('/api/card_draw',(req,res) => {
   console.log("ドロー機能発火")
   var select_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
-  console.log(req.body.carddata)
-  if (req.body.carddata.length != 0){
-    player_db[select_Id].card_list = req.body.carddata
-  }
-  console.log(player_db[select_Id].card_list)
+
+    if (req.body.carddata.length != 0){
+      console.log("カードデータ更新")
+      player_db[select_Id].card_list = req.body.carddata
+    }
+
+  console.log("ドロー関数に送る処理開始")
   card_draw(select_Id)
+  console.log("ドロー完了")
   //フロントに新規リストを送信
-  res.send(player_db[select_Id].card_list)
+
+    res.send(player_db[select_Id].card_list)
+
   console.log("フロントにデータ送信完了")
-  console.log(player_db[select_Id].turn_flag)
 })
 
 //ターンを指定するフラグの送受信
 app.post('/api/turn_flag',(req,res) => {
   console.log("ターンを相手に渡す。")
 })
-
 
 //ページリロード時のターンを決定づける。
 app.post('/api/get_turn',(req,res) => {
@@ -104,19 +107,20 @@ app.post('/api/control_turn',(req,res) => {
     }
   })
   //同じRoomにいる、自分以外の人のturn_flagを+１する
-  this_Room_player = JSON.stringify(this_Room_player)
-  this_Room_player = JSON.parse(this_Room_player)
-  console.log(this_Room_player)
-  var select_Id = player_db.findIndex(e => e.player_Id === this_Room_player[0].player_Id);
-  player_db[select_Id].turn_flag += 1
-  //自分のturn_flagを+１する
-  player_db[select_turn_Id].turn_flag += 1
+
+    this_Room_player = JSON.stringify(this_Room_player)
+    this_Room_player = JSON.parse(this_Room_player)
+    var select_Id = player_db.findIndex(e => e.player_Id === this_Room_player[0].player_Id);
+    player_db[select_Id].turn_flag += 1
+    //自分のturn_flagを+１する
+    player_db[select_turn_Id].turn_flag += 1
+
   console.log("相手と自分のturn_flagを共に変更成功")
 })
 
 //カードドロー機能
 function card_draw(select_Id){
-  console.log("ドロー機能が発火されました")
+  console.log("ドロー関数が発火されました")
   for (let j = player_db[select_Id].card_list.length; j < 6; ) {
     var tmp = Number(Math.floor(Math.random() * 56));
     //if (!player_db[select_Id].card_list_number.includes(tmp)) {
