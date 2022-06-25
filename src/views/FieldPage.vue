@@ -900,10 +900,10 @@ export default {
     this.socket.on("card-value",  function(cardValue) {
 
       //ここに、自分のturn_flagを+1する処理を書く。
-      console.log(this);
-      console.log(tmp.userId);
-      console.log(cardValue.userId);
-      console.log(cardValue.selecteddata);
+      // console.log(this);
+      // console.log(tmp.userId);
+      // console.log(cardValue.userId);
+      // console.log(cardValue.selecteddata);
       if (cardValue.userId == tmp.userId) {
         //攻撃できなくしたい（相手のターンにする）
         tmp.oponentTurn = true;
@@ -994,9 +994,10 @@ export default {
           if (ableCombo.length == 0) {
             console.log("0だよーーー!")
             return false;
-          } else if (updateddata[i] == ableCombo[0].id_list[i] && updateddata.length == ableCombo.length) {
+          } else if (updateddata[i] == ableCombo[0].id_list[i]  && updateddata.length == ableCombo[0].id_list.length) {
             console.log("updateの長さ"+updateddata.length)
-            console.log("ableComboの長さ"+ableCombo)
+            console.log("ableComboの長さ"+ableCombo.length)
+            console.log(ableCombo[0])
             console.log("OK")
             return true;
           } else {
