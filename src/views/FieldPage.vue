@@ -748,7 +748,7 @@ export default {
 
     //初期ドローを行う。
     //この初期ドローを、バックの機能にして、この時点で手札をバックから貰えるようにする。⇒完了
-    this.$axios.post('/card_draw',{player_Id: searchParams.get("id")}).then((res)=>{
+    this.$axios.post('/card_draw',{carddata: this.mydata,player_Id: searchParams.get("id")}).then((res)=>{
       console.log(res.data)
       for (let i=0; i < res.data.length; i++){
         this.mydata.push(res.data[i])
@@ -793,13 +793,14 @@ export default {
         console.log("自分の番を変更する処理を送信")
       )
       //処理
+      console.log("useCardsが発火された")
       let cardValue = {
         userId: this.userId,
         selecteddata: this.selecteddata,
         roomId: searchParams.get("room"),
       };
       console.log(cardValue)
-      this.socket.emit("cardValue", cardValue);
+      this.socket.emit("cardValue", cardValue,searchParams.get("id"));
       if (this.selecteddata.length == 1) {
         if (this.selecteddata[0].action == "enhancement") {
           // 回復の処理
@@ -843,17 +844,15 @@ export default {
       this.showAttack = true;
       // 出されたカードを削除
       this.selecteddata.splice(index, this.selecteddata.length);
-      //現在の手札のカードをバックエンドに送信
-      this.$axios.post('/card_data',{carddata: this.mydata, player_Id: searchParams.get("id")})
-
       /*
       TODO:
       以下のドロー処理をバックで書くようにする
       */
       // ドローする処理
       // 今ある手札の取得
-      this.$axios.post('/card_draw',{player_Id: searchParams.get("id")}).then((res)=>{
+      this.$axios.post('/card_draw',{carddata: this.mydata,player_Id: searchParams.get("id")}).then((res)=>{
         console.log(res.data)
+        this.mydata = []
         for (let i=0; i < res.data.length; i++){
           this.mydata.push(res.data[i])
         }
@@ -894,15 +893,14 @@ export default {
     
     //cardValueを受け取った時の処理
     this.socket.on("card-value",  function(cardValue) {
-      if (attacksignal == 1){
-        console.log("攻撃もらった")
-      }
-      const searchParams = new URLSearchParams(window.location.search);
-      this.$axios.post('/control_turn',{player_Id: searchParams.get("id")}).then((res)=>{console.log("自分の番を変更する処理を送信")})
+
+      // const searchParams = new URLSearchParams(window.location.search);
+      // this.$axios.post('/control_turn_me',{player_Id: searchParams.get("id")}).then((res) => {
+      //   console.log("自分の番を変更する処理を送信")
+      // })
     
       //ここに、自分のturn_flagを+1する処理を書く。
       this.mydata = []
-      this.attacksignal = 1
       console.log(this);
       console.log(tmp.userId);
       console.log(cardValue.userId);

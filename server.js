@@ -68,6 +68,11 @@ app.get('/api/get_combo_db',(req,res) => {
 app.post('/api/card_draw',(req,res) => {
   console.log("ドロー機能発火")
   var select_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
+  console.log(req.body.carddata)
+  if (req.body.carddata.length != 0){
+    player_db[select_Id].card_list = req.body.carddata
+  }
+  console.log(player_db[select_Id].card_list)
   card_draw(select_Id)
   //フロントに新規リストを送信
   res.send(player_db[select_Id].card_list)
@@ -80,14 +85,6 @@ app.post('/api/turn_flag',(req,res) => {
   console.log("ターンを相手に渡す。")
 })
 
-//カードを出した直後の自分のカード情報を取得
-app.post('/api/card_data',(req,res) => {
-  var select_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
-  console.log("現在の手札の状態を取得完了")
-  console.log(req.body)
-  player_db[select_Id].card_list = req.body.carddata
-
-})
 
 //ページリロード時のターンを決定づける。
 app.post('/api/get_turn',(req,res) => {
@@ -98,9 +95,23 @@ app.post('/api/get_turn',(req,res) => {
 })
 
 app.post('/api/control_turn',(req,res) => {
+  //同じRoomにいる、自分以外の人のturn_flagを+１する
   var select_turn_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
+  var this_RoomId = player_db[select_turn_Id].RoomId
+  var this_Room_player = player_db.filter(e => {
+    if(e.RoomId === this_RoomId && e.player_Id != req.body.player_Id){
+      return true
+    }
+  })
+  //同じRoomにいる、自分以外の人のturn_flagを+１する
+  this_Room_player = JSON.stringify(this_Room_player)
+  this_Room_player = JSON.parse(this_Room_player)
+  console.log(this_Room_player)
+  var select_Id = player_db.findIndex(e => e.player_Id === this_Room_player[0].player_Id);
+  player_db[select_Id].turn_flag += 1
+  //自分のturn_flagを+１する
   player_db[select_turn_Id].turn_flag += 1
-  console.log("今の状態"+player_db[select_turn_Id].turn_flag)
+  console.log("相手と自分のturn_flagを共に変更成功")
 })
 
 app.post('/api/control_turn_me',(req,res) => {
@@ -115,12 +126,12 @@ function card_draw(select_Id){
   console.log("ドロー機能が発火されました")
   for (let j = player_db[select_Id].card_list.length; j < 6; ) {
     var tmp = Number(Math.floor(Math.random() * 56));
-    if (!player_db[select_Id].card_list_number.includes(tmp)) {
+    //if (!player_db[select_Id].card_list_number.includes(tmp)) {
       //ここ修正必要
-      player_db[select_Id].card_list_number.push(tmp);
-      player_db[select_Id].card_list.push(card_db[player_db[select_Id].card_list_number[j]]);
+      //player_db[select_Id].card_list_number.push(tmp);
+      player_db[select_Id].card_list.push(card_db[tmp]);
       j++;
-    }
+    //}
   }
 };
 
@@ -152,8 +163,17 @@ io.sockets.on("connection", function (socket) {
   socket.on("room-join", function (RoomID) {
     socket.join(RoomID);
   });
-  socket.on("cardValue", function (cardValue) {
+  socket.on("cardValue", function (cardValue,player_Id) {
     socket.join(cardValue.roomId);
+    // console.log("取得したID"+player_Id)
+    // var select_Id = player_db.findIndex(e => e.player_Id === player_Id);
+    // var this_RoomId = player_db[select_Id].RoomId
+    // var this_Room_player = player_db.filter(e => {
+    //   if(e.RoomId === this_RoomId){
+    //     return true
+    //   }
+    // });
+    // console.log("ルームに居る人のデータ"+this_Room_player)
     io.to(cardValue.roomId).emit("card-value", cardValue);
     console.log("カードの使用が認められました")
   });
