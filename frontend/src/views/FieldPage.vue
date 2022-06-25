@@ -1219,9 +1219,22 @@ export default {
         }
       } else {
         // 攻撃可能な配列を取得してaction_valueを相手のhpから引く
-        this.effect = this.ableattacks[0].name_en;
+        // ableattacksをcombo_data_dbに変える
+
+        let updateddata = this.selecteddata.map((obj) => obj.id);
+        let canattackdata = updateddata.sort((a,b) => (a < b ? -1 : 1));
+
+        const isIncludes = (arr, target) =>
+        arr.every((el) => target.includes(el));
+
+        let filterddata = this.combo_data_db.filter((combo_data) => {
+          return isIncludes(canattackdata, combo_data.id_list)
+        })
+
+        this.effect = filterddata[0].name_en;
+        this.damageValue = filterddata[0].action_value;
         this.sampleHp.yours =
-          this.sampleHp.yours - this.ableattacks[0].action_value;
+          this.sampleHp.yours - filterddata[0].action_value;
       }
       // attackのカットインを表示
       this.showAttack = true;
