@@ -744,6 +744,7 @@ export default {
       for (let i=0; i < res.data.length; i++){
         this.combo_data.push(res.data[i])
       }
+      console.log(this.combo_data)
     })
 
     //初期ドローを行う。
@@ -894,11 +895,6 @@ export default {
     //cardValueを受け取った時の処理
     this.socket.on("card-value",  function(cardValue) {
 
-      // const searchParams = new URLSearchParams(window.location.search);
-      // this.$axios.post('/control_turn_me',{player_Id: searchParams.get("id")}).then((res) => {
-      //   console.log("自分の番を変更する処理を送信")
-      // })
-    
       //ここに、自分のturn_flagを+1する処理を書く。
       this.mydata = []
       console.log(this);

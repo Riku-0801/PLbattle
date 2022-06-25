@@ -114,13 +114,6 @@ app.post('/api/control_turn',(req,res) => {
   console.log("相手と自分のturn_flagを共に変更成功")
 })
 
-app.post('/api/control_turn_me',(req,res) => {
-  console.log("攻撃くらったよ")
-  var select_turn_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
-  player_db[select_turn_Id].turn_flag += 1
-  console.log("今の状態"+player_db[select_turn_Id].turn_flag)
-})
-
 //カードドロー機能
 function card_draw(select_Id){
   console.log("ドロー機能が発火されました")
