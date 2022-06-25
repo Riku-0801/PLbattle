@@ -781,7 +781,7 @@ export default {
           type: "attachment",
           img: require("../assets/cards/External-HDD.png"),
           action: "enhancement",
-          value: 20,
+          value: 40,
           field: "",
           set_id: 0,
         },
@@ -1127,6 +1127,7 @@ export default {
         i++;
       }
     }
+    
     const searchParams = new URLSearchParams(window.location.search);
     let RoomID = searchParams.get("room");
     this.socket.emit("room-join", RoomID);
@@ -1137,8 +1138,9 @@ export default {
     console.log("fire");
     let tmp = this;
     this.socket.on("card-value", function (cardValue) {
+      //ここに、相手が選択したカードのデータが帰ってきてる
+      //この、lenghtの長さが１以上の場合、カードのcombo_listからvalueを引っ張ってくる必要がある。
       console.log(this);
-      console.log(tmp);
       console.log(tmp.userId);
       console.log(cardValue.userId);
       console.log(cardValue.selecteddata);
@@ -1166,9 +1168,22 @@ export default {
           }
         } else {
           // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
-          tmp.sampleHp.mine =
-            tmp.sampleHp.mine - tmp.ableattacks[0].action_value;
-        }
+          //ableattacksが入ってないよ
+          /*
+          ここに、自分のHPを引く処理をしている。
+          */
+        const isIncludes = (arr, target) => arr.every((el) => target.includes(el));
+        let updateddata = cardValue.selecteddata.map((obj) => obj.id);
+        tmp.combo_data_db.filter((combo_data) => {
+          if(isIncludes(updateddata, combo_data.id_list)){
+            if(updateddata.length == combo_data.id_list.length){
+              tmp.sampleHp.mine = tmp.sampleHp.mine - combo_data.action_value;
+              console.log("走ったよ")
+              tmp.damageValue = combo_data.action_value;
+            }
+          }
+        });
+      }
       }
     });
   },
@@ -1196,6 +1211,7 @@ export default {
         selecteddata: this.selecteddata,
         roomId: searchParams.get("room"),
       };
+      console.log(cardValue)
       this.socket.emit("cardValue", cardValue);
       if (this.selecteddata.length == 1) {
         if (this.selecteddata[0].action == "enhancement") {
@@ -1219,22 +1235,27 @@ export default {
         }
       } else {
         // 攻撃可能な配列を取得してaction_valueを相手のhpから引く
-        // ableattacksをcombo_data_dbに変える
-
+        this.effect = this.ableattacks[0].name_en;
+        /*
+        ここで、自分の画面での相手のHPから引く処理をしているが、ableattacksってやつは存在しない        
+        */
+       //ここに、selecteddataに一致するコンボのvalueを記述する。
+       /*
+       １．selecteddataに一致する、combo_dataのid_listを探す
+       ２．一致したid_listがもっているaciton_valueを取得
+       */
+        const isIncludes = (arr, target) => arr.every((el) => target.includes(el));
         let updateddata = this.selecteddata.map((obj) => obj.id);
-        let canattackdata = updateddata.sort((a,b) => (a < b ? -1 : 1));
-
-        const isIncludes = (arr, target) =>
-        arr.every((el) => target.includes(el));
-
-        let filterddata = this.combo_data_db.filter((combo_data) => {
-          return isIncludes(canattackdata, combo_data.id_list)
-        })
-
-        this.effect = filterddata[0].name_en;
-        this.damageValue = filterddata[0].action_value;
-        this.sampleHp.yours =
-          this.sampleHp.yours - filterddata[0].action_value;
+        this.combo_data_db.filter((combo_data) => {
+          if(isIncludes(updateddata, combo_data.id_list)){
+            if(updateddata.length == combo_data.id_list.length){
+              this.sampleHp.yours = this.sampleHp.yours - combo_data.action_value;
+              console.log("走ったよ")
+              this.damageValue = combo_data.action_value;
+            }
+          }
+        });
+        console.log("枚数2枚")
       }
       // attackのカットインを表示
       this.showAttack = true;
@@ -1334,9 +1355,9 @@ export default {
         for (let i = 0, n = updateddata.length; i < n; ++i) {
           console.log(ableCombo)
           if (ableCombo.length == 0) {
-            cosole.log("0だよーーー！")
+            console.log("0だよーーー!")
             return false;
-          } else if (updateddata[i] == ableCombo[0].id_list[i]) {
+          } else if (updateddata[i] == ableCombo[0].id_list[i] && updateddata.length == ableCombo.length) {
             return true;
           } else {
             return false;
