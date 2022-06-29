@@ -39,3 +39,24 @@ language に対応した framework を用いると、攻撃力 1.5 倍
 2 人で交互にターンを繰り返す
 ２. 4 タイプのカードを組み合わせて戦う
 5. 相手の HP をゼロにして勝つ
+
+
+# frontend
+
+## Project setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
