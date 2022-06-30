@@ -925,6 +925,9 @@ export default {
   mounted() {
     let tmp = this;
 
+    this.socket.on("num-player", function (numplayer) {
+      console.log(numplayer);
+    });
     //cardValueを受け取った時の処理
     this.socket.on("card-value", function (cardValue) {
       //ここに、自分のturn_flagを+1する処理を書く。
