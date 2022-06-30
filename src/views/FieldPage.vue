@@ -112,7 +112,7 @@ export default {
   components: {
     VueDrag,
   },
-  
+
   data() {
     return {
       effect: "action",
@@ -711,10 +711,10 @@ export default {
       ],
       combo_data: [],
       // 普段表示していない要素
-      showAttack: false,//自分の攻撃表示　これは別にバックで管理する必要はない
-      showOponent: false,//相手の攻撃表示　これは別にバックで管理する必要はない
-      dalayItem: false,//なにも使ってない　消していい？
-      oponentTurn: false,//行動の可否を決定づける部分　これをバックで管理しよう。
+      showAttack: false, //自分の攻撃表示　これは別にバックで管理する必要はない
+      showOponent: false, //相手の攻撃表示　これは別にバックで管理する必要はない
+      dalayItem: false, //なにも使ってない　消していい？
+      oponentTurn: false, //行動の可否を決定づける部分　これをバックで管理しよう。
       judgeLose: false,
       judgeWin: false,
       // draganddrop用のデータ
@@ -728,58 +728,74 @@ export default {
       recent_mydata_len: [],
       recent_selectdata_id: [],
       tmp: 0,
-      userId: Math.random().toString(32).substring(2),
+      userId: "",
       sampleHp: {
         mine: 300,
         yours: 300,
       },
-      attacksignal: 0
+      attacksignal: 0,
     };
   },
   created() {
     const searchParams = new URLSearchParams(window.location.search);
-    this.attacksignal = 0
+    this.attacksignal = 0;
     //バックエンドからコンボdbを受け取る処理
-    this.$axios.get('/get_combo_db').then((res)=>{
-      for (let i=0; i < res.data.length; i++){
-        this.combo_data.push(res.data[i])
+    this.$axios.get("/get_combo_db").then((res) => {
+      for (let i = 0; i < res.data.length; i++) {
+        this.combo_data.push(res.data[i]);
       }
-      console.log(this.combo_data)
+      console.log(this.combo_data);
+    });
+    //HPの共有
+    this.$axios.post("/HP", {
+      HPs: this.sampleHp,
+      player_Id: searchParams.get("id"),
     })
-
+    .then((res) => {
+      console.log(res.data)
+      this.sampleHp.mine = res.data.my_HP
+      this.sampleHp.yours = res.data.enemy_HP
+    });
+    
     //初期ドローを行う。
     //この初期ドローを、バックの機能にして、この時点で手札をバックから貰えるようにする。⇒完了
-    this.$axios.post('/card_draw',{carddata: this.mydata,player_Id: searchParams.get("id")}).then((res)=>{
-      console.log(res.data)
-      for (let i=0; i < res.data.length; i++){
-        this.mydata.push(res.data[i])
-      }
-      console.log(this.mydata)
-    })
+    this.$axios
+      .post("/card_draw", {
+        carddata: this.mydata,
+        player_Id: searchParams.get("id"),
+      })
+      .then((res) => {
+        console.log(res.data);
+        for (let i = 0; i < res.data.length; i++) {
+          this.mydata.push(res.data[i]);
+        }
+        console.log(this.mydata);
+      });
 
     //joinするための送信
+    this.userId = searchParams.get("id");
     let RoomID = searchParams.get("room");
-    this.socket.emit("room-join", RoomID);
+    this.socket.emit("room-join", RoomID, this.userId);
     console.log(this.userId);
-
     //turn_flagに応じて、showAttackなどの表示、非表示を決定する。
     //偶数の時は自分の番
-    this.$axios.post('/get_turn',{player_Id: searchParams.get("id")}).then((res)=>{
-      if(res.data%2 == 0){
-        this.oponentTurn = false
-      }else if(res.data%2 == 1){
-        this.oponentTurn = true
-      }
-    })
+    this.$axios
+      .post("/get_turn", { player_Id: searchParams.get("id") })
+      .then((res) => {
+        console.log(res.data);
+        if (res.data % 2 == 0) {
+          this.oponentTurn = false;
+        } else if (res.data % 2 == 1) {
+          this.oponentTurn = true;
+        }
+      });
   },
   methods: {
-
     //強引にフロントエンドのdbからimgを貰ってくる
-    search_img_id(id){
-      var select_Id = this.card_db.findIndex(e => e.id === id);
-      return this.card_db[select_Id].img
+    search_img_id(id) {
+      var select_Id = this.card_db.findIndex((e) => e.id === id);
+      return this.card_db[select_Id].img;
     },
-
 
     //roomIdをサーバーサイドへ送信
     sendRoomId(roomId) {
@@ -787,21 +803,20 @@ export default {
     },
     //カード発動時の処理
     useCards: function (index) {
-
       //ここに、turn_flagを+1する処理を書く。
       const searchParams = new URLSearchParams(window.location.search);
-      this.$axios.post('/control_turn',{player_Id: searchParams.get("id")}).then(
-        console.log("自分の番を変更する処理を送信")
-      )
+      this.$axios
+        .post("/control_turn", { player_Id: searchParams.get("id") })
+        .then(console.log("自分の番を変更する処理を送信"));
       //処理
-      console.log("useCardsが発火された")
+      console.log("useCardsが発火された");
       let cardValue = {
         userId: this.userId,
         selecteddata: this.selecteddata,
         roomId: searchParams.get("room"),
       };
-      console.log(cardValue)
-      this.socket.emit("cardValue", cardValue,searchParams.get("id"));
+      console.log(cardValue);
+      this.socket.emit("cardValue", cardValue, searchParams.get("id"));
       if (this.selecteddata.length == 1) {
         if (this.selecteddata[0].action == "enhancement") {
           // 回復の処理
@@ -824,18 +839,20 @@ export default {
       } else {
         // 攻撃可能な配列を取得してaction_valueを相手のhpから引く
         this.effect = this.ableattacks[0].name_en;
-        const isIncludes = (arr, target) => arr.every((el) => target.includes(el));
+        const isIncludes = (arr, target) =>
+          arr.every((el) => target.includes(el));
         let updateddata = this.selecteddata.map((obj) => obj.id);
         this.combo_data.filter((combo_data) => {
-          if(isIncludes(updateddata, combo_data.id_list)){
-            if(updateddata.length == combo_data.id_list.length){
-              this.sampleHp.yours = this.sampleHp.yours - combo_data.action_value;
-              console.log("走ったよ")
+          if (isIncludes(updateddata, combo_data.id_list)) {
+            if (updateddata.length == combo_data.id_list.length) {
+              this.sampleHp.yours =
+                this.sampleHp.yours - combo_data.action_value;
+              console.log("走ったよ");
               this.damageValue = combo_data.action_value;
             }
           }
         });
-        console.log("枚数2枚")
+        console.log("枚数2枚");
       }
       // attackのカットインを表示
       //この、showAttackの処理を、
@@ -845,11 +862,45 @@ export default {
       this.showAttack = true;
       // 出されたカードを削除
       this.selecteddata.splice(index, this.selecteddata.length);
+<<<<<<< HEAD
       
+=======
+      /*
+      TODO:
+      以下のドロー処理をバックで書くようにする
+      */
+      // ドローする処理
+      // 今ある手札の取得
+      setTimeout(() => {
+        this.$axios
+          .post("/card_draw", {
+            carddata: this.mydata,
+            player_Id: searchParams.get("id"),
+          })
+          .then((res) => {
+            console.log(res.data);
+            this.mydata = [];
+            for (let i = 0; i < res.data.length; i++) {
+              this.mydata.push(res.data[i]);
+            }
+            console.log(this.mydata);
+          });
+      }, 1000);
+
+>>>>>>> 76fec80230c3d19393c13dd1a1b6963f90f81813
       this.oponentTurn = true;
 
       //バックエンドにデータを送信
-      this.$axios.post('/HP',  this.sampleHp)
+      this.$axios.post("/HP", {
+            HPs: this.sampleHp,
+            player_Id: searchParams.get("id"),
+          })
+          .then((res) => {
+            console.log("自分のHP情報"+res.data.my_HP)
+            console.log("自分のHP情報"+res.data.enemy_HP)
+            this.sampleHp.mine = res.data.my_HP
+            this.sampleHp.yours = res.data.enemy_HP
+          });
     },
     // 相手の攻撃のカットインを表示
     oponentAttack: function () {
@@ -876,20 +927,20 @@ export default {
       if (this.sampleHp.yours <= 0) {
         this.judgeWin = true;
       }
-
     },
     // homeボタン
     goHome: function () {
       this.$router.push("/");
     },
-    
   },
   mounted() {
     let tmp = this;
-    
-    //cardValueを受け取った時の処理
-    this.socket.on("card-value",  function(cardValue) {
 
+    this.socket.on("num-player", function (numplayer) {
+      console.log(numplayer);
+    });
+    //cardValueを受け取った時の処理
+    this.socket.on("card-value", function (cardValue) {
       //ここに、自分のturn_flagを+1する処理を書く。
       // console.log(this);
       // console.log(tmp.userId);
@@ -918,28 +969,29 @@ export default {
               tmp.sampleHp.mine - cardValue.selecteddata[0].value;
           }
         } else {
-        const isIncludes = (arr, target) => arr.every((el) => target.includes(el));
-        let updateddata = cardValue.selecteddata.map((obj) => obj.id);
-        tmp.combo_data.filter((combo_data) => {
-          if(isIncludes(updateddata, combo_data.id_list)){
-            if(updateddata.length == combo_data.id_list.length){
-              tmp.sampleHp.mine = tmp.sampleHp.mine - combo_data.action_value;
-              console.log("走ったよ")
-              tmp.damageValue = combo_data.action_value;
+          const isIncludes = (arr, target) =>
+            arr.every((el) => target.includes(el));
+          let updateddata = cardValue.selecteddata.map((obj) => obj.id);
+          tmp.combo_data.filter((combo_data) => {
+            if (isIncludes(updateddata, combo_data.id_list)) {
+              if (updateddata.length == combo_data.id_list.length) {
+                tmp.sampleHp.mine = tmp.sampleHp.mine - combo_data.action_value;
+                console.log("走ったよ");
+                tmp.damageValue = combo_data.action_value;
+              }
             }
-          }
-        });
-      }
+          });
+        }
       }
     });
   },
-  
+
   computed: {
     ableattacks: function () {
       // selecteddataのidだけを集めた
       let updateddata = this.selecteddata.map((obj) => obj.id);
-      let canattackdata = updateddata.sort((a,b) => (a < b ? -1 : 1));
-      
+      let canattackdata = updateddata.sort((a, b) => (a < b ? -1 : 1));
+
       // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
@@ -955,19 +1007,19 @@ export default {
       }
     },
     //発動できるかどうかを判定する
-     attack_decision: function () {
-      console.log("decision発火")
+    attack_decision: function () {
+      console.log("decision発火");
       let updateddata = this.selecteddata.map((obj) => obj.id);
-      updateddata.sort(function(first, second){
-        if (first > second){
+      updateddata.sort(function (first, second) {
+        if (first > second) {
           return 1;
-        }else if (first < second){
+        } else if (first < second) {
           return -1;
-        }else{
+        } else {
           return 0;
         }
       });
-      console.log(updateddata)
+      console.log(updateddata);
       // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
@@ -984,16 +1036,19 @@ export default {
         for (let i = 0, n = updateddata.length; i < n; ++i) {
           console.log(ableCombo)
           if (ableCombo.length == 0) {
-            console.log("0だよーーー!")
+            console.log("0だよーーー!");
             return false;
-          } else if (updateddata[i] == ableCombo[0].id_list[i]  && updateddata.length == ableCombo[0].id_list.length) {
-            console.log("updateの長さ"+updateddata.length)
-            console.log("ableComboの長さ"+ableCombo.length)
-            console.log(ableCombo[0])
-            console.log("OK")
+          } else if (
+            updateddata[i] == ableCombo[0].id_list[i] &&
+            updateddata.length == ableCombo[0].id_list.length
+          ) {
+            console.log("updateの長さ" + updateddata.length);
+            console.log("ableComboの長さ" + ableCombo.length);
+            console.log(ableCombo[0]);
+            console.log("OK");
             return true;
           } else {
-            console.log("不足")
+            console.log("不足");
             return false;
           }
         }

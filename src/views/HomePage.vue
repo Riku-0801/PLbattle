@@ -6,8 +6,7 @@
         <div>>>>>>>>>>>>>>>>>>>>></div>
         <br />
         <div class="a neon_title">><span>CODE DUEL</span></div>
-        <div>>
-        </div>
+        <div>></div>
         <div>></div>
         <div>></div>
         <!--<div class="typing">-->
@@ -64,12 +63,18 @@ export default {
       this.player_Id = Math.random().toString(32).substring(2);
       this.RoomId = id;
       this.socket.emit("login", this.RoomId);
-      this.$axios.post('/player_data',{RoomId: this.RoomId, player_Id: this.player_Id})
+      this.$axios.post("/player_data", {
+        RoomId: this.RoomId,
+        player_Id: this.player_Id,
+      });
     },
     //ページ遷移機能
     push() {
       console.log(this.RoomId);
-      this.$router.push({ name: "field", query: { room: this.RoomId ,id: this.player_Id} });
+      this.$router.push({
+        name: "field",
+        query: { room: this.RoomId, id: this.player_Id },
+      });
     },
     set() {
       localStorage.setItem(
