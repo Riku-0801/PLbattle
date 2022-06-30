@@ -42,12 +42,21 @@ app.post("/api/message", (req, res) => {
 
 //フロントエンドからHP情報を受け取る。
 app.post("/api/HP", (req, res) => {
-  var select_turn_Id = player_db.findIndex(
+  var select_Id = player_db.findIndex(
     (e) => e.player_Id === req.body.player_Id
   );
 
-  console.log(req.body);
+  player_db[select_Id].my_HP = req.body.HPs.mine
+  player_db[select_Id].enemy_HP = req.body.HPs.yours
+  console.log("自分のHP"+player_db[select_Id].my_HP);
+  console.log("相手のHP"+player_db[select_Id].enemy_HP);
+  HP_data = {
+    my_HP: player_db[select_Id].my_HP,
+    enemy_HP: player_db[select_Id].enemy_HP
+  }
+  res.send(HP_data)
 });
+
 
 //ログイン時に、player_IdとRoomIdを受け取る。それをplayer_dbに格納
 app.post("/api/player_data", (req, res) => {
@@ -78,6 +87,8 @@ app.post("/api/player_data", (req, res) => {
 app.get("/api/get_combo_db", (req, res) => {
   res.json(combo_data_db);
 });
+
+
 
 //カードドローリクエストがフロントから走った場合に発火
 app.post("/api/card_draw", (req, res) => {
