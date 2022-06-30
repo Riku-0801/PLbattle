@@ -45,7 +45,7 @@ app.post("/api/HP", (req, res) => {
   var select_turn_Id = player_db.findIndex(
     (e) => e.player_Id === req.body.player_Id
   );
-  
+
   console.log(req.body);
 });
 
@@ -157,6 +157,7 @@ function card_draw(select_Id) {
 
 //接続時処理
 let numClients = {};
+let numPlayer = {};
 io.sockets.on("connection", function (socket) {
   console.log("connected");
   //接続切断処理
@@ -181,6 +182,12 @@ io.sockets.on("connection", function (socket) {
   });
   socket.on("room-join", function (RoomID) {
     socket.join(RoomID);
+    if (numPlayer[RoomID] == undefined) {
+      numPlayer[RoomID] = 1;
+    } else {
+      numPlayer[RoomID]++;
+    }
+    io.to(RoomID).emit("num-player", numPlayer[RoomID]);
   });
   socket.on("cardValue", function (cardValue, player_Id) {
     socket.join(cardValue.roomId);

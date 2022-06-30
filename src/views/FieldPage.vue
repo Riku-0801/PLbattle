@@ -878,9 +878,9 @@ export default {
 
       //バックエンドにデータを送信
       this.$axios.post("/HP", {
-            HP: this.sampleHp,
-            player_Id: searchParams.get("id"),
-          });
+        HP: this.sampleHp,
+        player_Id: searchParams.get("id"),
+      });
     },
     // 相手の攻撃のカットインを表示
     oponentAttack: function () {
@@ -909,6 +909,9 @@ export default {
   mounted() {
     let tmp = this;
 
+    this.socket.on("num-player", function (numplayer) {
+      console.log(numplayer);
+    });
     //cardValueを受け取った時の処理
     this.socket.on("card-value", function (cardValue) {
       //ここに、自分のturn_flagを+1する処理を書く。
