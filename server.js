@@ -11,9 +11,9 @@ const PORT = process.env.PORT || 3000;
 const serveStatic = require("serve-static");
 const cors = require("cors");
 //post時にbodyを参照できるようにする
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 //post時にjsonファイルを扱えるようにする
-app.use(express.json())
+app.use(express.json());
 app.use(
   cors({
     //魂のtrue　いつか直したい
@@ -36,102 +36,120 @@ if (process.env.NODE_ENV !== "production") {
 }
 app.use(serveStatic(__dirname + "/dist"));
 
-
-app.post('/api/message', (req, res) => {
-  console.log(req.body.firstname)
-})
+app.post("/api/message", (req, res) => {
+  console.log(req.body.firstname);
+});
 
 //フロントエンドからHP情報を受け取る。
-app.post('/api/HP', (req, res) => {
-  console.log(req.body)
-})
+app.post("/api/HP", (req, res) => {
+  console.log(req.body);
+});
 
 //ログイン時に、player_IdとRoomIdを受け取る。それをplayer_dbに格納
-app.post('/api/player_data', (req, res) => {
-  player_db.push({
-    RoomId: req.body.RoomId, 
-    player_Id: req.body.player_Id, 
-    card_list: [],
-    my_HP: 200, 
-    enemy_HP: 200,
-    card_list_number:[],
-    turn_flag: 0
-  })
-})
+app.post("/api/player_data", (req, res) => {
+  if (numClients[req.body.RoomId] == 1) {
+    player_db.push({
+      RoomId: req.body.RoomId,
+      player_Id: req.body.player_Id,
+      card_list: [],
+      my_HP: 200,
+      enemy_HP: 200,
+      card_list_number: [],
+      turn_flag: 1,
+    });
+  } else {
+    player_db.push({
+      RoomId: req.body.RoomId,
+      player_Id: req.body.player_Id,
+      card_list: [],
+      my_HP: 200,
+      enemy_HP: 200,
+      card_list_number: [],
+      turn_flag: 0,
+    });
+  }
+});
 
 //コンボカードリストをフロントに送信
-app.get('/api/get_combo_db',(req,res) => {
-  res.json(combo_data_db)
-})
+app.get("/api/get_combo_db", (req, res) => {
+  res.json(combo_data_db);
+});
 
 //カードドローリクエストがフロントから走った場合に発火
-app.post('/api/card_draw',(req,res) => {
-  console.log("ドロー機能発火")
-  var select_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
+app.post("/api/card_draw", (req, res) => {
+  console.log("ドロー機能発火");
+  var select_Id = player_db.findIndex(
+    (e) => e.player_Id === req.body.player_Id
+  );
 
-    if (req.body.carddata.length != 0){
-      console.log("カードデータ更新")
-      player_db[select_Id].card_list = req.body.carddata
-    }
+  if (req.body.carddata.length != 0) {
+    console.log("カードデータ更新");
+    player_db[select_Id].card_list = req.body.carddata;
+  }
 
-  console.log("ドロー関数に送る処理開始")
-  card_draw(select_Id)
-  console.log("ドロー完了")
+  console.log("ドロー関数に送る処理開始");
+  card_draw(select_Id);
+  console.log("ドロー完了");
   //フロントに新規リストを送信
 
-    res.send(player_db[select_Id].card_list)
+  res.send(player_db[select_Id].card_list);
 
-  console.log("フロントにデータ送信完了")
-})
+  console.log("フロントにデータ送信完了");
+});
 
 //ターンを指定するフラグの送受信
-app.post('/api/turn_flag',(req,res) => {
-  console.log("ターンを相手に渡す。")
-})
+app.post("/api/turn_flag", (req, res) => {
+  console.log("ターンを相手に渡す。");
+});
 
 //ページリロード時のターンを決定づける。
-app.post('/api/get_turn',(req,res) => {
-  console.log("リロード及びページ起動時のターンを取得しています。")
-  var select_turn_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
-  res.json(player_db[select_turn_Id].turn_flag)
+app.post("/api/get_turn", (req, res) => {
+  console.log("リロード及びページ起動時のターンを取得しています。");
+  var select_turn_Id = player_db.findIndex(
+    (e) => e.player_Id === req.body.player_Id
+  );
+  res.json(player_db[select_turn_Id].turn_flag);
   //覚え書き：数字を送る際はjsonにしよう。
-})
+});
 
-app.post('/api/control_turn',(req,res) => {
+app.post("/api/control_turn", (req, res) => {
   //同じRoomにいる、自分以外の人のturn_flagを+１する
-  var select_turn_Id = player_db.findIndex(e => e.player_Id === req.body.player_Id);
-  var this_RoomId = player_db[select_turn_Id].RoomId
-  var this_Room_player = player_db.filter(e => {
-    if(e.RoomId === this_RoomId && e.player_Id != req.body.player_Id){
-      return true
+  var select_turn_Id = player_db.findIndex(
+    (e) => e.player_Id === req.body.player_Id
+  );
+  var this_RoomId = player_db[select_turn_Id].RoomId;
+  var this_Room_player = player_db.filter((e) => {
+    if (e.RoomId === this_RoomId && e.player_Id != req.body.player_Id) {
+      return true;
     }
-  })
+  });
   //同じRoomにいる、自分以外の人のturn_flagを+１する
 
-    this_Room_player = JSON.stringify(this_Room_player)
-    this_Room_player = JSON.parse(this_Room_player)
-    var select_Id = player_db.findIndex(e => e.player_Id === this_Room_player[0].player_Id);
-    player_db[select_Id].turn_flag += 1
-    //自分のturn_flagを+１する
-    player_db[select_turn_Id].turn_flag += 1
+  this_Room_player = JSON.stringify(this_Room_player);
+  this_Room_player = JSON.parse(this_Room_player);
+  var select_Id = player_db.findIndex(
+    (e) => e.player_Id === this_Room_player[0].player_Id
+  );
+  player_db[select_Id].turn_flag += 1;
+  //自分のturn_flagを+１する
+  player_db[select_turn_Id].turn_flag += 1;
 
-  console.log("相手と自分のturn_flagを共に変更成功")
-})
+  console.log("相手と自分のturn_flagを共に変更成功");
+});
 
 //カードドロー機能
-function card_draw(select_Id){
-  console.log("ドロー関数が発火されました")
+function card_draw(select_Id) {
+  console.log("ドロー関数が発火されました");
   for (let j = player_db[select_Id].card_list.length; j < 6; ) {
     var tmp = Number(Math.floor(Math.random() * 56));
     //if (!player_db[select_Id].card_list_number.includes(tmp)) {
-      //ここ修正必要
-      //player_db[select_Id].card_list_number.push(tmp);
-      player_db[select_Id].card_list.push(card_db[tmp]);
-      j++;
+    //ここ修正必要
+    //player_db[select_Id].card_list_number.push(tmp);
+    player_db[select_Id].card_list.push(card_db[tmp]);
+    j++;
     //}
   }
-};
-
+}
 
 //接続時処理
 let numClients = {};
@@ -153,19 +171,18 @@ io.sockets.on("connection", function (socket) {
       socket.join(RoomId);
       console.log("Roomに入室が完了しました");
       console.log(RoomId);
-      console.log("今のRoomに居る人数"+numClients[RoomId]);
+      console.log("今のRoomに居る人数" + numClients[RoomId]);
     }
     //ルーム入室
   });
   socket.on("room-join", function (RoomID) {
     socket.join(RoomID);
   });
-  socket.on("cardValue", function (cardValue,player_Id) {
+  socket.on("cardValue", function (cardValue, player_Id) {
     socket.join(cardValue.roomId);
     io.to(cardValue.roomId).emit("card-value", cardValue);
-    console.log("カードの使用が認められました")
+    console.log("カードの使用が認められました");
   });
-  
 });
 
 http.listen(PORT, function () {
@@ -182,11 +199,11 @@ var player_db = [
     card_list: [],
     my_HP: 0,
     enemy_HP: 0,
-    card_list_number:[],
-    turn_flag: 0
+    card_list_number: [],
+    turn_flag: 0,
   },
-]
-var combo_data_db=[
+];
+var combo_data_db = [
   {
     combo_id: 1,
     name_en: "Royal Straight Flush",
@@ -305,7 +322,7 @@ var combo_data_db=[
     name_ja: "バード",
     action_value: 70,
     id_list: [30, 31],
-    name_list: ["Swift","Kotlin"]
+    name_list: ["Swift", "Kotlin"],
   },
   {
     combo_id: 16,
@@ -313,7 +330,7 @@ var combo_data_db=[
     name_ja: "グーグル",
     action_value: 80,
     id_list: [32, 37],
-    name_list: ["dart","Go"]
+    name_list: ["dart", "Go"],
   },
   {
     combo_id: 17,
@@ -321,7 +338,7 @@ var combo_data_db=[
     name_ja: "アップル",
     action_value: 70,
     id_list: [29, 30],
-    name_list: ["Objective-C","Swift"]
+    name_list: ["Objective-C", "Swift"],
   },
   {
     combo_id: 18,
@@ -329,7 +346,7 @@ var combo_data_db=[
     name_ja: "パイソンズ1",
     action_value: 40,
     id_list: [4, 5],
-    name_list: ["Django","FastAPI"]
+    name_list: ["Django", "FastAPI"],
   },
   {
     combo_id: 19,
@@ -337,7 +354,7 @@ var combo_data_db=[
     name_ja: "パイソンズ2",
     action_value: 50,
     id_list: [4, 16],
-    name_list: ["Django","Flask"]
+    name_list: ["Django", "Flask"],
   },
   {
     combo_id: 20,
@@ -345,7 +362,7 @@ var combo_data_db=[
     name_ja: "パイソンズ3",
     action_value: 50,
     id_list: [5, 16],
-    name_list: ["FastAPI","Flask"]
+    name_list: ["FastAPI", "Flask"],
   },
   {
     combo_id: 21,
@@ -564,7 +581,7 @@ var combo_data_db=[
     name_list: ["TypeScript", "Angular"],
   },
 ];
-var card_db= [
+var card_db = [
   {
     id: 1,
     name: "Javascript",
