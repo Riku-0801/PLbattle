@@ -8,10 +8,12 @@
       <!-- 相手の攻撃エフェクト -->
       <div v-show="showOponent" class="overlay" @click="closeOponent">
         <!-- 相手の攻撃情報をここに持ってくる -->
-        <v-card height="475px" width="400px" class="black">
-          <v-img src="../assets/cards/Angular.png"></v-img>
-        </v-card>
-        <div class="dalayEffect">Mark Up</div>
+        <div v-for="given in givenCards" :key="given.id">
+          <v-card height="475px" width="400px" class="black">
+            <v-img :src="search_img_id(given.id)"></v-img>
+          </v-card>
+        </div>
+        <div class="dalayEffect">{{ givenAttack.effect }}  {{ givenAttack.value }} pt</div>
       </div>
       <!-- 自分のhpが0になった時の処理 -->
       <div v-show="judgeLose" class="overwrap items">
@@ -22,7 +24,7 @@
       </div>
       <!-- 自分の攻撃エフェクト -->
       <div v-show="showAttack" class="overlay" @click="getCardValue">
-        <div class="dalayEffect">{{ effect }}　{{ damageValue }} pt</div>
+        <div class="myEffect">{{ effect }}　{{ damageValue }} pt</div>
       </div>
       <!-- 相手のhpが0になった時の処理 -->
       <div v-show="judgeWin" class="overwrap items">
@@ -734,6 +736,11 @@ export default {
         yours: 300,
       },
       attacksignal: 0,
+      givenCards: [],
+      givenAttack: {
+        effect: '',
+        value: ''
+      }
     };
   },
   created() {
@@ -756,7 +763,7 @@ export default {
       this.sampleHp.mine = res.data.my_HP
       this.sampleHp.yours = res.data.enemy_HP
     });
-    
+
     //初期ドローを行う。
     //この初期ドローを、バックの機能にして、この時点で手札をバックから貰えるようにする。⇒完了
     this.$axios
@@ -803,8 +810,9 @@ export default {
     },
     //カード発動時の処理
     useCards: function (index) {
-      //ここに、turn_flagを+1する処理を書く。
+      // todo: searchParamsをグローバル変数にできないかな
       const searchParams = new URLSearchParams(window.location.search);
+      //ここに、turn_flagを+1する処理を書く。
       this.$axios
         .post("/control_turn", { player_Id: searchParams.get("id") })
         .then(console.log("自分の番を変更する処理を送信"));
@@ -862,27 +870,6 @@ export default {
       this.showAttack = true;
       // 出されたカードを削除
       this.selecteddata.splice(index, this.selecteddata.length);
-      /*
-      TODO:
-      以下のドロー処理をバックで書くようにする
-      */
-      // ドローする処理
-      // 今ある手札の取得
-      setTimeout(() => {
-        this.$axios
-          .post("/card_draw", {
-            carddata: this.mydata,
-            player_Id: searchParams.get("id"),
-          })
-          .then((res) => {
-            console.log(res.data);
-            this.mydata = [];
-            for (let i = 0; i < res.data.length; i++) {
-              this.mydata.push(res.data[i]);
-            }
-            console.log(this.mydata);
-          });
-      }, 1000);
 
       this.oponentTurn = true;
 
@@ -898,13 +885,18 @@ export default {
             this.sampleHp.yours = res.data.enemy_HP
           });
     },
-    // 相手の攻撃のカットインを表示
-    oponentAttack: function () {
-      this.showOponent = true;
-    },
     // カットインを閉じる
     closeOponent: function () {
       this.showOponent = false;
+      // カードをドローする処理
+      const searchParams = new URLSearchParams(window.location.search);
+      this.$axios.post('/card_draw',{carddata: this.mydata,player_Id: searchParams.get("id")}).then((res)=>{
+        console.log(res.data)
+          this.mydata = []
+          for (let i=0; i < res.data.length; i++){
+            this.mydata.push(res.data[i])
+          }
+        })
       // 自分のhpが０だった時の負け表示
       if (this.sampleHp.mine <= 0) {
         this.judgeLose = true;
@@ -970,7 +962,31 @@ export default {
               }
             }
           });
+        };
+        // 相手の攻撃のカードデータを取得
+        tmp.givenCards = []
+        for (let i = 0; i < cardValue.selecteddata.length; i++) {
+          tmp.givenCards.push(cardValue.selecteddata[i]);
+        };
+        // コンポ名を取得する。一枚の場合はeffectが何かを入れる
+        if(tmp.givenCards.length == 1){
+          tmp.givenAttack.effect = cardValue.selecteddata[0].action
+          tmp.givenAttack.value = cardValue.selecteddata[0].value
+        }else{
+          // 選択されたカードのidリストを取得
+          let updateddata = tmp.givenCards.map((obj) => obj.id);
+          // コンボデータからそのidリストと一致するコンボを検索
+          const isIncludes = (arr, target) =>
+            arr.every((el) => target.includes(el));
+          // 一致するコンボを取得
+          let givenCombo = tmp.combo_data.filter((combo) => {
+            return isIncludes(updateddata, combo.id_list)
+          });
+          tmp.givenAttack.effect = givenCombo[0].name_en
+          tmp.givenAttack.value = givenCombo[0].action_value
         }
+        // 相手の攻撃を表示
+        tmp.showOponent = true;
       }
     });
   },
@@ -1023,6 +1039,7 @@ export default {
         });
         // 完全一致した攻撃だけを返す
         for (let i = 0, n = updateddata.length; i < n; ++i) {
+          console.log(ableCombo)
           if (ableCombo.length == 0) {
             console.log("0だよーーー!");
             return false;
@@ -1117,7 +1134,24 @@ export default {
   opacity: 0;
   animation: SlideIn 0.4s;
   /* 0.8秒遅らせる */
-  /* animation-delay: 0.8s; */
+  animation-delay: 0.8s;
+  /* opacityが戻らないようにする */
+  animation-fill-mode: forwards;
+}
+
+.myEffect {
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 30%;
+  color: white;
+  font-size: 100px;
+  background: radial-gradient(#134e61, #102335);
+  font: "Oxanium";
+  opacity: 0;
+  animation: SlideIn 0.4s;
   /* opacityが戻らないようにする */
   animation-fill-mode: forwards;
 }
