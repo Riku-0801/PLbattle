@@ -81,6 +81,7 @@ app.post("/api/player_data", (req, res) => {
       turn_flag: 0,
     });
   }
+  //ここでルーム人数渡す
   res.json(numClients[req.body.RoomId]);
 });
 
