@@ -35,7 +35,8 @@ if (process.env.NODE_ENV !== "production") {
   );
 }
 app.use(serveStatic(__dirname + "/dist"));
-
+let numClients = {};
+let numPlayer = {};
 app.post("/api/message", (req, res) => {
   console.log(req.body.firstname);
 });
@@ -46,17 +47,16 @@ app.post("/api/HP", (req, res) => {
     (e) => e.player_Id === req.body.player_Id
   );
 
-  player_db[select_Id].my_HP = req.body.HPs.mine
-  player_db[select_Id].enemy_HP = req.body.HPs.yours
-  console.log("自分のHP"+player_db[select_Id].my_HP);
-  console.log("相手のHP"+player_db[select_Id].enemy_HP);
+  player_db[select_Id].my_HP = req.body.HPs.mine;
+  player_db[select_Id].enemy_HP = req.body.HPs.yours;
+  console.log("自分のHP" + player_db[select_Id].my_HP);
+  console.log("相手のHP" + player_db[select_Id].enemy_HP);
   HP_data = {
     my_HP: player_db[select_Id].my_HP,
-    enemy_HP: player_db[select_Id].enemy_HP
-  }
-  res.send(HP_data)
+    enemy_HP: player_db[select_Id].enemy_HP,
+  };
+  res.send(HP_data);
 });
-
 
 //ログイン時に、player_IdとRoomIdを受け取る。それをplayer_dbに格納
 app.post("/api/player_data", (req, res) => {
@@ -81,14 +81,13 @@ app.post("/api/player_data", (req, res) => {
       turn_flag: 0,
     });
   }
+  res.json(numClients[req.body.RoomId]);
 });
 
 //コンボカードリストをフロントに送信
 app.get("/api/get_combo_db", (req, res) => {
   res.json(combo_data_db);
 });
-
-
 
 //カードドローリクエストがフロントから走った場合に発火
 app.post("/api/card_draw", (req, res) => {
@@ -167,8 +166,7 @@ function card_draw(select_Id) {
 }
 
 //接続時処理
-let numClients = {};
-let numPlayer = {};
+
 io.sockets.on("connection", function (socket) {
   console.log("connected");
   //接続切断処理

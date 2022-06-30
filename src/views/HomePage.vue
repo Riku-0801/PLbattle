@@ -64,10 +64,15 @@ export default {
       this.player_Id = Math.random().toString(32).substring(2);
       this.RoomId = id;
       this.socket.emit("login", this.RoomId);
-      this.$axios.post("/player_data", {
-        RoomId: this.RoomId,
-        player_Id: this.player_Id,
-      });
+      this.$axios
+        .post("/player_data", {
+          RoomId: this.RoomId,
+          player_Id: this.player_Id,
+        })
+        .then((res) => {
+          //res.dataがRoomにいる人数ここで場合分けすればOK
+          console.log(res.data);
+        });
     },
     //ページ遷移機能
     push() {
