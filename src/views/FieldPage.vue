@@ -845,22 +845,6 @@ export default {
       this.showAttack = true;
       // 出されたカードを削除
       this.selecteddata.splice(index, this.selecteddata.length);
-      /*
-      TODO:
-      以下のドロー処理をバックで書くようにする
-      */
-      // ドローする処理
-      // 今ある手札の取得
-      setTimeout(() => {
-        this.$axios.post('/card_draw',{carddata: this.mydata,player_Id: searchParams.get("id")}).then((res)=>{
-            console.log(res.data)
-            this.mydata = []
-            for (let i=0; i < res.data.length; i++){
-              this.mydata.push(res.data[i])
-            }
-            console.log(this.mydata)
-        })
-      }, 1000)
       
       this.oponentTurn = true;
 
@@ -874,6 +858,13 @@ export default {
     // カットインを閉じる
     closeOponent: function () {
       this.showOponent = false;
+      this.$axios.post('/card_draw',{carddata: this.mydata,player_Id: searchParams.get("id")}).then((res)=>{
+        console.log(res.data)
+          this.mydata = []
+          for (let i=0; i < res.data.length; i++){
+            this.mydata.push(res.data[i])
+          }
+        })
       // 自分のhpが０だった時の負け表示
       if (this.sampleHp.mine <= 0) {
         this.judgeLose = true;
