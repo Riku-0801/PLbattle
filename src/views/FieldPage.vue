@@ -746,7 +746,17 @@ export default {
       }
       console.log(this.combo_data);
     });
-
+    //HPの共有
+    this.$axios.post("/HP", {
+      HPs: this.sampleHp,
+      player_Id: searchParams.get("id"),
+    })
+    .then((res) => {
+      console.log(res.data)
+      this.sampleHp.mine = res.data.my_HP
+      this.sampleHp.yours = res.data.enemy_HP
+    });
+    
     //初期ドローを行う。
     //この初期ドローを、バックの機能にして、この時点で手札をバックから貰えるようにする。⇒完了
     this.$axios
@@ -878,8 +888,14 @@ export default {
 
       //バックエンドにデータを送信
       this.$axios.post("/HP", {
-            HP: this.sampleHp,
+            HPs: this.sampleHp,
             player_Id: searchParams.get("id"),
+          })
+          .then((res) => {
+            console.log("自分のHP情報"+res.data.my_HP)
+            console.log("自分のHP情報"+res.data.enemy_HP)
+            this.sampleHp.mine = res.data.my_HP
+            this.sampleHp.yours = res.data.enemy_HP
           });
     },
     // 相手の攻撃のカットインを表示
