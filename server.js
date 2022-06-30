@@ -42,6 +42,10 @@ app.post("/api/message", (req, res) => {
 
 //フロントエンドからHP情報を受け取る。
 app.post("/api/HP", (req, res) => {
+  var select_turn_Id = player_db.findIndex(
+    (e) => e.player_Id === req.body.player_Id
+  );
+  
   console.log(req.body);
 });
 

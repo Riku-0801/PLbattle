@@ -877,7 +877,10 @@ export default {
       this.oponentTurn = true;
 
       //バックエンドにデータを送信
-      this.$axios.post("/HP", this.sampleHp);
+      this.$axios.post("/HP", {
+            HP: this.sampleHp,
+            player_Id: searchParams.get("id"),
+          });
     },
     // 相手の攻撃のカットインを表示
     oponentAttack: function () {
