@@ -756,7 +756,7 @@ export default {
       this.sampleHp.mine = res.data.my_HP
       this.sampleHp.yours = res.data.enemy_HP
     });
-    
+
     //初期ドローを行う。
     //この初期ドローを、バックの機能にして、この時点で手札をバックから貰えるようにする。⇒完了
     this.$axios
@@ -862,32 +862,7 @@ export default {
       this.showAttack = true;
       // 出されたカードを削除
       this.selecteddata.splice(index, this.selecteddata.length);
-<<<<<<< HEAD
       
-=======
-      /*
-      TODO:
-      以下のドロー処理をバックで書くようにする
-      */
-      // ドローする処理
-      // 今ある手札の取得
-      setTimeout(() => {
-        this.$axios
-          .post("/card_draw", {
-            carddata: this.mydata,
-            player_Id: searchParams.get("id"),
-          })
-          .then((res) => {
-            console.log(res.data);
-            this.mydata = [];
-            for (let i = 0; i < res.data.length; i++) {
-              this.mydata.push(res.data[i]);
-            }
-            console.log(this.mydata);
-          });
-      }, 1000);
-
->>>>>>> 76fec80230c3d19393c13dd1a1b6963f90f81813
       this.oponentTurn = true;
 
       //バックエンドにデータを送信
