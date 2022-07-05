@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-container>
+    <div v-show="numMember" class="overlay"><p class="alone">相手が入室するまでしばらくお待ちください</p></div>
       <div v-show="oponentTurn" class="overlay">
         <p class="judge">相手のターンです</p>
       </div>
@@ -1087,6 +1088,7 @@ export default {
         },
       ],
       // 普段表示していない要素
+      showAlone: false,
       showAttack: false,
       showOponent: false,
       dalayItem: false,
@@ -1110,6 +1112,7 @@ export default {
         mine: 300,
         yours: 300,
       },
+      numMember: 1,
     };
   },
   created() {
@@ -1132,6 +1135,12 @@ export default {
     let RoomID = searchParams.get("room");
     this.socket.emit("room-join", RoomID);
     console.log(this.userId);
+    console.log(this.numMember)
+
+    //一人の時は操作できないようにする
+    if (this.numMember === 1) {
+     showAlone()
+    }
   },
   mounted() {
     //cardValueを受け取った時の処理
@@ -1188,6 +1197,9 @@ export default {
     });
   },
   methods: {
+    showAlone() {
+      this.showAlone = true;
+    },
     chengeTurn() {
       console.log(this.oponentTurn);
       this.oponentTurn = false;
@@ -1380,7 +1392,11 @@ export default {
 }
 
 .judge {
-  font-size: 64px;
+  font-size: 4rem;
+  animation: neon_blink 2s infinite alternate;
+}
+.alone {
+  font-size: 2.5rem;
   animation: neon_blink 2s infinite alternate;
 }
 
