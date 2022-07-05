@@ -1110,9 +1110,13 @@ export default {
         mine: 300,
         yours: 300,
       },
+      numMember: 1,
+      audio: new Audio(require('@/assets/sounds/bgm.mp3'))
     };
   },
   created() {
+    this.audio.currentTime = 0 // 連続で鳴らせるように
+    this.audio.play() // 鳴らす
     // axios使用時の名残？
     for (let i = 0; i < this.combo_data_db.length; i++) {
       this.combo_data.push(this.combo_data_db[i]);

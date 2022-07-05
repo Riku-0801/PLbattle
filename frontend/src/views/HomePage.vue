@@ -46,9 +46,15 @@ export default {
       socket: io("localhost:3000"),
       turn_flag: 0,
       RoomId: "",
+      bgm: new Audio(require('@/assets/sounds/bgm2.mp3'))
     };
   },
+  created() {
+    this.bgm.currentTime = 0 // 連続で鳴らせるように
+    this.bgm.play()// 鳴らす
+  },
   mounted() {
+    this.bgm.play()// 鳴らす
     this.socket.on("logined", function (userId) {
       console.log(userId);
     });
@@ -63,6 +69,7 @@ export default {
       this.socket.emit("login", this.RoomId);
     },
     push() {
+      this.bgm.pause()
       console.log(this.RoomId);
       this.$router.push({ name: "field", query: { room: this.RoomId } });
     },
