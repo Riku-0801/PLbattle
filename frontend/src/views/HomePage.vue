@@ -24,6 +24,9 @@
             >id：{{ number }}</span
           >
         </div>
+        <div>
+         ><v-btn outlined @click="pause" class="btn">ミュート</v-btn>
+        </div>
       </v-col>
       <v-col cols="4" class="start">
         <v-btn outlined class="btn big" @click="push()">
@@ -72,6 +75,9 @@ export default {
       this.bgm.pause()
       console.log(this.RoomId);
       this.$router.push({ name: "field", query: { room: this.RoomId } });
+    },
+    pause() {
+      this.bgm.pause()
     },
     set() {
       localStorage.setItem(
