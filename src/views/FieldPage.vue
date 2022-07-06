@@ -880,12 +880,9 @@ export default {
     },
     // カットインを閉じる
     closeOponent: function () {
-      console.log("closeOponent Fire");
       this.showOponent = false;
       // カードをドローする処理
       const searchParams = new URLSearchParams(window.location.search);
-      console.log(this.mydata);
-      console.log(searchParams.get("id"));
       this.$axios
         .post("/card_draw", {
           carddata: this.mydata,
@@ -902,27 +899,6 @@ export default {
           console.log(e);
           console.log("axios finished");
         });
-
-      /*
-      this.$axios({
-        method: "post",
-        url: "/card_draw",
-        data: { carddata: this.mydata, player_Id: searchParams.get("id") },
-        timeout: 5000,
-      })
-        .then((res) => {
-          console.log(res.data);
-          this.mydata = [];
-          for (let i = 0; i < res.data.length; i++) {
-            this.mydata.push(res.data[i]);
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-          console.log("axios finished");
-        });
-      */
-      console.log("Post succeded");
       // 自分のhpが０だった時の負け表示
       if (this.sampleHp.mine <= 0) {
         this.judgeLose = true;

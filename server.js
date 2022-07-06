@@ -89,24 +89,17 @@ app.get("/api/get_combo_db", (req, res) => {
 
 //カードドローリクエストがフロントから走った場合に発火
 app.post("/api/card_draw", (req, res) => {
-  console.log("ドロー機能発火");
   const select_Id = player_db.findIndex(
     (e) => e.player_Id === req.body.player_Id
   );
 
   if (req.body.carddata.length != 0) {
-    console.log("カードデータ更新");
     player_db[select_Id].card_list = req.body.carddata;
   }
-
-  console.log("ドロー関数に送る処理開始");
   card_draw(select_Id);
-  console.log("ドロー完了");
   //フロントに新規リストを送信
 
   res.send(player_db[select_Id].card_list);
-
-  console.log(player_db);
 });
 
 //ターンを指定するフラグの送受信
@@ -145,7 +138,6 @@ app.post("/api/control_turn", (req, res) => {
   player_db[select_Id].turn_flag += 1;
   //自分のturn_flagを+１する
   player_db[select_turn_Id].turn_flag += 1;
-  console.log("##################################");
   res.send();
 });
 
