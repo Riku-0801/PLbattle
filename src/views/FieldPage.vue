@@ -1,11 +1,11 @@
 <template>
   <v-app>
     <v-container>
-      <!-- <div v-show="oponentTurn" class="overlay">
-        <p class="alone">{{ message }}</p>
-      </div> -->
       <div v-show="oponentTurn" class="overlay">
         <p class="judge">{{ message }}</p>
+      </div>
+      <div v-show="numplayer" v-if="(numplayer = 1)" class="overlay">
+        <p class="alone">相手が入室するまでしばらくお待ちください</p>
       </div>
       <!-- <v-btn @click="oponentAttack">相手の攻撃</v-btn> -->
       <!-- 相手の攻撃エフェクト -->
@@ -41,6 +41,7 @@
       <!-- -------通常画面------- -->
       <v-row class="field-row"
         ><div>
+          <h4>ルームID：{{ roomId }}</h4>
           <h4 class="text">HP</h4>
           <h2 class="text">自分：{{ sampleHp.mine }}</h2>
           <h4 class="text">相手：{{ sampleHp.yours }}</h4>
@@ -812,8 +813,7 @@ export default {
         if (res.data % 2 == 0) {
           this.oponentTurn = false;
         } else if (res.data == 1) {
-          this.oponentTurn = true;
-          this.message = "相手がいません";
+          this.oponentTurn = false;
         } else {
           this.oponentTurn = true;
           this.message = "相手のターンです";
@@ -832,6 +832,7 @@ export default {
 
     //roomIdをサーバーサイドへ送信
     sendRoomId(roomId) {
+      console.log(roomId);
       this.socket.emit("login", roomId);
     },
     //カード発動時の処理
