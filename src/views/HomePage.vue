@@ -54,7 +54,7 @@ export default {
   methods: {
     issue() {
       // HACK: ID作る関数入れておく
-      this.number = Math.random().toString(32).substring(2);
+      this.id = Math.random().toString(32).substring(2);
     },
     //追加機能：クエリにplayer_Idを追加。同じルーム内でのプレイヤーを識別するのに利用。
     sendRoomId: function (id) {
