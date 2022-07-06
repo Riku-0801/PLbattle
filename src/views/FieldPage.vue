@@ -748,7 +748,6 @@ export default {
         effect: "",
         value: "",
       },
-      message: "",
     };
   },
   created() {
@@ -818,7 +817,6 @@ export default {
 
     //roomIdをサーバーサイドへ送信
     sendRoomId(roomId) {
-      console.log(roomId);
       this.socket.emit("login", roomId);
     },
     //カード発動時の処理
