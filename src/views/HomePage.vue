@@ -43,6 +43,8 @@ export default {
       turn_flag: 0,
       RoomId: "",
       player_Id: "",
+      start_se: new Audio(require("@/assets/sounds/piri.mp3")),
+      click_se: new Audio(require("@/assets/sounds/kako.mp3")),
     };
   },
   mounted() {
@@ -57,6 +59,7 @@ export default {
     },
     //追加機能：クエリにplayer_Idを追加。同じルーム内でのプレイヤーを識別するのに利用。
     sendRoomId: function (id) {
+      this.click_se.play();
       this.player_Id = Math.random().toString(32).substring(2);
       this.RoomId = id;
       this.socket.emit("login", this.RoomId);
@@ -72,6 +75,7 @@ export default {
     },
     //ページ遷移機能
     push() {
+      this.start_se.play();
       console.log(this.RoomId);
       this.$router.push({
         name: "field",

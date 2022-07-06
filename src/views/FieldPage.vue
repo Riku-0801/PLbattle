@@ -4,7 +4,7 @@
       <div v-show="oponentTurn" class="overlay">
         <p class="judge">相手のターンです</p>
       </div>
-      <div v-show="numplayer" v-if="(numplayer = 1)" class="overlay">
+      <div v-show="numplayer" v-if="(numplayer = 100)" class="overlay">
         <p class="alone">相手が入室するまでしばらくお待ちください</p>
       </div>
       <!-- <v-btn @click="oponentAttack">相手の攻撃</v-btn> -->
@@ -122,6 +122,7 @@ export default {
 
   data() {
     return {
+      action_se: new Audio(require("@/assets/sounds/action_se.mp3")),
       effect: "action",
       damageValue: 0,
       cardValue: [
@@ -920,6 +921,7 @@ export default {
     },
     // 自分の攻撃エフェクトを閉じる時に発火する処理
     getCardValue: function () {
+      this.action_se.play();
       this.showAttack = false;
       if (this.sampleHp.yours <= 0) {
         this.judgeWin = true;
