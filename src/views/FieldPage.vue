@@ -2,7 +2,7 @@
   <v-app>
     <v-container>
       <div v-show="oponentTurn" class="overlay">
-        <p class="judge">{{ message }}</p>
+        <p class="judge">相手のターンです</p>
       </div>
       <div v-show="numplayer" v-if="(numplayer = 1)" class="overlay">
         <p class="alone">相手が入室するまでしばらくお待ちください</p>
@@ -41,7 +41,6 @@
       <!-- -------通常画面------- -->
       <v-row class="field-row"
         ><div>
-          <h4>ルームID：{{ roomId }}</h4>
           <h4 class="text">HP</h4>
           <h2 class="text">自分：{{ sampleHp.mine }}</h2>
           <h4 class="text">相手：{{ sampleHp.yours }}</h4>
@@ -747,9 +746,6 @@ export default {
         effect: "",
         value: "",
       },
-      showAlone: false,
-      numMember: 0,
-      message: "",
     };
   },
   created() {
@@ -795,17 +791,8 @@ export default {
     this.socket.emit("room-join", RoomID, this.userId);
     console.log(this.userId);
 
-    //一人の時操作できないようにする
-    // console.log("numMember" + numMember);
-    // if (this.numplayer === 1) {
-    //   showAlone();
-    //   this.message = "一人です";
-    // } else if (this.numplayer >= 3) {
-    //   this.message = "人数が多すぎます";
-    // }
     //turn_flagに応じて、showAttackなどの表示、非表示を決定する。
     //偶数の時は自分の番
-    //1の時は一人ですが表示される
     this.$axios
       .post("/get_turn", { player_Id: searchParams.get("id") })
       .then((res) => {
@@ -816,14 +803,10 @@ export default {
           this.oponentTurn = false;
         } else {
           this.oponentTurn = true;
-          this.message = "相手のターンです";
         }
       });
   },
   methods: {
-    showAlone() {
-      this.showAlone = true;
-    },
     //強引にフロントエンドのdbからimgを貰ってくる
     search_img_id(id) {
       var select_Id = this.card_db.findIndex((e) => e.id === id);
