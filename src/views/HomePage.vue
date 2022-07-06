@@ -12,7 +12,7 @@
         <!--<div class="typing">-->
         <div class="input">
           >　<span>相手のIDを入力してください：</span
-          ><input v-model="number" placeholder="" /><v-btn
+          ><input v-model="id" placeholder="" /><v-btn
             outlined
             @click="sendRoomId(id)"
             class="btn play"
@@ -62,6 +62,7 @@ export default {
     sendRoomId: function (id) {
       this.player_Id = Math.random().toString(32).substring(2);
       this.RoomId = id;
+      console.log(this.RoomId)
       this.socket.emit("login", this.RoomId);
       this.$axios
         .post("/player_data", {

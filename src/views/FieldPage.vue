@@ -874,29 +874,33 @@ export default {
       this.oponentTurn = true;
 
       //バックエンドにデータを送信
-      this.$axios.post("/HP", {
+      
+      this.$axios.post("/HP_CardDraw", {
+            carddata: this.mydata,
             HPs: this.sampleHp,
             player_Id: searchParams.get("id"),
           })
           .then((res) => {
-            console.log("自分のHP情報"+res.data.my_HP)
-            console.log("自分のHP情報"+res.data.enemy_HP)
-            this.sampleHp.mine = res.data.my_HP
-            this.sampleHp.yours = res.data.enemy_HP
+            this.sampleHp.mine = res.data.HP_data.my_HP
+            this.sampleHp.yours = res.data.HP_data.enemy_HP
+            this.mydata = []
+            for (let i=0; i < res.data.card_list.length; i++){
+              this.mydata.push(res.data.card_list[i])
+            }
           });
     },
     // カットインを閉じる
     closeOponent: function () {
       this.showOponent = false;
       // カードをドローする処理
-      const searchParams = new URLSearchParams(window.location.search);
-      this.$axios.post('/card_draw',{carddata: this.mydata,player_Id: searchParams.get("id")}).then((res)=>{
-        console.log(res.data)
-          this.mydata = []
-          for (let i=0; i < res.data.length; i++){
-            this.mydata.push(res.data[i])
-          }
-        })
+      //const searchParams = new URLSearchParams(window.location.search);
+      // this.$axios.post('/card_draw',{carddata: this.mydata,player_Id: searchParams.get("id")}).then((res)=>{
+      //   console.log(res.data)
+      //     this.mydata = []
+      //     for (let i=0; i < res.data.length; i++){
+      //       this.mydata.push(res.data[i])
+      //     }
+      //   })
       // 自分のhpが０だった時の負け表示
       if (this.sampleHp.mine <= 0) {
         this.judgeLose = true;
