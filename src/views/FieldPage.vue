@@ -4,7 +4,7 @@
       <div v-show="oponentTurn" class="overlay">
         <p class="judge">相手のターンです</p>
       </div>
-      <div v-show="numplayer" v-if="(numplayer = 100)" class="overlay">
+      <div v-show="isAlone" class="overlay">
         <p class="alone">相手が入室するまでしばらくお待ちください</p>
       </div>
       <!-- <v-btn @click="oponentAttack">相手の攻撃</v-btn> -->
@@ -725,6 +725,7 @@ export default {
       oponentTurn: false, //行動の可否を決定づける部分　これをバックで管理しよう。
       judgeLose: false,
       judgeWin: false,
+      isAlone: false,
       // draganddrop用のデータ
       options: {
         group: "myGroup",
@@ -747,6 +748,7 @@ export default {
         effect: "",
         value: "",
       },
+      message: "",
     };
   },
   created() {
@@ -934,14 +936,10 @@ export default {
   },
   mounted() {
     let tmp = this;
-
     this.socket.on("num-player", function (numplayer) {
       console.log("numplayer" + numplayer);
-      if (numplayer === 1) {
-        showAlone();
-        this.message = "一人です";
-      } else if (numplayer >= 3) {
-        this.message = "人数が多すぎます";
+      if (numplayer == 1) {
+        tmp.isAlone = true;
       }
     });
     //cardValueを受け取った時の処理
