@@ -19,15 +19,12 @@
             >このルームで遊ぶ</v-btn
           >
         </div>
-        <div>
-          ><v-btn outlined @click="issue" class="btn">IDを発行</v-btn>
-        </div>
+        <div>><v-btn outlined @click="issue" class="btn">IDを発行</v-btn></div>
       </v-col>
       <v-col cols="4" class="start">
         <v-btn outlined class="btn big" @click="push()">
           <span>start</span></v-btn
         >
-        <v-btn></v-btn>
       </v-col>
     </v-row>
   </v-container>
