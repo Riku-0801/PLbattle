@@ -1,11 +1,11 @@
 {
-  "name": "plbattle",
-  "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serve:backend": "nodemon ./server.js"
+    "serve:frontend": "vue-cli-service serve",
+    "serve:backend": "nodemon ./server.js",
+    "build": "vue-cli-service build"
   },
   "repository": {
     "type": "git",
@@ -18,13 +18,33 @@
   },
   "homepage": "https://github.com/Riku-0801/PLbattle#readme",
   "dependencies": {
-    "express": "^4.18.1",
-    "socket.io": "^4.5.1",
     "axios": "^0.27.2",
+    "body-parser": "^1.20.0",
     "core-js": "^3.8.3",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "google-fonts-webpack-plugin": "^0.4.4",
+    "socket.io": "^4.5.1",
+    "socket.io-client": "^4.5.1",
+    "vue": "^2.6.14",
+    "vue-router": "^3.5.1",
+    "vuedraggable": "^2.24.3",
+    "vuetify": "^2.6.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.16"
-  }
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "nodemon": "^2.0.16",
+    "sass": "~1.32.0",
+    "sass-loader": "^10.0.0",
+    "vue-cli-plugin-vuetify": "~2.5.1",
+    "vue-template-compiler": "^2.6.14",
+    "vuetify-loader": "^1.7.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

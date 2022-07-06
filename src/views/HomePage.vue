@@ -12,26 +12,21 @@
         <!--<div class="typing">-->
         <div class="input">
           >　<span>相手のIDを入力してください：</span
-          ><input v-model="id" placeholder="" /><v-btn
+          ><input v-model="number" placeholder="" /><v-btn
             outlined
             @click="sendRoomId(id)"
             class="btn play"
             >このルームで遊ぶ</v-btn
           >
         </div>
-        <div>
-          ><v-btn outlined @click="issue" class="btn">IDを発行</v-btn> 　<span
-            >id：{{ number }}</span
-          >
-        </div>
-        <div>
-         ><v-btn outlined @click="pause" class="btn">ミュート</v-btn>
-        </div>
+        <div>><v-btn outlined @click="issue" class="btn">IDを発行</v-btn></div>
+        <div>><v-btn outlined @click="pause" class="btn">ミュート</v-btn></div>
       </v-col>
       <v-col cols="4" class="start">
         <v-btn outlined class="btn big" @click="push()">
           <span>start</span></v-btn
         >
+        <v-btn></v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -50,6 +45,7 @@ export default {
       turn_flag: 0,
       RoomId: "",
       bgm: new Audio(require('@/assets/sounds/bgm2.mp3'))
+      player_Id: "",
     };
   },
   created() {
@@ -67,14 +63,29 @@ export default {
       // HACK: ID作る関数入れておく
       this.number = Math.random().toString(32).substring(2);
     },
+    //追加機能：クエリにplayer_Idを追加。同じルーム内でのプレイヤーを識別するのに利用。
     sendRoomId: function (id) {
+      this.player_Id = Math.random().toString(32).substring(2);
       this.RoomId = id;
       this.socket.emit("login", this.RoomId);
+      this.$axios
+        .post("/player_data", {
+          RoomId: this.RoomId,
+          player_Id: this.player_Id,
+        })
+        .then((res) => {
+          //res.dataがRoomにいる人数ここで場合分けすればOK
+          console.log(res.data);
+        });
     },
+    //ページ遷移機能
     push() {
       this.bgm.pause()
       console.log(this.RoomId);
-      this.$router.push({ name: "field", query: { room: this.RoomId } });
+      this.$router.push({
+        name: "field",
+        query: { room: this.RoomId, id: this.player_Id },
+      });
     },
     pause() {
       this.bgm.pause()
