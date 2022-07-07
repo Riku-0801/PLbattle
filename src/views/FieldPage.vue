@@ -4,6 +4,9 @@
       <div v-show="oponentTurn" class="overlay">
         <p class="judge">相手のターンです</p>
       </div>
+      <div v-show="isAlone" class="overlay">
+        <p class="alone">相手が入室するまでしばらくお待ちください</p>
+      </div>
       <!-- <v-btn @click="oponentAttack">相手の攻撃</v-btn> -->
       <!-- 相手の攻撃エフェクト -->
       <div v-show="showOponent" class="overlay" @click="closeOponent">
@@ -119,6 +122,8 @@ export default {
 
   data() {
     return {
+      action_se: new Audio(require("@/assets/sounds/action_se.mp3")),
+      damage_se: new Audio(require("@/assets/sounds/damage_se.mp3")),
       effect: "action",
       damageValue: 0,
       cardValue: [
@@ -721,6 +726,7 @@ export default {
       oponentTurn: false, //行動の可否を決定づける部分　これをバックで管理しよう。
       judgeLose: false,
       judgeWin: false,
+      isAlone: false,
       // draganddrop用のデータ
       options: {
         group: "myGroup",
@@ -792,7 +798,9 @@ export default {
       .then((res) => {
         if (res.data % 2 == 0) {
           this.oponentTurn = false;
-        } else if (res.data % 2 == 1) {
+        } else if (res.data == 1) {
+          this.oponentTurn = false;
+        } else {
           this.oponentTurn = true;
         }
       });
@@ -810,6 +818,7 @@ export default {
     },
     //カード発動時の処理
     useCards: function (index) {
+      this.action_se.play();
       // todo: searchParamsをグローバル変数にできないかな
       const searchParams = new URLSearchParams(window.location.search);
       //ここに、turn_flagを+1する処理を書く。
@@ -862,6 +871,7 @@ export default {
       もし、trun_flagが１ならtrue、とかにする。
       */
       this.showAttack = true;
+      this.damage_se.play();
       // 出されたカードを削除
       this.selecteddata.splice(index, this.selecteddata.length);
 
@@ -918,9 +928,11 @@ export default {
   },
   mounted() {
     let tmp = this;
-
     this.socket.on("num-player", function (numplayer) {
-      console.log(numplayer);
+      console.log("numplayer" + numplayer);
+      if (numplayer == 1) {
+        tmp.isAlone = true;
+      }
     });
     //cardValueを受け取った時の処理
     this.socket.on("card-value", function (cardValue) {
@@ -1061,7 +1073,11 @@ export default {
 }
 
 .judge {
-  font-size: 64px;
+  font-size: 4rem;
+  animation: neon_blink 2s infinite alternate;
+}
+.alone {
+  font-size: 2.5rem;
   animation: neon_blink 2s infinite alternate;
 }
 
