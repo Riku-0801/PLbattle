@@ -465,7 +465,7 @@ const combo_data_db = [
     combo_id: 31,
     name_en: "Pair",
     name_ja: "ペア",
-    action_value: 30,
+    action_value: 50,
     id_list: [4, 10],
     name_list: ["Python", "Django"],
   },
