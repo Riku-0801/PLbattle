@@ -123,6 +123,7 @@ export default {
   data() {
     return {
       action_se: new Audio(require("@/assets/sounds/action_se.mp3")),
+      damage_se: new Audio(require("@/assets/sounds/damage_se.mp3")),
       effect: "action",
       damageValue: 0,
       cardValue: [
@@ -821,6 +822,7 @@ export default {
     },
     //カード発動時の処理
     useCards: function (index) {
+      this.action_se.play();
       // todo: searchParamsをグローバル変数にできないかな
       const searchParams = new URLSearchParams(window.location.search);
       //ここに、turn_flagを+1する処理を書く。
@@ -879,6 +881,7 @@ export default {
       もし、trun_flagが１ならtrue、とかにする。
       */
       this.showAttack = true;
+      this.damage_se.play();
       // 出されたカードを削除
       this.selecteddata.splice(index, this.selecteddata.length);
 
@@ -921,7 +924,6 @@ export default {
     },
     // 自分の攻撃エフェクトを閉じる時に発火する処理
     getCardValue: function () {
-      this.action_se.play();
       this.showAttack = false;
       if (this.sampleHp.yours <= 0) {
         this.judgeWin = true;
