@@ -1,6 +1,6 @@
-var express = require("express");
-var app = express();
-var http = require("http").Server(app);
+const express = require("express");
+const app = express();
+const http = require("http").Server(app);
 const io = require("socket.io")(http, {
   cors: {
     origin: "http://localhost:8080",
@@ -43,14 +43,24 @@ app.post("/api/message", (req, res) => {
 
 //フロントエンドからHP情報を受け取る。
 app.post("/api/HP", (req, res) => {
-  var select_Id = player_db.findIndex(
+  let select_Id = player_db.findIndex(
     (e) => e.player_Id === req.body.player_Id
   );
 
   player_db[select_Id].my_HP = req.body.HPs.mine;
   player_db[select_Id].enemy_HP = req.body.HPs.yours;
-  console.log("自分のHP" + player_db[select_Id].my_HP);
-  console.log("相手のHP" + player_db[select_Id].enemy_HP);
+  HP_data = {
+    my_HP: player_db[select_Id].my_HP,
+    enemy_HP: player_db[select_Id].enemy_HP,
+  };
+  res.send(HP_data);
+});
+
+//フロントエンド更新時用のHP情報共有
+app.post("/api/HP_reload", (req, res) => {
+  let select_Id = player_db.findIndex(
+    (e) => e.player_Id === req.body.player_Id
+  );
   HP_data = {
     my_HP: player_db[select_Id].my_HP,
     enemy_HP: player_db[select_Id].enemy_HP,
@@ -91,35 +101,22 @@ app.get("/api/get_combo_db", (req, res) => {
 
 //カードドローリクエストがフロントから走った場合に発火
 app.post("/api/card_draw", (req, res) => {
-  console.log("ドロー機能発火");
-  var select_Id = player_db.findIndex(
+  const select_Id = player_db.findIndex(
     (e) => e.player_Id === req.body.player_Id
   );
 
   if (req.body.carddata.length != 0) {
-    console.log("カードデータ更新");
     player_db[select_Id].card_list = req.body.carddata;
   }
-
-  console.log("ドロー関数に送る処理開始");
   card_draw(select_Id);
-  console.log("ドロー完了");
   //フロントに新規リストを送信
 
   res.send(player_db[select_Id].card_list);
-
-  console.log("フロントにデータ送信完了");
-});
-
-//ターンを指定するフラグの送受信
-app.post("/api/turn_flag", (req, res) => {
-  console.log("ターンを相手に渡す。");
 });
 
 //ページリロード時のターンを決定づける。
 app.post("/api/get_turn", (req, res) => {
-  console.log("リロード及びページ起動時のターンを取得しています。");
-  var select_turn_Id = player_db.findIndex(
+  const select_turn_Id = player_db.findIndex(
     (e) => e.player_Id === req.body.player_Id
   );
   res.json(player_db[select_turn_Id].turn_flag);
@@ -128,34 +125,31 @@ app.post("/api/get_turn", (req, res) => {
 
 app.post("/api/control_turn", (req, res) => {
   //同じRoomにいる、自分以外の人のturn_flagを+１する
-  var select_turn_Id = player_db.findIndex(
+  const select_turn_Id = player_db.findIndex(
     (e) => e.player_Id === req.body.player_Id
   );
-  var this_RoomId = player_db[select_turn_Id].RoomId;
-  var this_Room_player = player_db.filter((e) => {
+  const this_RoomId = player_db[select_turn_Id].RoomId;
+  const this_Room_player = player_db.filter((e) => {
     if (e.RoomId === this_RoomId && e.player_Id != req.body.player_Id) {
       return true;
     }
   });
   //同じRoomにいる、自分以外の人のturn_flagを+１する
 
-  this_Room_player = JSON.stringify(this_Room_player);
-  this_Room_player = JSON.parse(this_Room_player);
-  var select_Id = player_db.findIndex(
+  const select_Id = player_db.findIndex(
     (e) => e.player_Id === this_Room_player[0].player_Id
   );
   player_db[select_Id].turn_flag += 1;
   //自分のturn_flagを+１する
   player_db[select_turn_Id].turn_flag += 1;
-
-  console.log("相手と自分のturn_flagを共に変更成功");
+  res.send();
 });
 
 //カードドロー機能
 function card_draw(select_Id) {
   console.log("ドロー関数が発火されました");
   for (let j = player_db[select_Id].card_list.length; j < 6; ) {
-    var tmp = Number(Math.floor(Math.random() * 56));
+    const tmp = Number(Math.floor(Math.random() * 56));
     //if (!player_db[select_Id].card_list_number.includes(tmp)) {
     //ここ修正必要
     //player_db[select_Id].card_list_number.push(tmp);
@@ -172,7 +166,6 @@ io.sockets.on("connection", function (socket) {
   //接続切断処理
   //ログイン時処理
   socket.on("login", function (RoomId) {
-    console.log("ログインが出来ています");
     if (numClients[RoomId] == undefined) {
       numClients[RoomId] = 1;
     } else {
@@ -217,13 +210,13 @@ var player_db = [
     RoomId: "",
     player_Id: "",
     card_list: [],
-    my_HP: 0,
-    enemy_HP: 0,
+    my_HP: 300,
+    enemy_HP: 300,
     card_list_number: [],
     turn_flag: 0,
   },
 ];
-var combo_data_db = [
+const combo_data_db = [
   {
     combo_id: 1,
     name_en: "Royal Straight Flush",
@@ -468,7 +461,7 @@ var combo_data_db = [
     combo_id: 31,
     name_en: "Pair",
     name_ja: "ペア",
-    action_value: 30,
+    action_value: 50,
     id_list: [4, 10],
     name_list: ["Python", "Django"],
   },
@@ -493,7 +486,7 @@ var combo_data_db = [
     name_en: "Pair",
     name_ja: "ペア",
     action_value: 90,
-    id_list: [27, 23],
+    id_list: [23, 27],
     name_list: ["PHP", "Laravel"],
   },
   {
@@ -601,7 +594,7 @@ var combo_data_db = [
     name_list: ["TypeScript", "Angular"],
   },
 ];
-var card_db = [
+const card_db = [
   {
     id: 1,
     name: "Javascript",

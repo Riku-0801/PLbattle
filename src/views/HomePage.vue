@@ -12,7 +12,7 @@
         <!--<div class="typing">-->
         <div class="input">
           >　<span>相手のIDを入力してください：</span
-          ><input v-model="number" placeholder="" /><v-btn
+          ><input v-model="id" placeholder="" /><v-btn
             outlined
             @click="sendRoomId(id)"
             class="btn play"
@@ -55,7 +55,7 @@ export default {
   methods: {
     issue() {
       // HACK: ID作る関数入れておく
-      this.number = Math.random().toString(32).substring(2);
+      this.id = Math.random().toString(32).substring(2);
     },
     //追加機能：クエリにplayer_Idを追加。同じルーム内でのプレイヤーを識別するのに利用。
     sendRoomId: function (id) {
