@@ -43,7 +43,7 @@ app.post("/api/message", (req, res) => {
 
 //フロントエンドからHP情報を受け取る。
 app.post("/api/HP", (req, res) => {
-  const select_Id = player_db.findIndex(
+  let select_Id = player_db.findIndex(
     (e) => e.player_Id === req.body.player_Id
   );
 
@@ -53,6 +53,19 @@ app.post("/api/HP", (req, res) => {
     my_HP: player_db[select_Id].my_HP,
     enemy_HP: player_db[select_Id].enemy_HP,
   };
+  res.send(HP_data);
+});
+
+//フロントエンド更新時用のHP情報共有
+app.post("/api/HP_reload", (req, res) => {
+  let select_Id = player_db.findIndex(
+    (e) => e.player_Id === req.body.player_Id
+  );
+  HP_data = {
+    my_HP: player_db[select_Id].my_HP,
+    enemy_HP: player_db[select_Id].enemy_HP,
+  };
+  console.log(HP_data)
   res.send(HP_data);
 });
 
@@ -101,11 +114,6 @@ app.post("/api/card_draw", (req, res) => {
 
   res.send(player_db[select_Id].card_list);
 });
-
-//ターンを指定するフラグの送受信
-// app.post("/api/turn_flag", (req, res) => {
-//   console.log("ターンを相手に渡す。");
-// });
 
 //ページリロード時のターンを決定づける。
 app.post("/api/get_turn", (req, res) => {
@@ -212,7 +220,7 @@ var player_db = [
     turn_flag: 0,
   },
 ];
-var combo_data_db = [
+const combo_data_db = [
   {
     combo_id: 1,
     name_en: "Royal Straight Flush",
@@ -590,7 +598,7 @@ var combo_data_db = [
     name_list: ["TypeScript", "Angular"],
   },
 ];
-var card_db = [
+const card_db = [
   {
     id: 1,
     name: "Javascript",

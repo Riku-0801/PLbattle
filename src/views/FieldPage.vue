@@ -756,11 +756,11 @@ export default {
     });
     //HPの共有
     this.$axios
-      .post("/HP", {
-        HPs: this.sampleHp,
+      .post("/HP_reload", {
         player_Id: searchParams.get("id"),
       })
       .then((res) => {
+        console.log(res.data)
         this.sampleHp.mine = res.data.my_HP;
         this.sampleHp.yours = res.data.enemy_HP;
       });
