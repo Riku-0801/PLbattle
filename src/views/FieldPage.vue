@@ -1,11 +1,15 @@
 <template>
   <v-app>
     <v-container>
-      <div v-show="oponentTurn" class="overlay">
+      <!-- <div v-show="oponentTurn" class="overlay">
         <p class="judge">相手のターンです</p>
       </div>
       <div v-show="isAlone" class="overlay">
         <p class="alone">相手が入室するまでしばらくお待ちください</p>
+      </div>
+    -->
+      <div v-show="isAlone || oponentTurn" class="overlay">
+        <p class="alone">{{ message }}</p>
       </div>
       <!-- <v-btn @click="oponentAttack">相手の攻撃</v-btn> -->
       <!-- 相手の攻撃エフェクト -->
@@ -124,6 +128,7 @@ export default {
     return {
       action_se: new Audio(require("@/assets/sounds/action_se.mp3")),
       damage_se: new Audio(require("@/assets/sounds/damage_se.mp3")),
+      click_se: new Audio(require("@/assets/sounds/kako.mp3")),
       effect: "action",
       damageValue: 0,
       cardValue: [
@@ -749,6 +754,7 @@ export default {
         effect: "",
         value: "",
       },
+      message: "",
     };
   },
   created() {
@@ -766,7 +772,7 @@ export default {
         player_Id: searchParams.get("id"),
       })
       .then((res) => {
-        console.log(res.data)
+        console.log(res.data);
         this.sampleHp.mine = res.data.my_HP;
         this.sampleHp.yours = res.data.enemy_HP;
       });
@@ -799,9 +805,11 @@ export default {
         if (res.data % 2 == 0) {
           this.oponentTurn = false;
         } else if (res.data == 1) {
-          this.oponentTurn = false;
+          this.oponentTurn = true;
+          this.message = "相手が入室するまでしばらくお待ちください";
         } else {
           this.oponentTurn = true;
+          this.message = "相手のターンです";
         }
       });
   },
@@ -876,7 +884,7 @@ export default {
       this.selecteddata.splice(index, this.selecteddata.length);
 
       this.oponentTurn = true;
-
+      this.message = "相手のターンです";
       //バックエンドにデータを送信
       this.$axios
         .post("/HP", {
@@ -918,11 +926,13 @@ export default {
     getCardValue: function () {
       this.showAttack = false;
       if (this.sampleHp.yours <= 0) {
+        this.oponentTurn = false;
         this.judgeWin = true;
       }
     },
     // homeボタン
     goHome: function () {
+      this.click_se.play();
       this.$router.push("/");
     },
   },
@@ -932,6 +942,8 @@ export default {
       console.log("numplayer" + numplayer);
       if (numplayer == 1) {
         tmp.isAlone = true;
+      } else {
+        tmp.isAlone = false;
       }
     });
     //cardValueを受け取った時の処理
