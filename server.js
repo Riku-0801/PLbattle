@@ -65,7 +65,6 @@ app.post("/api/HP_reload", (req, res) => {
     my_HP: player_db[select_Id].my_HP,
     enemy_HP: player_db[select_Id].enemy_HP,
   };
-  console.log(HP_data)
   res.send(HP_data);
 });
 
@@ -136,9 +135,6 @@ app.post("/api/control_turn", (req, res) => {
     }
   });
   //同じRoomにいる、自分以外の人のturn_flagを+１する
-
-  // this_Room_player = JSON.stringify(this_Room_player);
-  // this_Room_player = JSON.parse(this_Room_player);
 
   const select_Id = player_db.findIndex(
     (e) => e.player_Id === this_Room_player[0].player_Id
