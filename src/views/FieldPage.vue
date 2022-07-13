@@ -800,11 +800,13 @@ export default {
     //turn_flagに応じて、showAttackなどの表示、非表示を決定する。
     //偶数の時は自分の番
     this.$axios
-      .post("/get_turn", { player_Id: searchParams.get("id") })
+      .post("/get_turn", { player_Id: searchParams.get("id"), roomId: searchParams.get("room") })
       .then((res) => {
-        if (res.data % 2 == 0) {
+        console.log("送信したデータ 人数"+res.data.roomMember)
+        console.log("送信したデータ"+res.data.turnFlag)
+        if (res.data.turnFlag % 2 == 0) {
           this.oponentTurn = false;
-        } else if (res.data == 1) {
+        } else if (res.data.turnFlag == 1 && res.data.roomMember == 1) {
           this.oponentTurn = true;
           this.message = "相手が入室するまでしばらくお待ちください";
         } else {
