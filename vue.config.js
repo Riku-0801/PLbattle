@@ -23,4 +23,10 @@ module.exports = defineConfig({
   },
 });
 
-module.exports = {};
+module.exports = {
+  pages: {
+    index: {
+      title: "CODE_DUEL",
+    },
+  },
+};
