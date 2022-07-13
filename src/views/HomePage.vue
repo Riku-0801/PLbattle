@@ -14,16 +14,12 @@
           >　<span>相手のIDを入力してください：</span
           ><input v-model="id" placeholder="" /><v-btn
             outlined
-            @click="sendRoomId('hogehoge')"
+            @click="sendRoomId(id)"
             class="btn play"
             >このルームで遊ぶ</v-btn
           >
         </div>
-        <div>
-          ><v-btn outlined @click="issue" class="btn">IDを発行</v-btn> 　<span
-            >id：{{ number }}</span
-          >
-        </div>
+        <div>><v-btn outlined @click="issue" class="btn">IDを発行</v-btn></div>
       </v-col>
       <v-col cols="4" class="start">
         <v-btn outlined class="btn big" @click="push()">
@@ -45,25 +41,46 @@ export default {
       id: "",
       socket: io("localhost:3000"),
       turn_flag: 0,
+      RoomId: "",
+      player_Id: "",
+      start_se: new Audio(require("@/assets/sounds/piri.mp3")),
+      click_se: new Audio(require("@/assets/sounds/kako.mp3")),
     };
   },
   mounted() {
     this.socket.on("logined", function (userId) {
       console.log(userId);
-      //this.push();
     });
   },
   methods: {
     issue() {
       // HACK: ID作る関数入れておく
-      this.number = Math.random().toString(32).substring(2);
+      this.id = Math.random().toString(32).substring(2);
     },
-    sendRoomId: function (RoomId) {
-      this.socket.emit("login", RoomId);
-      console.log(RoomId);
+    //追加機能：クエリにplayer_Idを追加。同じルーム内でのプレイヤーを識別するのに利用。
+    sendRoomId: function (id) {
+      this.click_se.play();
+      this.player_Id = Math.random().toString(32).substring(2);
+      this.RoomId = id;
+      this.socket.emit("login", this.RoomId);
+      this.$axios
+        .post("/player_data", {
+          RoomId: this.RoomId,
+          player_Id: this.player_Id,
+        })
+        .then((res) => {
+          //res.dataがRoomにいる人数ここで場合分けすればOK
+          console.log(res.data);
+        });
     },
+    //ページ遷移機能
     push() {
-      this.$router.push({ name: "field", query: { room: "hogehoge" } });
+      this.start_se.play();
+      console.log(this.RoomId);
+      this.$router.push({
+        name: "field",
+        query: { room: this.RoomId, id: this.player_Id },
+      });
     },
     set() {
       localStorage.setItem(

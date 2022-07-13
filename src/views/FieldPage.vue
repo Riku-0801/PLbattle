@@ -1,17 +1,28 @@
 <template>
   <v-app>
     <v-container>
-      <div v-show="oponentTurn" class="overlay">
-        <v-card class="caution">相手のターンです</v-card>
+      <!-- <div v-show="oponentTurn" class="overlay">
+        <p class="judge">相手のターンです</p>
       </div>
-      <v-btn @click="oponentAttack">相手の攻撃</v-btn>
+      <div v-show="isAlone" class="overlay">
+        <p class="alone">相手が入室するまでしばらくお待ちください</p>
+      </div>
+    -->
+      <div v-show="isAlone || oponentTurn" class="overlay">
+        <p class="alone">{{ message }}</p>
+      </div>
+      <!-- <v-btn @click="oponentAttack">相手の攻撃</v-btn> -->
       <!-- 相手の攻撃エフェクト -->
       <div v-show="showOponent" class="overlay" @click="closeOponent">
         <!-- 相手の攻撃情報をここに持ってくる -->
-        <v-card height="475px" width="400px" class="black">
-          <v-img src="../assets/cards/Angular.png"></v-img>
-        </v-card>
-        <div class="dalayEffect">Mark Up</div>
+        <div v-for="given in givenCards" :key="given.id">
+          <v-card height="475px" width="400px" class="black">
+            <v-img :src="search_img_id(given.id)"></v-img>
+          </v-card>
+        </div>
+        <div class="dalayEffect">
+          {{ givenAttack.effect }} {{ givenAttack.value }} pt
+        </div>
       </div>
       <!-- 自分のhpが0になった時の処理 -->
       <div v-show="judgeLose" class="overwrap items">
@@ -22,7 +33,7 @@
       </div>
       <!-- 自分の攻撃エフェクト -->
       <div v-show="showAttack" class="overlay" @click="getCardValue">
-        <div class="dalayEffect">{{ effect }}　{{ damageValue }} pt</div>
+        <div class="myEffect">{{ effect }}　{{ damageValue }} pt</div>
       </div>
       <!-- 相手のhpが0になった時の処理 -->
       <div v-show="judgeWin" class="overwrap items">
@@ -74,7 +85,7 @@
                   <v-img
                     aspect-ratio="475/400"
                     height="242px"
-                    :src="select.img"
+                    :src="search_img_id(select.id)"
                   >
                   </v-img>
                 </v-card>
@@ -94,7 +105,7 @@
         >
           <div v-for="mine in mydata" :key="`second-${mine.id}`" class="item">
             <v-card hover class="black">
-              <v-img :src="mine.img"> </v-img>
+              <v-img :src="search_img_id(mine.id)"> </v-img>
             </v-card>
           </div>
         </VueDrag>
@@ -112,8 +123,12 @@ export default {
   components: {
     VueDrag,
   },
+
   data() {
     return {
+      action_se: new Audio(require("@/assets/sounds/action_se.mp3")),
+      damage_se: new Audio(require("@/assets/sounds/damage_se.mp3")),
+      click_se: new Audio(require("@/assets/sounds/kako.mp3")),
       effect: "action",
       damageValue: 0,
       cardValue: [
@@ -126,379 +141,7 @@ export default {
       recieved_cardValue: [],
       // 1) サーバ連結
       socket: io("localhost:3000"),
-      combo_data_db: [
-        {
-          combo_id: 1,
-          name_en: "Royal Straight Flush",
-          name_ja: "ロイヤルストレートフラッシュ",
-          action_value: 500,
-          id_list: [29, 41, 42, 44],
-          name_list: ["Objective-C", "C", "C#", "C++"],
-        },
-        {
-          combo_id: 2,
-          name_en: "Mark Up",
-          name_ja: "マークアップ",
-          action_value: 40,
-          id_list: [2, 3],
-          name_list: ["HTML", "CSS"],
-        },
-        {
-          combo_id: 3,
-          name_en: "Rookie",
-          name_ja: "ルーキー",
-          action_value: 60,
-          id_list: [1, 2, 3],
-          name_list: ["Javascript", "HTML", "CSS"],
-        },
-        {
-          combo_id: 4,
-          name_en: "Jewelry",
-          name_ja: "ジュエリー",
-          action_value: 100,
-          id_list: [28, 29],
-          name_list: ["Perl", "Objective-C"],
-        },
-        {
-          combo_id: 5,
-          name_en: "P_combo1",
-          name_ja: "Pコンボ1",
-          action_value: 80,
-          id_list: [27, 28],
-          name_list: ["PHP", "Perl"],
-        },
-        {
-          combo_id: 6,
-          name_en: "P_combo2",
-          name_ja: "Pコンボ2",
-          action_value: 80,
-          id_list: [10, 27],
-          name_list: ["Python", "PHP"],
-        },
-        {
-          combo_id: 7,
-          name_en: "P_combo3",
-          name_ja: "Pコンボ3",
-          action_value: 80,
-          id_list: [10, 28],
-          name_list: ["Python", "Perl"],
-        },
-        {
-          combo_id: 8,
-          name_en: "P_Family",
-          name_ja: "Pファミリー",
-          action_value: 100,
-          id_list: [10, 27, 28],
-          name_list: ["Python", "PHP", "Perl"],
-        },
-        {
-          combo_id: 9,
-          name_en: "R_combo1",
-          name_ja: "Rコンボ1",
-          action_value: 50,
-          id_list: [11, 33],
-          name_list: ["R", "Rust"],
-        },
-        {
-          combo_id: 10,
-          name_en: "R_combo2",
-          name_ja: "Rコンボ2",
-          action_value: 60,
-          id_list: [11, 39],
-          name_list: ["R", "Ruby"],
-        },
-        {
-          combo_id: 11,
-          name_en: "R_combo3",
-          name_ja: "Rコンボ3",
-          action_value: 80,
-          id_list: [33, 39],
-          name_list: ["Rust", "Ruby"],
-        },
-        {
-          combo_id: 12,
-          name_en: "R_Family",
-          name_ja: "Rファミリー",
-          action_value: 90,
-          id_list: [11, 33, 39],
-          name_list: ["R", "Rust", "Ruby"],
-        },
-        {
-          combo_id: 13,
-          name_en: "Chalk & Cheese",
-          name_ja: "月と鼈",
-          action_value: 60,
-          id_list: [1, 43],
-          name_list: ["Javascript", "Java"],
-        },
-        {
-          combo_id: 14,
-          name_en: "The Script Brothers",
-          name_ja: "スクリプト兄弟",
-          action_value: 50,
-          id_list: [1, 12],
-          name_list: ["Javascript", "TypeScript"],
-        },
-        {
-          combo_id: 15,
-          name_en: "Bird",
-          name_ja: "バード",
-          action_value: 70,
-          id_list: [30, 31],
-        },
-        {
-          combo_id: 16,
-          name_en: "Google",
-          name_ja: "グーグル",
-          action_value: 80,
-          id_list: [32, 37],
-        },
-        {
-          combo_id: 17,
-          name_en: "Apple",
-          name_ja: "アップル",
-          action_value: 70,
-          id_list: [29, 30],
-        },
-        {
-          combo_id: 18,
-          name_en: "Pythons1",
-          name_ja: "パイソンズ1",
-          action_value: 40,
-          id_list: [4, 5],
-        },
-        {
-          combo_id: 19,
-          name_en: "Pythons2",
-          name_ja: "パイソンズ2",
-          action_value: 50,
-          id_list: [4, 16],
-        },
-        {
-          combo_id: 20,
-          name_en: "Pythons3",
-          name_ja: "パイソンズ3",
-          action_value: 50,
-          id_list: [5, 16],
-        },
-        {
-          combo_id: 21,
-          name_en: "The Python Brothers",
-          name_ja: "パイソン兄弟",
-          action_value: 70,
-          id_list: [4, 5, 16],
-          name_list: ["Django", "FastAPI", "Flask"],
-        },
-        {
-          combo_id: 22,
-          name_en: "Animals2",
-          name_ja: "アニマルズ1",
-          action_value: 80,
-          id_list: [10, 37],
-          name_list: ["Python", "Go"],
-        },
-        {
-          combo_id: 23,
-          name_en: "Animals2",
-          name_ja: "アニマルズ2",
-          action_value: 70,
-          id_list: [10, 51],
-          name_list: ["Python", "ドリトル"],
-        },
-        {
-          combo_id: 24,
-          name_en: "Animals3",
-          name_ja: "アニマルズ3",
-          action_value: 80,
-          id_list: [37, 51],
-          name_list: ["Go", "ドリトル"],
-        },
-        {
-          combo_id: 25,
-          name_en: "Japanese",
-          name_ja: "ジャパニーズ",
-          action_value: 90,
-          id_list: [50, 51, 52],
-          name_list: ["なでしこ", "ドリトル", "プロデル"],
-        },
-        {
-          combo_id: 26,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 45,
-          id_list: [1, 15],
-          name_list: ["JavaScript", "Vue"],
-        },
-        {
-          combo_id: 27,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 30,
-          id_list: [1, 6],
-          name_list: ["JavaScript", "jQuery"],
-        },
-        {
-          combo_id: 28,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 45,
-          id_list: [1, 18],
-          name_list: ["JavaScript", "Angular"],
-        },
-        {
-          combo_id: 29,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 75,
-          id_list: [1, 36],
-          name_list: ["JavaScript", "Node.js"],
-        },
-        {
-          combo_id: 30,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 45,
-          id_list: [10, 16],
-          name_list: ["Python", "Flask"],
-        },
-        {
-          combo_id: 31,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 30,
-          id_list: [10, 4],
-          name_list: ["Python", "Django"],
-        },
-        {
-          combo_id: 32,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 30,
-          id_list: [10, 5],
-          name_list: ["Python", "FastAPI"],
-        },
-        {
-          combo_id: 33,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 60,
-          id_list: [3, 34],
-          name_list: ["CSS", "tailwind"],
-        },
-        {
-          combo_id: 34,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 90,
-          id_list: [27, 23],
-          name_list: ["PHP", "Laravel"],
-        },
-        {
-          combo_id: 35,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 90,
-          id_list: [27, 8],
-          name_list: ["PHP", "CakePHP"],
-        },
-        {
-          combo_id: 36,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 105,
-          id_list: [39, 17],
-          name_list: ["Ruby", "Rails"],
-        },
-        {
-          combo_id: 37,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 75,
-          id_list: [30, 9],
-          name_list: ["Swift", "SwiftUI"],
-        },
-        {
-          combo_id: 38,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 90,
-          id_list: [37, 20],
-          name_list: ["Go", "echo"],
-        },
-        {
-          combo_id: 39,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 105,
-          id_list: [43, 19],
-          name_list: ["Java", "Spring"],
-        },
-        {
-          combo_id: 40,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 75,
-          id_list: [33, 21],
-          name_list: ["Rust", "Rocket"],
-        },
-        {
-          combo_id: 41,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 75,
-          id_list: [33, 22],
-          name_list: ["Rust", "Yew"],
-        },
-        {
-          combo_id: 42,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 105,
-          id_list: [32, 24],
-          name_list: ["dart", "Flutter"],
-        },
-        {
-          combo_id: 43,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 75,
-          id_list: [31, 7],
-          name_list: ["Kotlin", "Ktor"],
-        },
-        {
-          combo_id: 44,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 75,
-          id_list: [33, 14],
-          name_list: ["Rust", "warp"],
-        },
-        {
-          combo_id: 45,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 45,
-          id_list: [3, 56],
-          name_list: ["CSS", "Bootstrap"],
-        },
-        {
-          combo_id: 46,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 75,
-          id_list: [12, 15],
-          name_list: ["TypeScript", "Vue"],
-        },
-        {
-          combo_id: 47,
-          name_en: "Pair",
-          name_ja: "ペア",
-          action_value: 75,
-          id_list: [12, 18],
-          name_list: ["TypeScript", "Angular"],
-        },
-      ],
-      data_db: [
+      card_db: [
         {
           id: 1,
           name: "Javascript",
@@ -775,7 +418,7 @@ export default {
           type: "attachment",
           img: require("../assets/cards/External-HDD.png"),
           action: "enhancement",
-          value: 20,
+          value: 40,
           field: "",
           set_id: 0,
         },
@@ -1080,13 +723,15 @@ export default {
           set_id: 3,
         },
       ],
+      combo_data: [],
       // 普段表示していない要素
-      showAttack: false,
-      showOponent: false,
-      dalayItem: false,
-      oponentTurn: false,
+      showAttack: false, //自分の攻撃表示　これは別にバックで管理する必要はない
+      showOponent: false, //相手の攻撃表示　これは別にバックで管理する必要はない
+      dalayItem: false, //なにも使ってない　消していい？
+      oponentTurn: false, //行動の可否を決定づける部分　これをバックで管理しよう。
       judgeLose: false,
       judgeWin: false,
+      isAlone: false,
       // draganddrop用のデータ
       options: {
         group: "myGroup",
@@ -1095,46 +740,214 @@ export default {
       selecteddata: [],
       mydata: [],
       mydata_len: [],
-      combo_data: [],
       recent_mydata_len: [],
       recent_selectdata_id: [],
       tmp: 0,
-      userId: Math.random().toString(32).substring(2),
+      userId: "",
       sampleHp: {
         mine: 300,
         yours: 300,
       },
+      attacksignal: 0,
+      givenCards: [],
+      givenAttack: {
+        effect: "",
+        value: "",
+      },
+      message: "",
     };
   },
   created() {
-    // axios使用時の名残？
-    for (let i = 0; i < this.combo_data_db.length; i++) {
-      this.combo_data.push(this.combo_data_db[i]);
-    }
-    console.log(this.combo_data);
-    //初期ドローを行う。
-    for (let i = this.mydata.length; i < 6; ) {
-      this.tmp = Number(Math.floor(Math.random() * 56));
-      if (!this.mydata_len.includes(this.tmp)) {
-        this.mydata_len.push(this.tmp);
-        this.mydata.push(this.data_db[this.mydata_len[i]]);
-        i++;
+    const searchParams = new URLSearchParams(window.location.search);
+    this.attacksignal = 0;
+    //バックエンドからコンボdbを受け取る処理
+    this.$axios.get("/get_combo_db").then((res) => {
+      for (let i = 0; i < res.data.length; i++) {
+        this.combo_data.push(res.data[i]);
       }
-    }
+    });
+    //HPの共有
+    this.$axios
+      .post("/HP_reload", {
+        player_Id: searchParams.get("id"),
+      })
+      .then((res) => {
+        console.log(res.data);
+        this.sampleHp.mine = res.data.my_HP;
+        this.sampleHp.yours = res.data.enemy_HP;
+      });
 
-    this.socket.emit("getTurnFlag", this.userId);
-    console.log(this.userId);
+    //初期ドローを行う。
+    //この初期ドローを、バックの機能にして、この時点で手札をバックから貰えるようにする。⇒完了
+    this.$axios
+      .post("/card_draw", {
+        carddata: this.mydata,
+        player_Id: searchParams.get("id"),
+      })
+      .then((res) => {
+        console.log(res.data);
+        for (let i = 0; i < res.data.length; i++) {
+          this.mydata.push(res.data[i]);
+        }
+        console.log(this.mydata);
+        console.log("hogehoge");
+      });
+
+    //joinするための送信
+    this.userId = searchParams.get("id");
+    let RoomID = searchParams.get("room");
+    this.socket.emit("room-join", RoomID, this.userId);
+    //turn_flagに応じて、showAttackなどの表示、非表示を決定する。
+    //偶数の時は自分の番
+    this.$axios
+      .post("/get_turn", { player_Id: searchParams.get("id") })
+      .then((res) => {
+        if (res.data % 2 == 0) {
+          this.oponentTurn = false;
+        } else if (res.data == 1) {
+          this.oponentTurn = true;
+          this.message = "相手が入室するまでしばらくお待ちください";
+        } else {
+          this.oponentTurn = true;
+          this.message = "相手のターンです";
+        }
+      });
+  },
+  methods: {
+    //強引にフロントエンドのdbからimgを貰ってくる
+    search_img_id(id) {
+      var select_Id = this.card_db.findIndex((e) => e.id === id);
+      return this.card_db[select_Id].img;
+    },
+
+    //roomIdをサーバーサイドへ送信
+    sendRoomId(roomId) {
+      this.socket.emit("login", roomId);
+    },
+    //カード発動時の処理
+    useCards: function (index) {
+      this.action_se.play();
+      // todo: searchParamsをグローバル変数にできないかな
+      const searchParams = new URLSearchParams(window.location.search);
+      //ここに、turn_flagを+1する処理を書く。
+      this.$axios.post("/control_turn", { player_Id: searchParams.get("id") });
+      //処理
+      let cardValue = {
+        userId: this.userId,
+        selecteddata: this.selecteddata,
+        roomId: searchParams.get("room"),
+      };
+      this.socket.emit("cardValue", cardValue, searchParams.get("id"));
+      if (this.selecteddata.length == 1) {
+        if (this.selecteddata[0].action == "enhancement") {
+          // 回復の処理
+          this.effect = "enhancement";
+          this.damageValue = this.selecteddata[0].value;
+          this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
+        } else if (this.selecteddata[0].action == "steal") {
+          // 吸収の処理
+          this.effect = "steal";
+          this.sampleHp.yours =
+            this.sampleHp.yours - this.selecteddata[0].value;
+          this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
+        } else {
+          // 攻撃の処理
+          this.effect = "attack";
+          this.damageValue = this.selecteddata[0].value;
+          this.sampleHp.yours =
+            this.sampleHp.yours - this.selecteddata[0].value;
+        }
+      } else {
+        // 攻撃可能な配列を取得してaction_valueを相手のhpから引く
+        this.effect = this.ableattacks[0].name_en;
+        const isIncludes = (arr, target) =>
+          arr.every((el) => target.includes(el));
+        let updateddata = this.selecteddata.map((obj) => obj.id);
+        this.combo_data.filter((combo_data) => {
+          if (isIncludes(updateddata, combo_data.id_list)) {
+            if (updateddata.length == combo_data.id_list.length) {
+              this.sampleHp.yours =
+                this.sampleHp.yours - combo_data.action_value;
+              this.damageValue = combo_data.action_value;
+            }
+          }
+        });
+      }
+      // attackのカットインを表示
+      //この、showAttackの処理を、
+      /*
+      もし、trun_flagが１ならtrue、とかにする。
+      */
+      this.showAttack = true;
+      this.damage_se.play();
+      // 出されたカードを削除
+      this.selecteddata.splice(index, this.selecteddata.length);
+
+      this.oponentTurn = true;
+      this.message = "相手のターンです";
+      //バックエンドにデータを送信
+      this.$axios
+        .post("/HP", {
+          HPs: this.sampleHp,
+          player_Id: searchParams.get("id"),
+        })
+        .then((res) => {
+          this.sampleHp.mine = res.data.my_HP;
+          this.sampleHp.yours = res.data.enemy_HP;
+        });
+    },
+    // カットインを閉じる
+    closeOponent: function () {
+      this.showOponent = false;
+      // カードをドローする処理
+      const searchParams = new URLSearchParams(window.location.search);
+      this.$axios
+        .post("/card_draw", {
+          carddata: this.mydata,
+          player_Id: searchParams.get("id"),
+        })
+        .then((res) => {
+          console.log(res.data);
+          this.mydata = [];
+          for (let i = 0; i < res.data.length; i++) {
+            this.mydata.push(res.data[i]);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          console.log("axios finished");
+        });
+      // 自分のhpが０だった時の負け表示
+      if (this.sampleHp.mine <= 0) {
+        this.judgeLose = true;
+      }
+    },
+    // 自分の攻撃エフェクトを閉じる時に発火する処理
+    getCardValue: function () {
+      this.showAttack = false;
+      if (this.sampleHp.yours <= 0) {
+        this.oponentTurn = false;
+        this.judgeWin = true;
+      }
+    },
+    // homeボタン
+    goHome: function () {
+      this.click_se.play();
+      this.$router.push("/");
+    },
   },
   mounted() {
-    //cardValueを受け取った時の処理
-    console.log("fire");
     let tmp = this;
+    this.socket.on("num-player", function (numplayer) {
+      console.log("numplayer" + numplayer);
+      if (numplayer == 1) {
+        tmp.isAlone = true;
+      } else {
+        tmp.isAlone = false;
+      }
+    });
+    //cardValueを受け取った時の処理
     this.socket.on("card-value", function (cardValue) {
-      console.log(this);
-      console.log(tmp);
-      console.log(tmp.userId);
-      console.log(cardValue.userId);
-      console.log(cardValue.selecteddata);
       if (cardValue.userId == tmp.userId) {
         //攻撃できなくしたい（相手のターンにする）
         tmp.oponentTurn = true;
@@ -1158,133 +971,78 @@ export default {
               tmp.sampleHp.mine - cardValue.selecteddata[0].value;
           }
         } else {
-          // todo: ableattacksから配列を取得してaction_valueを相手のhpから引く
-          tmp.sampleHp.mine =
-            tmp.sampleHp.mine - tmp.ableattacks[0].action_value;
+          const isIncludes = (arr, target) =>
+            arr.every((el) => target.includes(el));
+          let updateddata = cardValue.selecteddata.map((obj) => obj.id);
+          tmp.combo_data.filter((combo_data) => {
+            if (isIncludes(updateddata, combo_data.id_list)) {
+              if (updateddata.length == combo_data.id_list.length) {
+                tmp.sampleHp.mine = tmp.sampleHp.mine - combo_data.action_value;
+                tmp.damageValue = combo_data.action_value;
+              }
+            }
+          });
         }
+        // 相手の攻撃のカードデータを取得
+        tmp.givenCards = [];
+        for (let i = 0; i < cardValue.selecteddata.length; i++) {
+          tmp.givenCards.push(cardValue.selecteddata[i]);
+        }
+        // コンポ名を取得する。一枚の場合はeffectが何かを入れる
+        if (tmp.givenCards.length == 1) {
+          tmp.givenAttack.effect = cardValue.selecteddata[0].action;
+          tmp.givenAttack.value = cardValue.selecteddata[0].value;
+        } else {
+          // 選択されたカードのidリストを取得
+          let updateddata = tmp.givenCards.map((obj) => obj.id);
+          // コンボデータからそのidリストと一致するコンボを検索
+          const isIncludes = (arr, target) =>
+            arr.every((el) => target.includes(el));
+          // 一致するコンボを取得
+          let givenCombo = tmp.combo_data.filter((combo) => {
+            return isIncludes(updateddata, combo.id_list);
+          });
+          tmp.givenAttack.effect = givenCombo[0].name_en;
+          tmp.givenAttack.value = givenCombo[0].action_value;
+        }
+        // 相手の攻撃を表示
+        tmp.showOponent = true;
       }
     });
-  },
-  methods: {
-    chengeTurn() {
-      console.log(this.oponentTurn);
-      this.oponentTurn = false;
-      //onsole.log(this.oponentTurn)
-    },
-    getTurnFlag() {
-      //turn_flagのデータをlocalstorageからもらいます
-      this.turn_flag = localStorage.getItem("turn_flag");
-      console.log(this.turn_flag);
-    },
-    //roomIdをサーバーサイドへ送信
-    sendRoomId(roomId) {
-      this.socket.emit("login", roomId);
-    },
-    //カード発動時の処理
-    useCards: function (index) {
-      //処理
-      let cardValue = {
-        userId: this.userId,
-        selecteddata: this.selecteddata,
-      };
-      this.socket.emit("cardValue", cardValue);
-      if (this.selecteddata.length == 1) {
-        if (this.selecteddata[0].action == "enhancement") {
-          // 回復の処理
-          this.effect = "enhancement";
-          this.damageValue = this.selecteddata[0].value;
-          const action = this.selecteddata[0].name_en;
-          this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
-        } else if (this.selecteddata[0].action == "steal") {
-          // 吸収の処理
-          this.effect = "steal";
-          this.sampleHp.yours =
-            this.sampleHp.yours - this.selecteddata[0].value;
-          this.sampleHp.mine = this.sampleHp.mine + this.selecteddata[0].value;
-        } else {
-          // 攻撃の処理
-          this.effect = "attack";
-          this.damageValue = this.selecteddata[0].value;
-          this.sampleHp.yours =
-            this.sampleHp.yours - this.selecteddata[0].value;
-        }
-      } else {
-        // 攻撃可能な配列を取得してaction_valueを相手のhpから引く
-        this.effect = this.ableattacks[0].name_en;
-        this.sampleHp.yours =
-          this.sampleHp.yours - this.ableattacks[0].action_value;
-      }
-      // attackのカットインを表示
-      this.showAttack = true;
-      // 出されたカードを削除
-      this.selecteddata.splice(index, this.selecteddata.length);
-      // ドローする処理
-      // 今ある手札の取得
-      this.recent_mydata_len = [];
-      for (let i = 0; i < this.mydata.length; i++) {
-        this.recent_mydata_len.push(this.mydata[i].id - 1);
-      }
-      // ６枚以下ならカードを取得するのをループ
-      for (let i = this.mydata.length - 1; i < 5; ) {
-        this.tmp = Number(Math.floor(Math.random() * 56));
-        if (!this.recent_mydata_len.includes(this.tmp)) {
-          this.mydata_len.push(this.tmp);
-          let pushdata =
-            this.data_db[
-              this.mydata_len[i - this.mydata.length + this.mydata_len.length]
-            ];
-          this.mydata.push(pushdata);
-          i++;
-        }
-      }
-      this.oponentTurn = true;
-    },
-    // 相手の攻撃のカットインを表示
-    oponentAttack: function () {
-      this.showOponent = true;
-    },
-    // カットインを閉じる
-    closeOponent: function () {
-      this.showOponent = false;
-      // 自分のhpが０だった時の負け表示
-      if (this.sampleHp.mine <= 0) {
-        this.judgeLose = true;
-      }
-    },
-    // 自分の攻撃エフェクトを閉じる時に発火する処理
-    getCardValue: function () {
-      this.showAttack = false;
-      if(this.sampleHp.yours <= 0){
-        this.judgeWin = true
-      }
-    },
-    // homeボタン
-    goHome: function () {
-      this.$router.push("/");
-    },
   },
 
   computed: {
     ableattacks: function () {
       // selecteddataのidだけを集めた
       let updateddata = this.selecteddata.map((obj) => obj.id);
+      let canattackdata = updateddata.sort((a, b) => (a < b ? -1 : 1));
+
       // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
       //recent_selectdataに、idに対応するカードの名前を入れたい
-      if (updateddata.length === 0) {
+      if (canattackdata.length === 0) {
         // 何も選択されていないとき空の配列を返す
         return [];
       } else {
         // updateddataにあるのと一致した攻撃だけを返す
-        return this.combo_data_db.filter((combo_data) => {
-          return isIncludes(updateddata, combo_data.id_list);
+        return this.combo_data.filter((combo_data) => {
+          return isIncludes(canattackdata, combo_data.id_list);
         });
       }
     },
     //発動できるかどうかを判定する
     attack_decision: function () {
       let updateddata = this.selecteddata.map((obj) => obj.id);
+      updateddata.sort(function (first, second) {
+        if (first > second) {
+          return 1;
+        } else if (first < second) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
       // 一致してるものがあるかを判定
       const isIncludes = (arr, target) =>
         arr.every((el) => target.includes(el));
@@ -1294,15 +1052,17 @@ export default {
         this.cardValue.value = this.selecteddata[0].value;
         return true;
       } else {
-        let ableCombo = this.combo_data_db.filter((combo_data) => {
+        let ableCombo = this.combo_data.filter((combo_data) => {
           return isIncludes(updateddata, combo_data.id_list);
         });
-        console.log(ableCombo);
         // 完全一致した攻撃だけを返す
         for (let i = 0, n = updateddata.length; i < n; ++i) {
           if (ableCombo.length == 0) {
             return false;
-          } else if (updateddata[i] !== ableCombo[0].id_list[i]) {
+          } else if (
+            updateddata[i] == ableCombo[0].id_list[i] &&
+            updateddata.length == ableCombo[0].id_list.length
+          ) {
             return true;
           } else {
             return false;
@@ -1313,7 +1073,6 @@ export default {
     // コンボ名を取得する
     getComboName: function () {
       let updateddata = this.selecteddata.map((obj) => obj.id);
-      console.log(updateddata);
     },
   },
 };
@@ -1326,7 +1085,11 @@ export default {
 }
 
 .judge {
-  font-size: 64px;
+  font-size: 4rem;
+  animation: neon_blink 2s infinite alternate;
+}
+.alone {
+  font-size: 2.5rem;
   animation: neon_blink 2s infinite alternate;
 }
 
@@ -1386,6 +1149,23 @@ export default {
   animation: SlideIn 0.4s;
   /* 0.8秒遅らせる */
   animation-delay: 0.8s;
+  /* opacityが戻らないようにする */
+  animation-fill-mode: forwards;
+}
+
+.myEffect {
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 30%;
+  color: white;
+  font-size: 100px;
+  background: radial-gradient(#134e61, #102335);
+  font: "Oxanium";
+  opacity: 0;
+  animation: SlideIn 0.4s;
   /* opacityが戻らないようにする */
   animation-fill-mode: forwards;
 }
