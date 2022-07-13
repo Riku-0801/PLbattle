@@ -26,6 +26,7 @@ module.exports = defineConfig({
 module.exports = {
   pages: {
     index: {
+      entry: "src/main.js",
       title: "CODE_DUEL",
     },
   },
