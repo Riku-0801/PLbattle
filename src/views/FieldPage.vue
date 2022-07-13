@@ -140,7 +140,7 @@ export default {
       turn_flag: 0,
       recieved_cardValue: [],
       // 1) サーバ連結
-      socket: io("localhost:3000"),
+      socket: io("code--duel.herokuapp.com/"),
       card_db: [
         {
           id: 1,

@@ -39,7 +39,7 @@ export default {
     return {
       number: "",
       id: "",
-      socket: io("localhost:3000"),
+      socket: io("code--duel.herokuapp.com/"),
       turn_flag: 0,
       RoomId: "",
       player_Id: "",
